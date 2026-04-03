@@ -211,12 +211,17 @@
                     <option value="oldest">Sort: Oldest first</option>
                     <option value="due_soon">Sort: Due date, soonest first</option>
                     <option value="due_late">Sort: Due date, latest first</option>
-                  <option value="priority_high">Sort: Priority, high to low</option>
-                  <option value="priority_low">Sort: Priority, low to high</option>
-                  <option value="status">Sort: Status</option>
-                  <option value="category">Sort: Category</option>
-                  <option value="title">Sort: Title A-Z</option>
-                </select>
+                    <option value="title_asc">Sort: Task A-Z</option>
+                    <option value="title_desc">Sort: Task Z-A</option>
+                    <option value="priority_asc">Sort: Priority A-Z</option>
+                    <option value="priority_desc">Sort: Priority Z-A</option>
+                    <option value="status_asc">Sort: Status A-Z</option>
+                    <option value="status_desc">Sort: Status Z-A</option>
+                    <option value="category_asc">Sort: Category A-Z</option>
+                    <option value="category_desc">Sort: Category Z-A</option>
+                    <option value="flag_asc">Sort: Flag A-Z</option>
+                    <option value="flag_desc">Sort: Flag Z-A</option>
+                  </select>
                 </div>
                 <div class="quick-filters-row">
                   <label class="quick-filter" for="overdueOnly">
@@ -307,7 +312,7 @@
               <button class="compact-header-button compact-header-priority" type="button" data-compact-sort="priority">Priority</button>
               <button class="compact-header-button compact-header-category" type="button" data-compact-sort="category">Category</button>
               <button class="compact-header-button compact-header-due" type="button" data-compact-sort="due">Due</button>
-              <span class="compact-header-flag">Flag</span>
+              <button class="compact-header-button compact-header-flag" type="button" data-compact-sort="flag">Flag</button>
               <span class="compact-header-actions">Actions</span>
             </div>
             <div id="todoList" class="todo-list"></div>

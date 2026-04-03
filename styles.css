@@ -27,6 +27,7 @@
   --error-bg: rgba(255, 125, 125, 0.08);
   --error-border: rgba(255, 125, 125, 0.72);
   --error-text: #ff9b9b;
+  --compact-table-columns: minmax(300px, 2.6fr) minmax(120px, 0.9fr) minmax(110px, 0.85fr) minmax(130px, 1fr) minmax(120px, 0.9fr) minmax(110px, 0.85fr) minmax(132px, 1fr);
 }
 
 body.light {
@@ -855,9 +856,10 @@ body.light .task-list-shell::-webkit-scrollbar-thumb {
 
 .todo-row {
   display: grid;
-  grid-template-columns: minmax(240px, 2fr) minmax(120px, 0.9fr) minmax(100px, 0.8fr) minmax(120px, 1fr) minmax(120px, 0.9fr) minmax(110px, 0.9fr) auto;
+  grid-template-columns: var(--compact-table-columns);
   gap: 14px;
   align-items: center;
+  justify-items: center;
   padding: 14px 16px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.04);
@@ -870,6 +872,8 @@ body.light .task-list-shell::-webkit-scrollbar-thumb {
   flex-direction: column;
   gap: 4px;
   min-width: 0;
+  justify-self: start;
+  width: 100%;
 }
 
 .todo-row-title {
@@ -915,6 +919,9 @@ body.light .task-list-shell::-webkit-scrollbar-thumb {
 .todo-row-due,
 .todo-row-flag {
   min-width: 0;
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 .todo-row-priority .compact-pill,
@@ -929,7 +936,9 @@ body.light .task-list-shell::-webkit-scrollbar-thumb {
 .todo-row-actions {
   display: flex;
   align-items: center;
-  justify-self: end;
+  justify-self: center;
+  justify-content: center;
+  width: 100%;
   gap: 10px;
 }
 
@@ -946,19 +955,40 @@ body.light .task-list-shell::-webkit-scrollbar-thumb {
 }
 
 .todo-list.density-compact .todo-row {
-  padding: 10px 14px;
-  gap: 12px;
+  padding: 8px 12px;
+  gap: 10px;
+  border-radius: 14px;
 }
 
 .todo-list.density-compact .todo-row-description {
-  font-size: 0.86rem;
+  display: none;
+}
+
+.todo-list.density-compact .todo-row-title {
+  font-size: 0.92rem;
 }
 
 .todo-list.density-compact .compact-pill,
 .todo-list.density-compact .todo-row .status-badge,
 .todo-list.density-compact .due-pill {
-  padding: 6px 10px;
-  font-size: 0.76rem;
+  min-height: 28px;
+  padding: 4px 9px;
+  font-size: 0.72rem;
+}
+
+.todo-list.density-compact .todo-row-actions {
+  gap: 8px;
+}
+
+.todo-list.density-compact .todo-row-actions .ghost-button,
+.todo-list.density-compact .todo-row-actions .danger-button {
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 0.78rem;
+}
+
+.todo-list.density-compact .todo-row-title-wrap {
+  gap: 0;
 }
 
 .todo-card.is-overdue {
@@ -1139,17 +1169,19 @@ body.light .date-icon-button:hover {
 
 .compact-header {
   display: grid;
-  grid-template-columns: minmax(240px, 2fr) minmax(120px, 0.9fr) minmax(100px, 0.8fr) minmax(120px, 1fr) minmax(120px, 0.9fr) minmax(110px, 0.9fr) auto;
+  grid-template-columns: var(--compact-table-columns);
   gap: 14px;
   align-items: center;
+  justify-items: center;
   position: sticky;
   top: 0;
   z-index: 2;
   margin: 0 0 10px;
-  padding: 0 16px 10px;
-  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  padding: 10px 16px 12px;
+  background: color-mix(in srgb, var(--surface-strong) 86%, white 14%);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
+  border-radius: 14px 14px 0 0;
   color: var(--muted);
   font-size: 0.77rem;
   font-weight: 600;
@@ -1158,12 +1190,17 @@ body.light .date-icon-button:hover {
 }
 
 .compact-header-actions {
-  justify-self: end;
+  justify-self: center;
+}
+
+.compact-header-title {
+  justify-self: start;
 }
 
 .compact-header-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   padding: 0;
   background: transparent;
@@ -1172,6 +1209,10 @@ body.light .date-icon-button:hover {
   letter-spacing: inherit;
   font-size: inherit;
   font-weight: inherit;
+}
+
+.compact-header-title.compact-header-button {
+  justify-content: flex-start;
 }
 
 .compact-header-button:hover {
@@ -1183,11 +1224,20 @@ body.light .date-icon-button:hover {
 }
 
 .compact-header-button.active::after {
-  content: '';
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentColor;
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.compact-header-button.active[data-sort-direction='asc']::after {
+  content: '↑';
+}
+
+.compact-header-button.active[data-sort-direction='desc']::after {
+  content: '↓';
+}
+
+body.light .compact-header {
+  background: color-mix(in srgb, var(--surface-strong) 90%, white 10%);
 }
 
 .filters-panel,

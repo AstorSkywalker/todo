@@ -607,8 +607,6 @@ function debounce(fn, delay) {
 }
 
 function sortTodoItems(items) {
-  const priorityRank = { high: 3, medium: 2, low: 1 };
-  const statusRank = { pending: 1, in_progress: 2, done: 3 };
   const sortedItems = [...items];
 
   sortedItems.sort((left, right) => {
@@ -619,16 +617,26 @@ function sortTodoItems(items) {
         return compareDueDates(left.dueDate, right.dueDate);
       case 'due_late':
         return compareDueDates(right.dueDate, left.dueDate);
-      case 'priority_high':
-        return (priorityRank[right.priority] || 0) - (priorityRank[left.priority] || 0);
-      case 'priority_low':
-        return (priorityRank[left.priority] || 0) - (priorityRank[right.priority] || 0);
-      case 'status':
-        return (statusRank[left.status] || 99) - (statusRank[right.status] || 99) || compareText(left.title, right.title);
-      case 'category':
-        return compareText(left.category || '', right.category || '') || compareText(left.title, right.title);
-      case 'title':
+      case 'title_asc':
         return compareText(left.title, right.title);
+      case 'title_desc':
+        return compareText(right.title, left.title);
+      case 'priority_asc':
+        return compareText(formatPriority(left.priority), formatPriority(right.priority)) || compareText(left.title, right.title);
+      case 'priority_desc':
+        return compareText(formatPriority(right.priority), formatPriority(left.priority)) || compareText(left.title, right.title);
+      case 'status_asc':
+        return compareText(formatStatus(left.status), formatStatus(right.status)) || compareText(left.title, right.title);
+      case 'status_desc':
+        return compareText(formatStatus(right.status), formatStatus(left.status)) || compareText(left.title, right.title);
+      case 'category_asc':
+        return compareText(left.category || '', right.category || '') || compareText(left.title, right.title);
+      case 'category_desc':
+        return compareText(right.category || '', left.category || '') || compareText(left.title, right.title);
+      case 'flag_asc':
+        return compareText(getFlagLabel(left), getFlagLabel(right)) || compareText(left.title, right.title);
+      case 'flag_desc':
+        return compareText(getFlagLabel(right), getFlagLabel(left)) || compareText(left.title, right.title);
       case 'newest':
       default:
         return compareDates(right.createdAt, left.createdAt);
@@ -648,6 +656,10 @@ function compareDueDates(left, right) {
   const leftValue = left ? new Date(`${left}T00:00:00`).getTime() : Number.POSITIVE_INFINITY;
   const rightValue = right ? new Date(`${right}T00:00:00`).getTime() : Number.POSITIVE_INFINITY;
   return leftValue - rightValue;
+}
+
+function getFlagLabel(item) {
+  return getDueState(item).label || 'Normal';
 }
 
 function inferImportFormat(fileName = '') {
@@ -701,7 +713,7 @@ function restoreListPreferences() {
     overdueOnly.checked = Boolean(preferences.overdueOnly);
     dueTodayOnly.checked = Boolean(preferences.dueTodayOnly);
     dueSoonOnly.checked = Boolean(preferences.dueSoonOnly);
-    sortTasks.value = preferences.sortBy || 'newest';
+    sortTasks.value = normalizeSortValue(preferences.sortBy);
     state.sortBy = sortTasks.value;
     state.viewMode = preferences.viewMode === 'compact' ? 'compact' : 'cards';
     state.densityMode = preferences.densityMode === 'compact' ? 'compact' : 'comfortable';
@@ -710,6 +722,35 @@ function restoreListPreferences() {
   } catch (error) {
     localStorage.removeItem(listPreferencesKey);
   }
+}
+
+function normalizeSortValue(sortValue) {
+  const normalized = {
+    title: 'title_asc',
+    status: 'status_asc',
+    category: 'category_asc',
+    priority_high: 'priority_asc',
+    priority_low: 'priority_desc'
+  }[sortValue] || sortValue || 'newest';
+
+  const supportedValues = new Set([
+    'newest',
+    'oldest',
+    'due_soon',
+    'due_late',
+    'title_asc',
+    'title_desc',
+    'priority_asc',
+    'priority_desc',
+    'status_asc',
+    'status_desc',
+    'category_asc',
+    'category_desc',
+    'flag_asc',
+    'flag_desc'
+  ]);
+
+  return supportedValues.has(normalized) ? normalized : 'newest';
 }
 
 function updateViewModeButtons() {
@@ -730,18 +771,25 @@ function updateDensityButtons() {
 
 function updateCompactHeaderButtons() {
   compactSortButtons.forEach((button) => {
-    const isActive = isCompactSortActive(button.dataset.compactSort);
+    const sortKey = button.dataset.compactSort;
+    const isActive = isCompactSortActive(sortKey);
     button.classList.toggle('active', isActive);
     button.setAttribute('aria-pressed', String(isActive));
+    if (isActive) {
+      button.dataset.sortDirection = getCompactSortDirection(sortKey);
+    } else {
+      delete button.dataset.sortDirection;
+    }
   });
 }
 
 function isCompactSortActive(sortKey) {
   return {
-    title: state.sortBy === 'title',
-    status: state.sortBy === 'status',
-    priority: state.sortBy === 'priority_high' || state.sortBy === 'priority_low',
-    category: state.sortBy === 'category',
+    title: state.sortBy === 'title_asc' || state.sortBy === 'title_desc',
+    status: state.sortBy === 'status_asc' || state.sortBy === 'status_desc',
+    priority: state.sortBy === 'priority_asc' || state.sortBy === 'priority_desc',
+    category: state.sortBy === 'category_asc' || state.sortBy === 'category_desc',
+    flag: state.sortBy === 'flag_asc' || state.sortBy === 'flag_desc',
     due: state.sortBy === 'due_soon' || state.sortBy === 'due_late'
   }[sortKey] || false;
 }
@@ -749,17 +797,38 @@ function isCompactSortActive(sortKey) {
 function getCompactHeaderSortValue(sortKey) {
   switch (sortKey) {
     case 'title':
-      return 'title';
+      return state.sortBy === 'title_asc' ? 'title_desc' : 'title_asc';
     case 'status':
-      return 'status';
+      return state.sortBy === 'status_asc' ? 'status_desc' : 'status_asc';
     case 'category':
-      return 'category';
+      return state.sortBy === 'category_asc' ? 'category_desc' : 'category_asc';
     case 'priority':
-      return state.sortBy === 'priority_high' ? 'priority_low' : 'priority_high';
+      return state.sortBy === 'priority_asc' ? 'priority_desc' : 'priority_asc';
+    case 'flag':
+      return state.sortBy === 'flag_asc' ? 'flag_desc' : 'flag_asc';
     case 'due':
       return state.sortBy === 'due_soon' ? 'due_late' : 'due_soon';
     default:
       return '';
+  }
+}
+
+function getCompactSortDirection(sortKey) {
+  switch (sortKey) {
+    case 'title':
+      return state.sortBy === 'title_desc' ? 'desc' : 'asc';
+    case 'status':
+      return state.sortBy === 'status_desc' ? 'desc' : 'asc';
+    case 'category':
+      return state.sortBy === 'category_desc' ? 'desc' : 'asc';
+    case 'priority':
+      return state.sortBy === 'priority_desc' ? 'desc' : 'asc';
+    case 'flag':
+      return state.sortBy === 'flag_desc' ? 'desc' : 'asc';
+    case 'due':
+      return state.sortBy === 'due_late' ? 'desc' : 'asc';
+    default:
+      return 'asc';
   }
 }
 
@@ -1070,11 +1139,16 @@ function formatSortOption(sortValue) {
     oldest: 'Oldest first',
     due_soon: 'Due date, soonest first',
     due_late: 'Due date, latest first',
-    priority_high: 'Priority, high to low',
-    priority_low: 'Priority, low to high',
-    status: 'Status',
-    category: 'Category',
-    title: 'Title A-Z'
+    title_asc: 'Task A-Z',
+    title_desc: 'Task Z-A',
+    priority_asc: 'Priority A-Z',
+    priority_desc: 'Priority Z-A',
+    status_asc: 'Status A-Z',
+    status_desc: 'Status Z-A',
+    category_asc: 'Category A-Z',
+    category_desc: 'Category Z-A',
+    flag_asc: 'Flag A-Z',
+    flag_desc: 'Flag Z-A'
   }[sortValue] || sortValue;
 }
 
