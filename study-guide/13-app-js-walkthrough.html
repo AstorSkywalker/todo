@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 13 - app.js Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 13</p>
+      <h1>Line-by-Line Walkthrough: app.js</h1>
+      <p class="muted kicker">This lesson explains how the frontend JavaScript is organized: state, DOM references, initialization, data loading, rendering, events, localStorage, and the chart system.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#state">State</a></li>
+          <li><a href="#dom">DOM references</a></li>
+          <li><a href="#init">Initialization</a></li>
+          <li><a href="#loading">Loading data</a></li>
+          <li><a href="#rendering">Rendering</a></li>
+          <li><a href="#events">Events and interactions</a></li>
+          <li><a href="#chart">Chart building</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="state">
+            <h2>1. State</h2>
+            <pre><code>const state = {
+  items: [],
+  editingId: null,
+  groupBy: 'status',
+  sortBy: 'newest',
+  viewMode: 'cards',
+  densityMode: 'comfortable'
+};</code></pre>
+            <p>This small object is one of the most important ideas in the whole frontend. It holds the UI’s current mode. A beginner lesson here is that JavaScript becomes much easier to reason about when the application has one clear state object instead of scattered global variables.</p>
+          </section>
+
+          <section id="dom">
+            <h2>2. DOM References</h2>
+            <p>The file begins by collecting a very large number of DOM references with <code>document.querySelector</code>. That can look intimidating, but it is actually organized. The file is telling you up front which HTML parts are dynamic.</p>
+            <pre><code>const todoForm = document.querySelector('#todoForm');
+const titleInput = document.querySelector('#title');
+const searchInput = document.querySelector('#searchInput');
+const workloadChart = document.querySelector('#workloadChart');
+...</code></pre>
+            <p>This is a good reading strategy tip: when you see a long list like this, do not try to memorize it. Instead, group it mentally into forms, filters, panels, chart elements, and modal controls.</p>
+          </section>
+
+          <section id="init">
+            <h2>3. Initialization</h2>
+            <pre><code>initialize();
+
+function initialize() {
+  restoreListPreferences();
+  updateViewModeButtons();
+  updateDensityButtons();
+  restoreFiltersPanelState();
+  restoreGroupingPanelState();
+  restoreChartPanelState();
+  restoreSidebarState();
+  bindEvents();
+  applySavedTheme();
+  loadTodos();
+  loadGroupSummary();
+  loadCategoryOptions();
+  loadStorageStatus();
+}</code></pre>
+            <p>This function teaches an important orchestration pattern. Initialization is not random. The file restores UI state, binds interactivity, applies appearance preferences, and only then fetches data.</p>
+          </section>
+
+          <section id="loading">
+            <h2>4. Loading Data</h2>
+            <pre><code>async function loadTodos() {
+  const params = new URLSearchParams();
+  ...
+  const response = await fetch(`/api/todos${query}`);
+  const data = await response.json();
+  ...
+}</code></pre>
+            <p>The frontend collects filters, sends them to the backend, then applies additional frontend-only filters such as date-range and due-state pills. That split is educational because it shows how client-side and server-side filtering can coexist.</p>
+          </section>
+
+          <section id="rendering">
+            <h2>5. Rendering</h2>
+            <p>The file renders several different UI layers:</p>
+            <ul>
+              <li>summary counters</li>
+              <li>group result pills</li>
+              <li>active filter pills</li>
+              <li>task cards or compact rows</li>
+              <li>storage status</li>
+              <li>chart</li>
+            </ul>
+            <pre><code>renderSummary(data.summary || emptySummary());
+renderWorkloadChart(state.items);
+renderActiveFilters();
+renderResultsStrip();
+renderTodos();</code></pre>
+            <p>The idea is simple: data changes, then render functions update the page to match.</p>
+          </section>
+
+          <section id="events">
+            <h2>6. Events and Interactions</h2>
+            <pre><code>function bindEvents() {
+  todoForm.addEventListener('submit', handleSubmit);
+  searchInput.addEventListener('input', debounce(refreshList, 250));
+  toggleSidebarButton.addEventListener('click', toggleSidebar);
+  themeToggle.addEventListener('click', toggleTheme);
+  ...
+}</code></pre>
+            <p>This is where the UI becomes alive. Each event listener connects one visible control to a behavior. If you want to understand an interaction, this is often the first place to inspect.</p>
+          </section>
+
+          <section id="chart">
+            <h2>7. Chart Building</h2>
+            <pre><code>function renderWorkloadChart(items) {
+  const buckets = buildWorkloadBuckets(items);
+  ...
+  const points = buckets.map(...);
+  const linePath = createSmoothPath(points);
+  const areaPath = `${linePath} ... Z`;
+  ...
+}</code></pre>
+            <p>The chart section is a very good example of turning data into geometry:</p>
+            <ol>
+              <li>count visible tasks per day</li>
+              <li>turn counts into x/y points</li>
+              <li>create a smooth path</li>
+              <li>render line, area, glow, dots, and labels</li>
+            </ol>
+            <p>This is where frontend coding starts to feel like both math and art.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>8. Exercise and Checkpoint</h2>
+            <p><strong>Exercise:</strong> add one more persisted preference to the app, such as a new panel state or a new display option, and save it in <code>localStorage</code>.</p>
+            <p><strong>Checkpoint:</strong> if you can explain how a button click can change state, trigger a render function, and update the DOM, you understand the core architecture of <code>app.js</code>.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/12-styles-css-walkthrough.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

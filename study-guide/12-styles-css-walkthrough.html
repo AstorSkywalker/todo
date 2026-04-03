@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 12 - styles.css Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 12</p>
+      <h1>Line-by-Line Walkthrough: styles.css</h1>
+      <p class="muted kicker">This lesson breaks down the visual system of the project in a code-first way. It focuses on tokens, layout, cards, gradients, pills, chart styling, motion, and responsive behavior.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#tokens">Design tokens</a></li>
+          <li><a href="#layout">Page layout and shell</a></li>
+          <li><a href="#cards">Cards and surfaces</a></li>
+          <li><a href="#sidebar">Sidebar states</a></li>
+          <li><a href="#kpis">KPI cards</a></li>
+          <li><a href="#chart">Chart styling</a></li>
+          <li><a href="#motion">Motion and transitions</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="tokens">
+            <h2>1. Design Tokens</h2>
+            <pre><code>:root {
+  --bg: #0e1726;
+  --surface: rgba(14, 25, 40, 0.72);
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #edf4ff;
+  --muted: #9fb3ca;
+  --primary: #69b1ff;
+  ...
+}</code></pre>
+            <p>This top block is the heart of the visual system. It defines the dashboard’s language before any component appears. When you learn dashboard design, this is one of the most reusable lessons: if you control color, contrast, and surface tokens centrally, the rest of the system becomes much easier to theme and evolve.</p>
+          </section>
+
+          <section id="layout">
+            <h2>2. Page Layout and Shell</h2>
+            <pre><code>.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+  padding: 24px;
+}</code></pre>
+            <p>This is where the dashboard gets its high-level shape. The grid creates a left rail and a main working column. The design lesson here is that layout comes before decoration. The right background, card shadows, and gradients are only effective because the structural spacing is already clear.</p>
+          </section>
+
+          <section id="cards">
+            <h2>3. Cards and Surfaces</h2>
+            <pre><code>.glass-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+}</code></pre>
+            <p>The cards work because they combine three things:</p>
+            <ul>
+              <li>a semi-transparent surface</li>
+              <li>a soft border</li>
+              <li>a shadow that separates the surface from the background</li>
+            </ul>
+            <p>This is a very modern pattern because it makes the interface feel layered and atmospheric instead of flat.</p>
+          </section>
+
+          <section id="sidebar">
+            <h2>4. Sidebar States and Collapsing</h2>
+            <pre><code>.app-shell.sidebar-collapsed {
+  grid-template-columns: 92px 1fr;
+}
+
+.sidebar.is-collapsed .sidebar-copy h1,
+.sidebar.is-collapsed .sidebar-copy .muted,
+.sidebar.is-collapsed .sidebar-body {
+  display: none;
+}</code></pre>
+            <p>This styling is a strong example of state-based CSS. Nothing magical happens here: JavaScript adds or removes classes, and CSS interprets those classes into a new layout. This separation of responsibilities is one of the cleanest ways to build interactive UI.</p>
+          </section>
+
+          <section id="kpis">
+            <h2>5. KPI Cards</h2>
+            <pre><code>.accent-blue  { background: linear-gradient(135deg, rgba(79, 155, 255, 0.18), var(--surface-strong)); }
+.accent-gold  { background: linear-gradient(135deg, rgba(255, 175, 74, 0.18), var(--surface-strong)); }
+.accent-coral { background: linear-gradient(135deg, rgba(255, 104, 111, 0.16), var(--surface-strong)); }
+.accent-green { background: linear-gradient(135deg, rgba(65, 207, 147, 0.16), var(--surface-strong)); }</code></pre>
+            <p>The KPI cards are a small masterclass in subtle emphasis. The gradients are not dramatic. They simply tint the upper-left portion of each card enough to create identity and depth. That is why they feel elegant instead of noisy.</p>
+          </section>
+
+          <section id="chart">
+            <h2>6. Chart Styling</h2>
+            <pre><code>.chart-shell {
+  position: relative;
+  padding: 14px 16px 10px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+}
+
+.chart-area-blur {
+  fill: url(#chartAreaGradient);
+  opacity: 0.9;
+}
+
+.chart-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 3;
+}</code></pre>
+            <p>This section teaches an advanced visual idea: a chart is not just data visualization. It is also a designed surface. The shell, the area fade, the glow, and the marker treatment are what make it feel integrated into the dashboard.</p>
+          </section>
+
+          <section id="motion">
+            <h2>7. Motion and Transitions</h2>
+            <pre><code>.app-shell {
+  transition: grid-template-columns 0.32s ease, gap 0.32s ease;
+}
+
+.sidebar-toggle {
+  transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
+}</code></pre>
+            <p>These transitions are short, readable, and intentional. They do not exist to show off. They exist to help the user feel the change in state. This is a major UI/UX lesson: motion should support comprehension.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>8. Exercise and Checkpoint</h2>
+            <p><strong>Exercise:</strong> create one new accent class, such as <code>.accent-purple</code>, using the same gradient pattern as the existing KPI cards.</p>
+            <p><strong>Checkpoint:</strong> if you can explain the difference between token definitions, component styles, and state-based selectors, you understand the main architecture of <code>styles.css</code>.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/11-index-html-walkthrough.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/13-app-js-walkthrough.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

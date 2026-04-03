@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 10 - Diagrams, Exercises, and Troubleshooting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 10</p>
+      <h1>Diagrams, Exercises, and Troubleshooting</h1>
+      <p class="muted kicker">This final guide lesson turns the project into more of a practical course. It gives you mental maps, mini exercises, and troubleshooting references you can use while rebuilding the app from scratch.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#flow">System flow diagrams</a></li>
+          <li><a href="#rebuild">Rebuild roadmap</a></li>
+          <li><a href="#exercises">Practice exercises</a></li>
+          <li><a href="#troubleshooting">Troubleshooting guide</a></li>
+          <li><a href="#next-steps">Next study steps</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="flow">
+            <h2>1. System Flow Diagrams</h2>
+            <p>When learning a full-stack project, diagrams help because they reduce mental overload. Here is the simplest end-to-end view of the app:</p>
+            <pre><code>Browser UI
+  |
+  | fetch('/api/todos')
+  v
+Node server
+  |
+  | route handler
+  v
+todoService
+  |
+  | read/write CSV
+  | sync SQLite
+  v
+data/todos.csv + data/todos.db</code></pre>
+            <p>Here is the rendering flow for the main dashboard:</p>
+            <pre><code>initialize()
+  -> restore localStorage preferences
+  -> bind events
+  -> apply theme + palette
+  -> load todos
+  -> render counters
+  -> render chart
+  -> render task list
+  -> render group summary</code></pre>
+            <p>And here is the storage sync idea:</p>
+            <pre><code>CSV is the primary source of truth
+        |
+        v
+read/write task changes
+        |
+        v
+sync updated rows into SQLite mirror</code></pre>
+          </section>
+
+          <section id="rebuild">
+            <h2>2. Rebuild Roadmap</h2>
+            <p>If you want to recreate the app from zero instead of only reading it, use this structured path:</p>
+            <ol>
+              <li>Create a static page shell with sidebar and dashboard regions.</li>
+              <li>Add a small form and static cards with fake sample text.</li>
+              <li>Style the cards and layout system.</li>
+              <li>Add frontend JavaScript state and task rendering.</li>
+              <li>Add a tiny backend that serves the static files.</li>
+              <li>Add a basic <code>GET /api/todos</code> route.</li>
+              <li>Add CSV persistence.</li>
+              <li>Add create, update, and delete.</li>
+              <li>Add theme switching and palettes.</li>
+              <li>Add grouping, filters, and compact view.</li>
+              <li>Add the chart.</li>
+              <li>Add import/export, tests, and docs.</li>
+            </ol>
+            <div class="note">
+              <p><strong>Teaching reminder:</strong> do not try to rebuild everything at once. Rebuild one vertical slice at a time, then compare your version to the real project.</p>
+            </div>
+          </section>
+
+          <section id="exercises">
+            <h2>3. Practice Exercises</h2>
+            <p>These exercises are designed to make the study guide active instead of passive.</p>
+            <table>
+              <thead>
+                <tr><th>Exercise</th><th>Goal</th><th>What you should learn</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Rebuild one KPI card</td><td>Create a summary card from scratch with HTML and CSS only.</td><td>How structure, gradient, shadow, and typography combine visually.</td></tr>
+                <tr><td>Create a new palette</td><td>Add your own color scheme using CSS variables.</td><td>How the design token system controls the whole dashboard.</td></tr>
+                <tr><td>Make a new quick filter</td><td>Add a `Due this week` filter in the frontend.</td><td>How state, DOM events, and render functions connect.</td></tr>
+                <tr><td>Change the chart window</td><td>Switch the chart from 14 days to 7 or 21 days.</td><td>How chart buckets, labels, and layout are generated.</td></tr>
+                <tr><td>Write one new backend test</td><td>Add a test for a route you care about.</td><td>How backend behavior becomes safer through automation.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="troubleshooting">
+            <h2>4. Troubleshooting Guide</h2>
+            <table>
+              <thead>
+                <tr><th>Problem</th><th>Likely cause</th><th>What to try</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>The UI changed but I still see the old version.</td><td>The browser cached something or the page was not refreshed.</td><td>Refresh the page, or do a hard refresh if needed.</td></tr>
+                <tr><td>A new backend route does not work.</td><td>The server is still running old code.</td><td>Restart the Node server after backend changes.</td></tr>
+                <tr><td>The date format looks wrong.</td><td>Old localStorage values or inconsistent formatting.</td><td>Refresh after the latest code, or clear the relevant stored preference.</td></tr>
+                <tr><td>The chart looks broken after resizing or style changes.</td><td>The CSS aspect ratio and SVG coordinate system are out of sync.</td><td>Check the SVG <code>viewBox</code>, chart width/height constants, and the dot overlay sizing together.</td></tr>
+                <tr><td>The study guide links feel broken.</td><td>Relative paths or server routes are wrong.</td><td>Use explicit routes like <code>/study-guide/...</code> and make sure the server serves the files.</td></tr>
+                <tr><td>Theme or collapse state behaves unexpectedly.</td><td>A saved localStorage value may be older than the latest implementation.</td><td>Refresh and, if needed, clear the related localStorage entry.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="next-steps">
+            <h2>5. Next Study Steps</h2>
+            <p>The guide is already much stronger now because it includes a glossary, troubleshooting notes, and deep walkthroughs of the main frontend files. If you want to go even deeper in the future, the strongest next additions would be:</p>
+            <ul>
+              <li>a deep walkthrough of <code>server.js</code> plus the backend route and service modules</li>
+              <li>more diagrams for request flow, storage synchronization, and localStorage persistence</li>
+              <li>guided rebuild checkpoints at the end of every lesson</li>
+              <li>frontend smoke tests as an advanced testing chapter</li>
+              <li>a future lesson on Oracle Database 26ai and OCI Autonomous Database integration strategy</li>
+            </ul>
+            <div class="success">
+              <p><strong>Final message:</strong> once you can explain the structure, visual system, storage model, request flow, and rendering strategy in your own words, you are no longer just reading the code. You are learning how to design and rebuild systems.</p>
+            </div>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/09-glossary-and-core-web-concepts.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

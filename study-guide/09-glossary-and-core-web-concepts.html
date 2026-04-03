@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 9 - Glossary and Core Web Concepts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 9</p>
+      <h1>Glossary and Core Web Concepts</h1>
+      <p class="muted kicker">This lesson is a beginner-friendly reference section. It explains the most important words and ideas used across the project so you can study the other lessons with less friction.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#html">HTML concepts</a></li>
+          <li><a href="#css">CSS concepts</a></li>
+          <li><a href="#javascript">JavaScript concepts</a></li>
+          <li><a href="#backend">Backend and API terms</a></li>
+          <li><a href="#data">Data and storage terms</a></li>
+          <li><a href="#docs">Documentation and testing terms</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="html">
+            <h2>1. HTML Concepts</h2>
+            <table>
+              <thead>
+                <tr><th>Term</th><th>Meaning</th><th>How it appears in this project</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>element</code></td><td>A piece of HTML such as <code>&lt;div&gt;</code> or <code>&lt;button&gt;</code>.</td><td>The dashboard is built from many semantic elements.</td></tr>
+                <tr><td><code>attribute</code></td><td>Extra information placed inside an element tag.</td><td><code>id</code>, <code>class</code>, <code>type</code>, and <code>aria-label</code> are used heavily.</td></tr>
+                <tr><td><code>semantic HTML</code></td><td>Choosing elements based on meaning, not just appearance.</td><td><code>&lt;aside&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, and <code>&lt;article&gt;</code> help structure the dashboard.</td></tr>
+                <tr><td><code>template</code></td><td>Hidden HTML structure that JavaScript can clone later.</td><td>The task cards and compact rows use <code>&lt;template&gt;</code> blocks.</td></tr>
+                <tr><td><code>form</code></td><td>A group of inputs submitted together.</td><td>The task creator/editor uses one main form.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="css">
+            <h2>2. CSS Concepts</h2>
+            <table>
+              <thead>
+                <tr><th>Term</th><th>Meaning</th><th>How it appears in this project</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>selector</code></td><td>The pattern that chooses what to style.</td><td><code>.glass-card</code>, <code>.stat-card</code>, and <code>body.light</code> are selectors.</td></tr>
+                <tr><td><code>custom property</code></td><td>A CSS variable like <code>--primary</code>.</td><td>All themes and palettes depend on these variables.</td></tr>
+                <tr><td><code>grid</code></td><td>A layout system for rows and columns.</td><td>The page shell, stats row, filter layout, and compact task rows all use grid.</td></tr>
+                <tr><td><code>flexbox</code></td><td>A layout system for one-dimensional alignment.</td><td>Buttons, headings, toolbars, and pills use flexbox.</td></tr>
+                <tr><td><code>transition</code></td><td>A smooth animation between CSS values.</td><td>The sidebar, chevrons, buttons, and theme toggle all use transitions.</td></tr>
+                <tr><td><code>gradient</code></td><td>A blended color background.</td><td>The KPI summary cards use subtle accent gradients.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="javascript">
+            <h2>3. JavaScript Concepts</h2>
+            <table>
+              <thead>
+                <tr><th>Term</th><th>Meaning</th><th>How it appears in this project</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>state</code></td><td>The current data that the UI depends on.</td><td>The <code>state</code> object stores view mode, sort mode, grouping mode, and rendered items.</td></tr>
+                <tr><td><code>event listener</code></td><td>A function that runs when the user interacts with something.</td><td>Buttons, form submissions, filters, and toggles all use listeners.</td></tr>
+                <tr><td><code>rendering</code></td><td>Turning data into visible UI.</td><td>Task cards, group results, summary counters, and the chart are all rendered from data.</td></tr>
+                <tr><td><code>localStorage</code></td><td>Browser storage for small persistent values.</td><td>Theme, palette, collapsed states, filters, and view preferences are saved here.</td></tr>
+                <tr><td><code>fetch</code></td><td>A browser API for making HTTP requests.</td><td>The frontend uses it to call the backend endpoints.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="backend">
+            <h2>4. Backend and API Terms</h2>
+            <table>
+              <thead>
+                <tr><th>Term</th><th>Meaning</th><th>How it appears in this project</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>route</code></td><td>A path and HTTP method handled by the server.</td><td><code>GET /api/todos</code> and <code>POST /api/todos</code> are routes.</td></tr>
+                <tr><td><code>CRUD</code></td><td>Create, Read, Update, Delete.</td><td>The task API supports all four operations.</td></tr>
+                <tr><td><code>JSON</code></td><td>A text format for structured data.</td><td>The API returns JSON responses and accepts JSON payloads.</td></tr>
+                <tr><td><code>service</code></td><td>A module that holds business logic.</td><td><code>todoService.js</code> contains the main storage and task operations.</td></tr>
+                <tr><td><code>validation</code></td><td>Checking whether input is acceptable.</td><td>The backend rejects invalid dates, missing titles, or malformed import data.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="data">
+            <h2>5. Data and Storage Terms</h2>
+            <table>
+              <thead>
+                <tr><th>Term</th><th>Meaning</th><th>How it appears in this project</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>CSV</code></td><td>Comma-separated values stored as text rows.</td><td><code>data/todos.csv</code> is the source of truth.</td></tr>
+                <tr><td><code>SQLite</code></td><td>A lightweight relational database stored in one file.</td><td><code>data/todos.db</code> mirrors the CSV data.</td></tr>
+                <tr><td><code>source of truth</code></td><td>The storage layer the app trusts most.</td><td>Right now that is still the CSV file.</td></tr>
+                <tr><td><code>sync</code></td><td>Keeping two storage systems aligned.</td><td>Server startup and write operations keep CSV and SQLite aligned.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="docs">
+            <h2>6. Documentation and Testing Terms</h2>
+            <table>
+              <thead>
+                <tr><th>Term</th><th>Meaning</th><th>How it appears in this project</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>OpenAPI</code></td><td>A standard machine-readable API description.</td><td>The project stores it in <code>openapi.json</code>.</td></tr>
+                <tr><td><code>Swagger UI</code></td><td>A browser interface that reads OpenAPI and lets you test endpoints.</td><td>Available at <code>/docs</code>.</td></tr>
+                <tr><td><code>test suite</code></td><td>A set of automated checks.</td><td><code>scripts/run-tests.js</code> covers CRUD, storage sync, import/export, grouping, and errors.</td></tr>
+                <tr><td><code>smoke test</code></td><td>A quick test that checks whether the main system still basically works.</td><td>A future frontend testing idea for this project.</td></tr>
+              </tbody>
+            </table>
+            <div class="callout">
+              <p><strong>Study tip:</strong> when a lesson uses a word you do not fully know, come back to this glossary. That is faster than trying to guess what the code means from context alone.</p>
+            </div>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/08-file-by-file-reading-lab.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/10-diagrams-exercises-and-troubleshooting.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

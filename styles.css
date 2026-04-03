@@ -178,7 +178,7 @@ button {
 
 .sidebar.is-collapsed .sidebar-copy {
   text-align: center;
-  margin-top: auto;
+  margin-top: 0;
   transform: translateY(0);
 }
 

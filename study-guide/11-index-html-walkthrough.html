@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 11 - index.html Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 11</p>
+      <h1>Line-by-Line Walkthrough: index.html</h1>
+      <p class="muted kicker">This lesson teaches how to read the main markup file from top to bottom. The goal is not only to recognize the tags, but to understand why the dashboard is divided into these exact sections and how JavaScript later depends on their ids and classes.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#head">Document head</a></li>
+          <li><a href="#shell">App shell</a></li>
+          <li><a href="#sidebar">Sidebar markup</a></li>
+          <li><a href="#hero">Hero and summary cards</a></li>
+          <li><a href="#chart">Chart section</a></li>
+          <li><a href="#work-panels">Forms, filters, grouping, tasks</a></li>
+          <li><a href="#templates">Templates and modal</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="head">
+            <h2>1. Document Head</h2>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+  &lt;title&gt;TaskFlow CSV&lt;/title&gt;
+  ...
+&lt;/head&gt;</code></pre>
+            <p>The first lesson here is simple but foundational: every modern page starts by declaring what kind of document it is, what character encoding it uses, and how it should scale on mobile. The font links and stylesheet link also belong in the head because they affect how the page should render before the body becomes visible.</p>
+          </section>
+
+          <section id="shell">
+            <h2>2. The App Shell</h2>
+            <pre><code>&lt;div class="app-shell"&gt;
+  &lt;aside id="sidebar" class="sidebar glass-card"&gt;...&lt;/aside&gt;
+  &lt;main class="dashboard"&gt;...&lt;/main&gt;
+&lt;/div&gt;</code></pre>
+            <p>This is the first major structural decision. The page is split into two columns: a utility rail on the left and a working dashboard on the right. If you were rebuilding the app from scratch, this is the first big HTML milestone because it defines the whole spatial logic of the project.</p>
+          </section>
+
+          <section id="sidebar">
+            <h2>3. Sidebar Markup</h2>
+            <pre><code>&lt;aside id="sidebar" class="sidebar glass-card"&gt;
+  &lt;div class="sidebar-header"&gt;
+    &lt;div class="sidebar-copy"&gt;...&lt;/div&gt;
+    &lt;button id="toggleSidebarButton" ...&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div id="sidebarBody" class="sidebar-body"&gt;...&lt;/div&gt;
+&lt;/aside&gt;</code></pre>
+            <p>This is a good example of HTML designed for interaction. The sidebar is not just static content. It has a header area, a collapsible body, and a button that JavaScript can target by id. That means the markup was written with future behavior in mind.</p>
+            <p>The ids matter because <code>app.js</code> later calls <code>document.querySelector('#toggleSidebarButton')</code> and similar selectors. This is one of the most important beginner lessons: HTML and JavaScript are not separate worlds. The HTML gives JavaScript handles to work with.</p>
+          </section>
+
+          <section id="hero">
+            <h2>4. Hero and Summary Cards</h2>
+            <pre><code>&lt;section class="hero glass-card"&gt;...&lt;/section&gt;
+
+&lt;section class="stats-grid"&gt;
+  &lt;article class="stat-card glass-card accent-blue"&gt;...&lt;/article&gt;
+  &lt;article class="stat-card glass-card accent-gold"&gt;...&lt;/article&gt;
+  &lt;article class="stat-card glass-card accent-coral"&gt;...&lt;/article&gt;
+  &lt;article class="stat-card glass-card accent-green"&gt;...&lt;/article&gt;
+&lt;/section&gt;</code></pre>
+            <p>The hero and stats sit early in the document because they sit early in the visual hierarchy. The user should understand the context of the dashboard and the key totals before diving into controls and task rows.</p>
+          </section>
+
+          <section id="chart">
+            <h2>5. Chart Section</h2>
+            <pre><code>&lt;section class="analytics-grid"&gt;
+  &lt;article class="glass-card analytics-card chart-panel"&gt;
+    ...
+    &lt;div class="chart-shell"&gt;
+      &lt;svg id="workloadChart" class="workload-chart" ...&gt;&lt;/svg&gt;
+      &lt;div id="workloadChartDots" class="chart-dots-layer"&gt;&lt;/div&gt;
+      &lt;div id="workloadChartLabels" class="chart-labels"&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/section&gt;</code></pre>
+            <p>This structure is especially educational because the chart is not a single element. It is actually built from three visual layers:</p>
+            <ul>
+              <li>the SVG line and area layer</li>
+              <li>the HTML overlay dots layer</li>
+              <li>the label row below</li>
+            </ul>
+            <p>That teaches a broader UI principle: a sophisticated component often comes from layering simpler primitives rather than from one magical element.</p>
+          </section>
+
+          <section id="work-panels">
+            <h2>6. Forms, Filters, Grouping, and Tasks</h2>
+            <p>The lower dashboard is broken into distinct work panels:</p>
+            <ul>
+              <li>task form</li>
+              <li>filters panel</li>
+              <li>grouping panel</li>
+              <li>task list panel</li>
+            </ul>
+            <pre><code>&lt;section class="glass-card panel filters-panel"&gt;...&lt;/section&gt;
+&lt;section class="glass-card panel grouping-panel"&gt;...&lt;/section&gt;
+&lt;section class="glass-card panel list-panel"&gt;...&lt;/section&gt;</code></pre>
+            <p>Each panel gets a heading, an optional collapse button, and a body. That repeated structure is intentional. Repetition is a major part of modern UI design because it makes interfaces feel designed rather than random.</p>
+          </section>
+
+          <section id="templates">
+            <h2>7. Templates and Modal</h2>
+            <p>The bottom of the file contains hidden support structures:</p>
+            <ul>
+              <li>task card template</li>
+              <li>compact row template</li>
+              <li>delete confirmation modal</li>
+            </ul>
+            <pre><code>&lt;template id="todoCardTemplate"&gt;...&lt;/template&gt;
+&lt;template id="todoCompactRowTemplate"&gt;...&lt;/template&gt;
+&lt;div id="confirmModal" class="modal-backdrop hidden"&gt;...&lt;/div&gt;</code></pre>
+            <p>This teaches something important: not every meaningful piece of HTML is visible on first load. Some structures exist only so JavaScript can clone or reveal them later.</p>
+          </section>
+
+          <section id="mistakes">
+            <h2>8. Common Mistakes When Rebuilding This File</h2>
+            <ul>
+              <li>Forgetting ids that JavaScript depends on, such as <code>#themeToggle</code> or <code>#todoForm</code>.</li>
+              <li>Replacing semantic containers with too many generic <code>&lt;div&gt;</code> elements and losing structure.</li>
+              <li>Moving templates into visible layout regions accidentally.</li>
+              <li>Changing the HTML structure without updating the selectors in <code>app.js</code>.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>9. Exercise and Checkpoint</h2>
+            <p><strong>Exercise:</strong> create a stripped-down copy of the dashboard shell containing only:</p>
+            <ul>
+              <li>sidebar</li>
+              <li>hero</li>
+              <li>stats grid</li>
+              <li>one empty panel</li>
+            </ul>
+            <p><strong>Checkpoint:</strong> if you can explain why the app needs ids, templates, and repeated panel structures, you understand the main architectural role of <code>index.html</code>.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/10-diagrams-exercises-and-troubleshooting.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/12-styles-css-walkthrough.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
