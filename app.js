@@ -597,7 +597,8 @@ function restoreListPreferences() {
 
 function toggleFiltersPanel() {
   const isCollapsed = filtersPanel.classList.toggle('is-collapsed');
-  filtersBody.classList.toggle('hidden', isCollapsed);
+  filtersBody.inert = isCollapsed;
+  filtersBody.setAttribute('aria-hidden', String(isCollapsed));
   toggleFiltersButton.setAttribute('aria-expanded', String(!isCollapsed));
   toggleFiltersButton.setAttribute('aria-label', isCollapsed ? 'Expand filters' : 'Collapse filters');
   localStorage.setItem(filtersPanelStateKey, isCollapsed ? 'collapsed' : 'expanded');
@@ -608,21 +609,24 @@ function restoreFiltersPanelState() {
 
   if (savedState !== 'collapsed') {
     filtersPanel.classList.remove('is-collapsed');
-    filtersBody.classList.remove('hidden');
+    filtersBody.inert = false;
+    filtersBody.setAttribute('aria-hidden', 'false');
     toggleFiltersButton.setAttribute('aria-expanded', 'true');
     toggleFiltersButton.setAttribute('aria-label', 'Collapse filters');
     return;
   }
 
   filtersPanel.classList.add('is-collapsed');
-  filtersBody.classList.add('hidden');
+  filtersBody.inert = true;
+  filtersBody.setAttribute('aria-hidden', 'true');
   toggleFiltersButton.setAttribute('aria-expanded', 'false');
   toggleFiltersButton.setAttribute('aria-label', 'Expand filters');
 }
 
 function toggleGroupingPanel() {
   const isCollapsed = groupingPanel.classList.toggle('is-collapsed');
-  groupingBody.classList.toggle('hidden', isCollapsed);
+  groupingBody.inert = isCollapsed;
+  groupingBody.setAttribute('aria-hidden', String(isCollapsed));
   toggleGroupingButton.setAttribute('aria-expanded', String(!isCollapsed));
   toggleGroupingButton.setAttribute('aria-label', isCollapsed ? 'Expand grouping' : 'Collapse grouping');
   localStorage.setItem(groupingPanelStateKey, isCollapsed ? 'collapsed' : 'expanded');
@@ -633,14 +637,16 @@ function restoreGroupingPanelState() {
 
   if (savedState !== 'collapsed') {
     groupingPanel.classList.remove('is-collapsed');
-    groupingBody.classList.remove('hidden');
+    groupingBody.inert = false;
+    groupingBody.setAttribute('aria-hidden', 'false');
     toggleGroupingButton.setAttribute('aria-expanded', 'true');
     toggleGroupingButton.setAttribute('aria-label', 'Collapse grouping');
     return;
   }
 
   groupingPanel.classList.add('is-collapsed');
-  groupingBody.classList.add('hidden');
+  groupingBody.inert = true;
+  groupingBody.setAttribute('aria-hidden', 'true');
   toggleGroupingButton.setAttribute('aria-expanded', 'false');
   toggleGroupingButton.setAttribute('aria-label', 'Expand grouping');
 }

@@ -184,53 +184,55 @@
               </button>
             </div>
 
-            <div id="filtersBody" class="filters">
-              <label class="search-field">
-                <span class="filter-label">Search tasks</span>
-                <input id="searchInput" type="search" placeholder="Search by title, category, or description" />
-              </label>
-              <div class="filter-grid">
-                <select id="filterStatus">
-                  <option value="">All statuses</option>
-                  <option value="pending">Pending</option>
-                  <option value="in_progress">In progress</option>
-                  <option value="done">Completed</option>
-                </select>
-                <select id="filterPriority">
-                  <option value="">All priorities</option>
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-                <select id="filterCategory">
-                  <option value="">All categories</option>
-                </select>
-                <select id="sortTasks" aria-label="Sort tasks">
-                  <option value="newest">Sort: Newest first</option>
-                  <option value="oldest">Sort: Oldest first</option>
-                  <option value="due_soon">Sort: Due date, soonest first</option>
-                  <option value="due_late">Sort: Due date, latest first</option>
-                  <option value="priority_high">Sort: Priority, high to low</option>
-                  <option value="priority_low">Sort: Priority, low to high</option>
-                  <option value="status">Sort: Status</option>
-                  <option value="title">Sort: Title A-Z</option>
-                </select>
+            <div id="filtersBody" class="collapsible-body">
+              <div class="collapsible-body-inner filters">
+                <label class="search-field">
+                  <span class="filter-label">Search tasks</span>
+                  <input id="searchInput" type="search" placeholder="Search by title, category, or description" />
+                </label>
+                <div class="filter-grid">
+                  <select id="filterStatus">
+                    <option value="">All statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="in_progress">In progress</option>
+                    <option value="done">Completed</option>
+                  </select>
+                  <select id="filterPriority">
+                    <option value="">All priorities</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                  <select id="filterCategory">
+                    <option value="">All categories</option>
+                  </select>
+                  <select id="sortTasks" aria-label="Sort tasks">
+                    <option value="newest">Sort: Newest first</option>
+                    <option value="oldest">Sort: Oldest first</option>
+                    <option value="due_soon">Sort: Due date, soonest first</option>
+                    <option value="due_late">Sort: Due date, latest first</option>
+                    <option value="priority_high">Sort: Priority, high to low</option>
+                    <option value="priority_low">Sort: Priority, low to high</option>
+                    <option value="status">Sort: Status</option>
+                    <option value="title">Sort: Title A-Z</option>
+                  </select>
+                </div>
+                <div class="quick-filters-row">
+                  <label class="quick-filter" for="overdueOnly">
+                    <input id="overdueOnly" type="checkbox" />
+                    <span>Overdue</span>
+                  </label>
+                  <label class="quick-filter" for="dueTodayOnly">
+                    <input id="dueTodayOnly" type="checkbox" />
+                    <span>Due today</span>
+                  </label>
+                  <label class="quick-filter" for="dueSoonOnly">
+                    <input id="dueSoonOnly" type="checkbox" />
+                    <span>Due soon</span>
+                  </label>
+                </div>
+                <p class="muted quick-filter-legend">Overdue: already passed. Due today: deadline is today. Due soon: due within the next 3 days.</p>
               </div>
-              <div class="quick-filters-row">
-                <label class="quick-filter" for="overdueOnly">
-                  <input id="overdueOnly" type="checkbox" />
-                  <span>Overdue</span>
-                </label>
-                <label class="quick-filter" for="dueTodayOnly">
-                  <input id="dueTodayOnly" type="checkbox" />
-                  <span>Due today</span>
-                </label>
-                <label class="quick-filter" for="dueSoonOnly">
-                  <input id="dueSoonOnly" type="checkbox" />
-                  <span>Due soon</span>
-                </label>
-              </div>
-              <p class="muted quick-filter-legend">Overdue: already passed. Due today: deadline is today. Due soon: due within the next 3 days.</p>
             </div>
           </section>
 
@@ -249,15 +251,17 @@
               </button>
             </div>
 
-            <div id="groupingBody">
-              <div class="group-toolbar">
-                <span>Group summary by:</span>
-                <button class="chip active" data-group="status" type="button">Status</button>
-                <button class="chip" data-group="priority" type="button">Priority</button>
-                <button class="chip" data-group="category" type="button">Category</button>
-              </div>
+            <div id="groupingBody" class="collapsible-body">
+              <div class="collapsible-body-inner">
+                <div class="group-toolbar">
+                  <span>Group summary by:</span>
+                  <button class="chip active" data-group="status" type="button">Status</button>
+                  <button class="chip" data-group="priority" type="button">Priority</button>
+                  <button class="chip" data-group="category" type="button">Category</button>
+                </div>
 
-              <div id="groupResults" class="group-results"></div>
+                <div id="groupResults" class="group-results"></div>
+              </div>
             </div>
           </section>
 

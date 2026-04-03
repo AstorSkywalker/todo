@@ -429,6 +429,18 @@ body.light .toggle-thumb {
   gap: 14px;
 }
 
+.collapsible-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition: grid-template-rows 0.28s ease, opacity 0.22s ease, margin-top 0.28s ease;
+}
+
+.collapsible-body-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
 .search-field {
   display: flex;
   flex-direction: column;
@@ -974,6 +986,13 @@ body.light .date-icon-button:hover {
 .grouping-panel,
 .list-panel {
   position: relative;
+}
+
+.filters-panel.is-collapsed .collapsible-body,
+.grouping-panel.is-collapsed .collapsible-body {
+  grid-template-rows: 0fr;
+  opacity: 0;
+  margin-top: 0;
 }
 
 .filters-panel.is-collapsed .panel-toggle-icon,
