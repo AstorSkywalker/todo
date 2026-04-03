@@ -109,6 +109,10 @@ renderActiveFilters();
 renderResultsStrip();
 renderTodos();</code></pre>
             <p>The idea is simple: data changes, then render functions update the page to match.</p>
+            <figure class="figure-card">
+              <img src="/assets/screenshots/dashboard-overview.jpg" alt="TaskFlow dashboard overview used as a frontend rendering study reference." />
+              <figcaption>This is a useful rendering reference. One data refresh in <code>app.js</code> affects many visible regions at once: KPI totals, chart, filter pills, grouped summary, task list, and storage status.</figcaption>
+            </figure>
           </section>
 
           <section id="events">

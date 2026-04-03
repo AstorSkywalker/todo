@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 29: API Design Principles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 29</p>
+      <h1>API Design Principles</h1>
+      <p class="kicker muted">Learn how the TaskFlow API stays understandable through route naming, validation, result shapes, status codes, and a clear separation between route logic and service logic.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#routes">Route design</a></li>
+          <li><a href="#verbs">HTTP verbs and intent</a></li>
+          <li><a href="#responses">Response design</a></li>
+          <li><a href="#validation">Validation and errors</a></li>
+          <li><a href="#modularity">Why modularity helps API design</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="routes">
+            <h2>1. Route Design Should Be Clear Before It Is Clever</h2>
+            <p>The current API works well as a learning and portfolio API because the route structure is readable:</p>
+            <pre><code>GET    /api/todos
+POST   /api/todos
+PUT    /api/todos/:id
+DELETE /api/todos/:id
+GET    /api/todos/group
+GET    /api/todos/storage
+POST   /api/todos/import
+GET    /api/todos/export</code></pre>
+            <p>This is easy to scan because resource, action, and route purpose are explicit.</p>
+          </section>
+
+          <section id="verbs">
+            <h2>2. HTTP Verbs Should Match Intent</h2>
+            <ul>
+              <li><strong>GET</strong> retrieves data</li>
+              <li><strong>POST</strong> creates or uploads data</li>
+              <li><strong>PUT</strong> replaces or updates a known resource</li>
+              <li><strong>DELETE</strong> removes a known resource</li>
+            </ul>
+            <p>This consistency helps both humans and tools like Swagger understand the API quickly.</p>
+          </section>
+
+          <section id="responses">
+            <h2>3. Response Design Should Be Predictable</h2>
+            <p>The project uses consistent JSON response patterns. A successful request returns data. A failed request returns an error message and an appropriate status code.</p>
+            <pre><code>{
+  "error": "Title is required."
+}</code></pre>
+            <p>Predictable response shapes matter because they reduce guesswork for frontend code and future API consumers.</p>
+          </section>
+
+          <section id="validation">
+            <h2>4. Validation and Errors Are Part Of Good API Design</h2>
+            <p>A well-designed API is not only about the happy path. It should also reject bad input clearly.</p>
+            <ul>
+              <li>missing title</li>
+              <li>invalid status</li>
+              <li>invalid priority</li>
+              <li>invalid date</li>
+              <li>invalid import mode or format</li>
+            </ul>
+            <p>That is why validation helpers matter so much. They help the API behave consistently and transparently.</p>
+          </section>
+
+          <section id="modularity">
+            <h2>5. Why Modularity Helps API Design</h2>
+            <p>Routes stay cleaner when they focus on HTTP concerns while services focus on business logic.</p>
+            <pre><code>route layer
+  - read request
+  - decide which service to call
+  - translate service result into HTTP response
+
+service layer
+  - validate
+  - filter
+  - create/update/delete
+  - import/export
+  - coordinate storage</code></pre>
+            <p>This separation makes the API easier to document, test, and extend later.</p>
+          </section>
+
+          <section id="mistakes">
+            <h2>6. Common Mistakes</h2>
+            <ul>
+              <li><strong>Making route names too clever:</strong> simple and explicit routes are easier to use.</li>
+              <li><strong>Returning inconsistent error shapes:</strong> the frontend becomes harder to maintain.</li>
+              <li><strong>Mixing business logic into route files:</strong> routes become harder to read and test.</li>
+              <li><strong>Ignoring documentation:</strong> an API is stronger when Swagger and OpenAPI describe it clearly.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Describe how you would add a new endpoint to return only overdue tasks without making the API confusing.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A good answer should reuse existing API patterns instead of inventing a surprising route style.</p>
+                <pre><code>Option 1:
+GET /api/todos?dueState=overdue
+
+Option 2:
+GET /api/todos/overdue
+
+Preferred here:
+GET /api/todos?dueState=overdue
+
+Why:
+- it keeps filtering logic on the list route
+- it avoids multiplying small special-case routes
+- it matches how filtering already works</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should feel consistent with the existing API. The strongest design choices usually extend current patterns instead of adding one-off exceptions.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain why clear routes, consistent responses, validation, and modular services all matter together, you understand the core API design story of the project.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/28-testing-strategy-beyond-smoke-tests.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/24-debugging-workflows.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

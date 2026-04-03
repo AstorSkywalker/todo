@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 28: Testing Strategy Beyond Smoke Tests</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 28</p>
+      <h1>Testing Strategy Beyond Smoke Tests</h1>
+      <p class="kicker muted">Learn how smoke tests fit into a wider quality strategy that also includes backend tests, negative cases, storage checks, and future browser automation.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#layers">Testing in layers</a></li>
+          <li><a href="#backend">What the current backend tests cover</a></li>
+          <li><a href="#frontend">Where frontend tests would add value</a></li>
+          <li><a href="#balance">How to balance confidence and effort</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="layers">
+            <h2>1. Testing Works Best In Layers</h2>
+            <p>A strong testing strategy usually does not rely on only one kind of test. Different test layers protect different kinds of mistakes.</p>
+            <table>
+              <thead>
+                <tr><th>Layer</th><th>What it protects</th><th>Example in this project</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Unit-ish helpers</td><td>Small logic rules</td><td>CSV parsing and validation helpers</td></tr>
+                <tr><td>API tests</td><td>Backend behavior</td><td>CRUD, import/export, grouping, errors</td></tr>
+                <tr><td>Smoke tests</td><td>Major visible flows</td><td>Page load, compact view, docs route</td></tr>
+                <tr><td>Future deeper UI tests</td><td>Interactive edge cases</td><td>Date masks, filter combinations, modal behavior</td></tr>
+              </tbody>
+            </table>
+            <p>This layered view is helpful because it keeps expectations realistic. Not every bug needs a browser test, and not every UI bug can be caught by backend tests.</p>
+          </section>
+
+          <section id="backend">
+            <h2>2. What The Current Backend Tests Already Protect</h2>
+            <p>This project already has meaningful automated backend coverage. The suite checks things like:</p>
+            <ul>
+              <li>CSV parsing with commas and quotes</li>
+              <li>validation behavior</li>
+              <li>import normalization and id handling</li>
+              <li>full CRUD flows</li>
+              <li>storage sync totals</li>
+              <li>grouping and error cases</li>
+            </ul>
+            <p>That means the app already has a solid logic safety net, even before browser automation is added.</p>
+          </section>
+
+          <section id="frontend">
+            <h2>3. Where Frontend Tests Would Add Value</h2>
+            <p>The biggest future testing opportunity is in the browser-facing behaviors that are easy to break visually or interactively.</p>
+            <ul>
+              <li>theme and palette switching</li>
+              <li>collapsible panels</li>
+              <li>cards versus compact mode</li>
+              <li>date-range filters and due-state pills</li>
+              <li>delete modal behavior</li>
+              <li>study guide and Swagger routes</li>
+            </ul>
+            <p>This is why smoke tests were a good next teaching topic: they are the smallest useful step into frontend automation.</p>
+          </section>
+
+          <section id="balance">
+            <h2>4. How To Balance Confidence And Effort</h2>
+            <p>A common testing mistake is either testing too little or trying to automate everything immediately.</p>
+            <div class="diagram-group">
+              <div class="diagram-lane">
+                <div class="diagram-lane-title">Healthy Testing Progression</div>
+                <div class="diagram-flow compact-flow">
+                  <div class="diagram-node success">Backend tests</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node warning">Smoke tests</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node primary">Focused UI tests</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node danger">Only then broader suites</div>
+                </div>
+              </div>
+            </div>
+            <p>The goal is confidence per effort. Small, high-value tests are usually the right next step.</p>
+          </section>
+
+          <section id="mistakes">
+            <h2>5. Common Mistakes</h2>
+            <ul>
+              <li><strong>Using browser tests for everything:</strong> many logic checks are faster and clearer at the backend level.</li>
+              <li><strong>Ignoring negative cases:</strong> invalid payloads and failing paths deserve tests too.</li>
+              <li><strong>Writing brittle UI assertions:</strong> prefer stable behavior checks over pixel-sensitive ones.</li>
+              <li><strong>Thinking no tests means faster progress:</strong> small tests often save time by reducing repeated regressions.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>6. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Write a four-part testing plan for TaskFlow using backend tests, smoke tests, and one future UI-specific test idea.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A strong answer should use the right tool for each type of confidence.</p>
+                <pre><code>Testing plan:
+
+1. Keep backend CRUD, validation, import/export, and grouping tests.
+2. Add smoke tests for dashboard load, compact view, and docs route.
+3. Add one future UI-focused test for date-range filtering behavior.
+4. Expand only after high-value flows are stable and protected.</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should feel layered and practical. A strong testing strategy does not depend on one giant test type. It assigns the right kind of test to the right kind of risk.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain why backend tests, smoke tests, and deeper UI tests all have different roles, you understand the overall quality strategy of the project.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/23-frontend-smoke-tests.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/29-api-design-principles.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
