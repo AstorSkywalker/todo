@@ -201,6 +201,56 @@
               <p><strong>Key lesson:</strong> frontend work often involves iteration. A first implementation may be functional, but testing in a real browser reveals what should be improved.</p>
             </div>
           </section>
+
+          <section id="mistakes">
+            <h2>9. Common Mistakes In Frontend JavaScript Like This</h2>
+            <ul>
+              <li>Changing the HTML ids or class names without updating the JavaScript selectors.</li>
+              <li>Updating state but forgetting to rerender the parts of the UI that depend on that state.</li>
+              <li>Mixing display-format dates and storage-format dates without a clear conversion step.</li>
+              <li>Saving a preference in <code>localStorage</code> but never restoring it on startup.</li>
+              <li>Adding too many event listeners in multiple places instead of centralizing them in one binding phase.</li>
+              <li>Trying to understand a long file all at once instead of tracing one interaction from click to render.</li>
+            </ul>
+            <div class="note">
+              <p><strong>Debugging rule:</strong> when the frontend feels overwhelming, pick one user action, such as clicking a filter or submitting the form, and follow only that path through the code.</p>
+            </div>
+          </section>
+
+          <section id="exercise">
+            <h2>10. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Add a tiny frontend preference that remembers whether the task list should start expanded or collapsed.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Create a localStorage key, restore it during initialization, and toggle a class on the task panel when a button is clicked. This is the same pattern used for other collapsible dashboard sections.</p>
+                <pre><code>const TASKS_PANEL_KEY = 'todo-tasks-panel-collapsed';
+
+function restoreTasksPanelState() {
+  const collapsed = localStorage.getItem(TASKS_PANEL_KEY) === 'true';
+  tasksPanel.classList.toggle('is-collapsed', collapsed);
+}
+
+function setTasksPanelCollapsed(collapsed) {
+  localStorage.setItem(TASKS_PANEL_KEY, String(collapsed));
+  tasksPanel.classList.toggle('is-collapsed', collapsed);
+}
+
+tasksPanelToggle.addEventListener('click', () =&gt; {
+  const collapsed = !tasksPanel.classList.contains('is-collapsed');
+  setTasksPanelCollapsed(collapsed);
+});</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>If you implement it correctly, the task panel should keep its collapsed or expanded state after refreshing the page. That tells you the preference was both saved and restored successfully.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how state, selectors, events, rendering, and localStorage work together, you understand the main frontend JavaScript architecture of the app.</p>
+          </section>
         </article>
 
         <nav class="chapter-nav">

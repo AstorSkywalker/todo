@@ -261,6 +261,68 @@
             <p>These are not just decorative. They help users understand state change. For example, when a panel collapses, both the arrow and the body move, so the user understands what happened.</p>
             <p>You also noticed something important artistically: the interface has soft color transitions and motion transitions. Those two layers work together. Color gives mood. Motion gives feedback.</p>
           </section>
+
+          <section id="mistakes">
+            <h2>11. Common Mistakes When Building CSS Systems Like This</h2>
+            <ul>
+              <li>Hardcoding colors directly into components instead of using tokens like <code>--primary</code> or <code>--surface</code>.</li>
+              <li>Making gradients too strong so the dashboard feels noisy instead of elegant.</li>
+              <li>Using too many unrelated spacing values and losing rhythm.</li>
+              <li>Creating dark mode and light mode as separate disconnected designs instead of one shared system with different tokens.</li>
+              <li>Adding motion everywhere instead of reserving it for meaningful state changes.</li>
+              <li>Forgetting contrast, which can make text or pills hard to read in one theme even if they look good in another.</li>
+            </ul>
+            <div class="note">
+              <p><strong>Practical design rule:</strong> if a dashboard starts feeling chaotic, reduce. Fewer accent colors, more consistent spacing, and more disciplined gradients almost always improve it.</p>
+            </div>
+          </section>
+
+          <section id="exercise">
+            <h2>12. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Create one small dashboard card style using the same visual language as the project:</p>
+                <ul>
+                  <li>glass-like background</li>
+                  <li>soft border</li>
+                  <li>shadow depth</li>
+                  <li>a subtle blue gradient accent</li>
+                </ul>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>First define the reusable visual shell. Then add one accent modifier on top of it. This follows the same pattern used across the real dashboard.</p>
+                <pre><code>.mini-card {
+  padding: 22px;
+  border-radius: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+}
+
+.mini-card.accent-blue {
+  background: linear-gradient(
+    135deg,
+    rgba(79, 155, 255, 0.18),
+    var(--surface-strong)
+  );
+}</code></pre>
+                <p>Then use it in markup like this:</p>
+                <pre><code>&lt;article class="mini-card accent-blue"&gt;
+  &lt;p class="eyebrow"&gt;Demo&lt;/p&gt;
+  &lt;h3&gt;Styled card&lt;/h3&gt;
+  &lt;p&gt;This card uses the same visual language as the dashboard.&lt;/p&gt;
+&lt;/article&gt;</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>The final result should feel like it belongs to the app immediately: rounded, calm, softly lit, and slightly futuristic. If it looks flat, the surface or shadow is too weak. If it looks loud, the gradient is too strong.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how tokens, card shells, gradients, and transitions combine into one coherent visual language, you understand the core design strategy behind <code>styles.css</code>.</p>
+          </section>
         </article>
 
         <nav class="chapter-nav">

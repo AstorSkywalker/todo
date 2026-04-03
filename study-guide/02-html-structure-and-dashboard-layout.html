@@ -170,6 +170,62 @@
             <p>The project also includes a separate documentation page, <code>docs.html</code>. This page is not part of the task dashboard itself. It exists to render Swagger UI and now also includes its own theme and palette controls that share settings with the main app.</p>
             <p>This teaches a very practical pattern: you can have more than one HTML entry point in the same project, as long as the server knows how to serve them.</p>
           </section>
+
+          <section id="exercise">
+            <h2>10. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Create a minimal dashboard layout that contains:</p>
+                <ul>
+                  <li>one left sidebar</li>
+                  <li>one hero section</li>
+                  <li>one stats row with two cards</li>
+                  <li>one task panel</li>
+                </ul>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Build the outer shell first, then add each region in order of importance: sidebar, hero, stats, panel. Keep the HTML semantic and simple.</p>
+                <pre><code>&lt;div class="app-shell"&gt;
+  &lt;aside class="sidebar glass-card"&gt;
+    &lt;div class="sidebar-header"&gt;
+      &lt;div class="sidebar-copy"&gt;
+        &lt;p class="eyebrow"&gt;TaskFlow&lt;/p&gt;
+        &lt;h1&gt;Sidebar&lt;/h1&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/aside&gt;
+
+  &lt;main class="dashboard"&gt;
+    &lt;section class="hero glass-card"&gt;
+      &lt;p class="eyebrow"&gt;Dashboard&lt;/p&gt;
+      &lt;h2&gt;My HTML layout&lt;/h2&gt;
+    &lt;/section&gt;
+
+    &lt;section class="stats-grid"&gt;
+      &lt;article class="stat-card glass-card accent-blue"&gt;Total&lt;/article&gt;
+      &lt;article class="stat-card glass-card accent-gold"&gt;Pending&lt;/article&gt;
+    &lt;/section&gt;
+
+    &lt;section class="glass-card panel"&gt;
+      &lt;div class="panel-head"&gt;
+        &lt;div&gt;
+          &lt;p class="eyebrow"&gt;Tasks&lt;/p&gt;
+          &lt;h3&gt;Task panel&lt;/h3&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+&lt;/div&gt;</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>You should end up with a clean two-column dashboard shell. The left side should feel like a utility rail, and the right side should feel like the beginning of a real dashboard with summary first and work area below.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain why the page is split into distinct semantic regions and why those regions appear in this order, you understand the HTML composition strategy behind the dashboard.</p>
+          </section>
         </article>
 
         <nav class="chapter-nav">
