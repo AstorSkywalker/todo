@@ -466,7 +466,6 @@ function showFeedback(message, isError = false) {
 }
 
 function refreshList() {
-  normalizeQuickFilters();
   saveListPreferences();
   loadTodos();
 }
@@ -579,40 +578,31 @@ function restoreListPreferences() {
     dueSoonOnly.checked = Boolean(preferences.dueSoonOnly);
     sortTasks.value = preferences.sortBy || 'newest';
     state.sortBy = sortTasks.value;
-    normalizeQuickFilters();
   } catch (error) {
     localStorage.removeItem(listPreferencesKey);
   }
 }
 
 function applyQuickFilters(items) {
+  const selectedTones = [];
+
   if (overdueOnly.checked) {
-    return items.filter((item) => getDueState(item).toneClass === 'overdue');
+    selectedTones.push('overdue');
   }
 
   if (dueTodayOnly.checked) {
-    return items.filter((item) => getDueState(item).toneClass === 'due-today');
+    selectedTones.push('due-today');
   }
 
   if (dueSoonOnly.checked) {
-    return items.filter((item) => getDueState(item).toneClass === 'due-soon');
+    selectedTones.push('due-soon');
   }
 
-  return items;
-}
-
-function normalizeQuickFilters() {
-  const selected = [overdueOnly, dueTodayOnly, dueSoonOnly].filter((input) => input.checked);
-
-  if (selected.length <= 1) {
-    return;
+  if (!selectedTones.length) {
+    return items;
   }
 
-  const lastChecked = selected[selected.length - 1];
-  overdueOnly.checked = false;
-  dueTodayOnly.checked = false;
-  dueSoonOnly.checked = false;
-  lastChecked.checked = true;
+  return items.filter((item) => selectedTones.includes(getDueState(item).toneClass));
 }
 
 function renderActiveFilters() {
@@ -635,15 +625,15 @@ function renderActiveFilters() {
   }
 
   if (overdueOnly.checked) {
-    filters.push({ key: 'overdueOnly', label: 'Overdue only' });
+    filters.push({ key: 'overdueOnly', label: 'Overdue' });
   }
 
   if (dueTodayOnly.checked) {
-    filters.push({ key: 'dueTodayOnly', label: 'Due today only' });
+    filters.push({ key: 'dueTodayOnly', label: 'Due today' });
   }
 
   if (dueSoonOnly.checked) {
-    filters.push({ key: 'dueSoonOnly', label: 'Due soon only' });
+    filters.push({ key: 'dueSoonOnly', label: 'Due soon' });
   }
 
   if (sortTasks.value !== 'newest') {
@@ -659,7 +649,7 @@ function renderActiveFilters() {
   activeFilters.classList.remove('hidden');
   activeFilters.innerHTML = [
     ...filters.map((filter) => (
-      `<button class="active-filter-pill" type="button" data-filter-key="${filter.key}" aria-label="Remove ${filter.label}"><span>${filter.label}</span><span class="filter-pill-close" aria-hidden="true">×</span></button>`
+      `<button class="active-filter-pill" type="button" data-filter-key="${filter.key}" aria-label="Remove ${filter.label}"><span>${filter.label}</span><span class="filter-pill-close" aria-hidden="true">x</span></button>`
     )),
     '<button class="clear-filters-button" type="button" data-filter-key="clearAll">Clear all</button>'
   ].join('');
@@ -1124,4 +1114,6 @@ function emptySummary() {
     done: 0
   };
 }
+
+
 

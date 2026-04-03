@@ -416,6 +416,11 @@ body.light .toggle-thumb {
   gap: 12px;
 }
 
+.quick-filter-legend {
+  margin: 2px 0 0;
+  font-size: 0.83rem;
+}
+
 .todo-form label,
 .filters input,
 .filters select {
@@ -423,22 +428,60 @@ body.light .toggle-thumb {
 }
 
 .quick-filter {
+  position: relative;
+  display: inline-flex;
+  margin-top: 8px;
+}
+
+.quick-filter span {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding: 12px 14px;
   border-radius: 16px;
-  margin-top: 8px;
   background: var(--field-bg);
   border: 1px solid var(--border);
   color: var(--text);
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.quick-filter span::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(159, 179, 202, 0.45);
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .quick-filter input {
-  width: 16px;
-  height: 16px;
+  position: absolute;
+  inset: 0;
+  opacity: 0;
   margin: 0;
-  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.quick-filter:hover span {
+  transform: translateY(-1px);
+  border-color: rgba(105, 177, 255, 0.28);
+}
+
+.quick-filter input:focus-visible + span {
+  outline: 2px solid rgba(105, 177, 255, 0.45);
+  outline-offset: 2px;
+}
+
+.quick-filter input:checked + span {
+  background: rgba(105, 177, 255, 0.16);
+  border-color: rgba(105, 177, 255, 0.35);
+  color: var(--primary);
+  box-shadow: inset 0 0 0 1px rgba(105, 177, 255, 0.12);
+}
+
+.quick-filter input:checked + span::before {
+  background: currentColor;
+  transform: scale(1.1);
 }
 
 input,
@@ -671,6 +714,34 @@ textarea:focus {
 .todo-list {
   display: grid;
   gap: 14px;
+  max-height: min(52vh, 720px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.todo-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.todo-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 999px;
+}
+
+.todo-list::-webkit-scrollbar-thumb {
+  background: rgba(105, 177, 255, 0.26);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+body.light .todo-list::-webkit-scrollbar-track {
+  background: rgba(24, 50, 78, 0.06);
+}
+
+body.light .todo-list::-webkit-scrollbar-thumb {
+  background: rgba(14, 121, 209, 0.24);
+  background-clip: padding-box;
 }
 
 .todo-card {

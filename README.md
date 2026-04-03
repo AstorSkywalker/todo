@@ -143,9 +143,11 @@ Supported filters:
 
 The UI also includes client-side quick filters for:
 
-- `Overdue only`
-- `Due today only`
-- `Due soon only`
+- `Overdue`
+- `Due today`
+- `Due soon`
+
+These quick filters can be combined, so for example you can view overdue and due-today tasks together.
 
 Example:
 
