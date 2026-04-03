@@ -38,6 +38,20 @@
           <li><code>GET /api/todos/group?by=status</code></li>
         </ul>
       </div>
+
+      <div class="api-box storage-box">
+        <h2>Storage status</h2>
+        <div class="storage-status">
+          <span>CSV rows</span>
+          <strong id="csvCount">0</strong>
+        </div>
+        <div class="storage-status">
+          <span>SQLite rows</span>
+          <strong id="sqliteCount">0</strong>
+        </div>
+        <p class="muted storage-note" id="storageNote">Sync status will appear here.</p>
+        <p class="muted storage-note" id="storageTimestamp">Last sync: waiting for data.</p>
+      </div>
     </aside>
 
     <main class="dashboard">
@@ -48,7 +62,15 @@
           <p class="muted">A lightweight interface for working with plain-text persisted data without losing a modern experience.</p>
         </div>
         <div class="hero-actions">
+          <select id="importMode" aria-label="Import mode">
+            <option value="append">Import: Append</option>
+            <option value="replace">Import: Replace all</option>
+          </select>
+          <button class="secondary-button" id="importButton" type="button">Import file</button>
+          <button class="ghost-button" id="exportCsvButton" type="button">Export CSV</button>
+          <button class="ghost-button" id="exportJsonButton" type="button">Export JSON</button>
           <button class="secondary-button" id="refreshButton" type="button">Reload</button>
+          <input id="importFileInput" type="file" accept=".csv,.json,application/json,text/csv" class="hidden" />
         </div>
       </section>
 
@@ -87,6 +109,7 @@
             <label>
               Title
               <input id="title" name="title" type="text" maxlength="120" placeholder="e.g. Prepare project demo" required />
+              <small id="titleError" class="field-error hidden" aria-live="polite"></small>
             </label>
 
             <label>
@@ -167,6 +190,31 @@
               <option value="medium">Medium</option>
               <option value="high">High</option>
             </select>
+            <select id="filterCategory">
+              <option value="">All categories</option>
+            </select>
+            <label class="quick-filter" for="overdueOnly">
+              <input id="overdueOnly" type="checkbox" />
+              <span>Overdue only</span>
+            </label>
+            <label class="quick-filter" for="dueTodayOnly">
+              <input id="dueTodayOnly" type="checkbox" />
+              <span>Due today only</span>
+            </label>
+            <label class="quick-filter" for="dueSoonOnly">
+              <input id="dueSoonOnly" type="checkbox" />
+              <span>Due soon only</span>
+            </label>
+            <select id="sortTasks" aria-label="Sort tasks">
+              <option value="newest">Sort: Newest first</option>
+              <option value="oldest">Sort: Oldest first</option>
+              <option value="due_soon">Sort: Due date, soonest first</option>
+              <option value="due_late">Sort: Due date, latest first</option>
+              <option value="priority_high">Sort: Priority, high to low</option>
+              <option value="priority_low">Sort: Priority, low to high</option>
+              <option value="status">Sort: Status</option>
+              <option value="title">Sort: Title A-Z</option>
+            </select>
           </div>
 
           <div class="group-toolbar">
@@ -177,6 +225,7 @@
           </div>
 
           <div id="groupResults" class="group-results"></div>
+          <div id="activeFilters" class="active-filters hidden"></div>
           <div id="feedback" class="feedback hidden"></div>
           <div id="todoList" class="todo-list"></div>
         </div>
@@ -200,6 +249,23 @@
       </div>
     </article>
   </template>
+
+  <div id="confirmModal" class="modal-backdrop hidden" aria-hidden="true">
+    <div class="modal-card glass-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Confirmation</p>
+          <h3 id="confirmTitle">Delete task</h3>
+        </div>
+      </div>
+      <p id="confirmMessage" class="muted">This action will remove the task from the CSV file. Do you want to continue?</p>
+      <p id="confirmTaskName" class="modal-task-name"></p>
+      <div class="modal-actions">
+        <button id="confirmCancel" class="ghost-button" type="button">Cancel</button>
+        <button id="confirmAccept" class="danger-button" type="button">Delete task</button>
+      </div>
+    </div>
+  </div>
 
   <script src="app.js"></script>
 </body>

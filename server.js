@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
+const { DB_FILE, getSqliteSummary, initializeSqlite, syncTodosToSqlite } = require('./sqliteService');
 
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
@@ -14,6 +15,8 @@ const PUBLIC_FILES = {
 };
 
 ensureDataFile();
+initializeSqlite();
+syncTodosToSqlite(readTodos());
 
 const server = http.createServer(async (req, res) => {
   const requestUrl = new URL(req.url, `http://${req.headers.host}`);
@@ -48,6 +51,83 @@ async function handleApi(req, res, requestUrl) {
   }
 
   const todos = readTodos();
+
+  if (req.method === 'GET' && pathParts[2] === 'export') {
+    const format = requestUrl.searchParams.get('format') || 'csv';
+
+    if (!['csv', 'json'].includes(format)) {
+      sendJson(res, 400, { error: 'Invalid export format. Use csv or json.' });
+      return;
+    }
+
+    sendExport(res, todos, format);
+    return;
+  }
+
+  if (req.method === 'GET' && pathParts[2] === 'storage') {
+    const sqlite = getSqliteSummary();
+
+    sendJson(res, 200, {
+      csv: {
+        file: DATA_FILE,
+        total: todos.length
+      },
+      sqlite
+    });
+    return;
+  }
+
+  if (req.method === 'POST' && pathParts[2] === 'import') {
+    let body;
+
+    try {
+      body = await readBody(req);
+    } catch (error) {
+      sendJson(res, 400, { error: error.message });
+      return;
+    }
+
+    const format = String(body.format || '').trim().toLowerCase();
+    const mode = String(body.mode || 'append').trim().toLowerCase();
+    const content = typeof body.content === 'string' ? body.content : '';
+
+    if (!['csv', 'json'].includes(format)) {
+      sendJson(res, 400, { error: 'Invalid import format. Use csv or json.' });
+      return;
+    }
+
+    if (!['append', 'replace'].includes(mode)) {
+      sendJson(res, 400, { error: 'Invalid import mode. Use append or replace.' });
+      return;
+    }
+
+    if (!content.trim()) {
+      sendJson(res, 400, { error: 'Import content is required.' });
+      return;
+    }
+
+    let importedTodos;
+    let normalizedTodos;
+
+    try {
+      importedTodos = parseImportContent(content, format);
+      normalizedTodos = normalizeImportedTodos(importedTodos, mode === 'replace' ? [] : todos);
+    } catch (error) {
+      sendJson(res, 400, { error: error.message });
+      return;
+    }
+
+    const mergedTodos = mode === 'replace' ? normalizedTodos : [...normalizedTodos, ...todos];
+
+    writeTodos(mergedTodos);
+    sendJson(res, 200, {
+      message: `Imported ${normalizedTodos.length} task${normalizedTodos.length === 1 ? '' : 's'} successfully.`,
+      imported: normalizedTodos.length,
+      total: mergedTodos.length,
+      mode
+    });
+    return;
+  }
 
   if (req.method === 'GET' && pathParts.length === 2) {
     const search = requestUrl.searchParams.get('search')?.trim().toLowerCase();
@@ -215,6 +295,28 @@ function sendJson(res, statusCode, payload) {
   res.end(JSON.stringify(payload));
 }
 
+function sendExport(res, todos, format) {
+  const timestamp = new Date().toISOString().slice(0, 10);
+
+  if (format === 'json') {
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Content-Disposition': `attachment; filename="todos-${timestamp}.json"`,
+      'Access-Control-Allow-Origin': '*'
+    });
+    res.end(JSON.stringify({ items: todos }, null, 2));
+    return;
+  }
+
+  const csv = buildCsvContent(todos);
+  res.writeHead(200, {
+    'Content-Type': 'text/csv; charset=utf-8',
+    'Content-Disposition': `attachment; filename="todos-${timestamp}.csv"`,
+    'Access-Control-Allow-Origin': '*'
+  });
+  res.end(csv);
+}
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let data = '';
@@ -254,6 +356,11 @@ function readTodos() {
 }
 
 function writeTodos(todos) {
+  fs.writeFileSync(DATA_FILE, buildCsvContent(todos), 'utf8');
+  syncTodosToSqlite(todos);
+}
+
+function buildCsvContent(todos) {
   const headers = ['id', 'title', 'description', 'status', 'priority', 'category', 'dueDate', 'createdAt', 'updatedAt'];
   const lines = [headers.join(',')];
 
@@ -261,7 +368,7 @@ function writeTodos(todos) {
     lines.push(headers.map((header) => escapeCsvValue(todo[header] || '')).join(','));
   }
 
-  fs.writeFileSync(DATA_FILE, `${lines.join('\n')}\n`, 'utf8');
+  return `${lines.join('\n')}\n`;
 }
 
 function parseCsvLine(line) {
@@ -312,9 +419,92 @@ function normalizePayload(body) {
   };
 }
 
+function parseImportContent(content, format) {
+  if (format === 'json') {
+    let parsed;
+
+    try {
+      parsed = JSON.parse(content);
+    } catch (error) {
+      throw new Error('The JSON file could not be parsed.');
+    }
+
+    const items = Array.isArray(parsed) ? parsed : parsed.items;
+    if (!Array.isArray(items)) {
+      throw new Error('The JSON file must contain an array of tasks or an "items" array.');
+    }
+
+    return items;
+  }
+
+  const trimmed = content.trim();
+  if (!trimmed) {
+    return [];
+  }
+
+  const [headerLine, ...rows] = trimmed.split(/\r?\n/);
+  const headers = parseCsvLine(headerLine);
+
+  if (!headers.length) {
+    throw new Error('The CSV file must include a header row.');
+  }
+
+  return rows.filter(Boolean).map((row) => {
+    const values = parseCsvLine(row);
+    return headers.reduce((acc, header, index) => {
+      acc[header] = values[index] || '';
+      return acc;
+    }, {});
+  });
+}
+
+function normalizeImportedTodos(items, existingTodos) {
+  const existingIds = new Set(existingTodos.map((item) => item.id));
+
+  return items.map((item, index) => {
+    const payload = normalizePayload(item);
+    const validationError = validateTodo(payload);
+
+    if (validationError) {
+      throw new Error(`Import row ${index + 1}: ${validationError}`);
+    }
+
+    const createdAt = isValidDateTime(item.createdAt) ? item.createdAt : new Date().toISOString();
+    const updatedAt = isValidDateTime(item.updatedAt) ? item.updatedAt : createdAt;
+    let id = String(item.id || '').trim();
+
+    if (!id || existingIds.has(id)) {
+      id = generateUniqueId(existingIds);
+    }
+
+    existingIds.add(id);
+
+    return {
+      id,
+      ...payload,
+      createdAt,
+      updatedAt
+    };
+  });
+}
+
+function generateUniqueId(existingIds) {
+  let candidate = '';
+
+  do {
+    candidate = `${Date.now()}${Math.floor(Math.random() * 1000)}`;
+  } while (existingIds.has(candidate));
+
+  return candidate;
+}
+
 function validateTodo(todo) {
   if (!todo.title) {
     return 'Title is required.';
+  }
+
+  if (todo.dueDate && !isValidIsoDate(todo.dueDate)) {
+    return 'Due date must be a valid date in YYYY-MM-DD format.';
   }
 
   if (!['pending', 'in_progress', 'done'].includes(todo.status)) {
@@ -326,6 +516,32 @@ function validateTodo(todo) {
   }
 
   return null;
+}
+
+function isValidDateTime(value) {
+  if (!value) {
+    return false;
+  }
+
+  return !Number.isNaN(new Date(value).getTime());
+}
+
+function isValidIsoDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
+  }
+
+  const safeDate = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(safeDate.getTime())) {
+    return false;
+  }
+
+  const [year, month, day] = value.split('-').map(Number);
+  return (
+    safeDate.getUTCFullYear() === year &&
+    safeDate.getUTCMonth() + 1 === month &&
+    safeDate.getUTCDate() === day
+  );
 }
 
 function buildSummary(todos) {

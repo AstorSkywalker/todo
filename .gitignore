@@ -3,3 +3,5 @@ node_modules/
 Thumbs.db
 .vscode/
 *.log
+data/*.db-shm
+data/*.db-wal

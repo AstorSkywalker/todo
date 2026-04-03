@@ -1,4 +1,66 @@
 id,title,description,status,priority,category,dueDate,createdAt,updatedAt
+1775199865546,oh no!,past due example.,pending,medium,Guitarra,2026-04-01,2026-04-03T07:04:25.546Z,2026-04-03T07:04:25.546Z
+1775199065256,SQLite,new task,pending,medium,General,2026-04-03,2026-04-03T06:51:05.256Z,2026-04-03T06:51:05.256Z
+1775196484629527,Prepare demo,Review UI and endpoints,pending,medium,Frontend,2026-04-12,2026-04-03T03:34:33.064Z,2026-04-03T03:34:33.064Z
+1775196484629727,The Police,Every Breath You Take,in_progress,medium,Guitar,2026-04-07,2026-04-03T02:48:53.192Z,2026-04-03T02:52:13.988Z
+1775196484629176,Whitesnake,Is This Love,done,low,Guitar,2026-04-06,2026-04-03T02:48:16.841Z,2026-04-03T02:52:34.402Z
+1775196484629372,Metallica,For Whom The Bells Tolls,in_progress,low,Guitar,2026-04-05,2026-04-03T02:46:51.500Z,2026-04-03T02:52:43.374Z
+1775196484629504,Pink Floyd,Coming Back to Life,pending,medium,Guitar,2026-04-04,2026-04-03T02:46:06.763Z,2026-04-03T02:52:52.410Z
+177519648462912,Eric Johnson,Cliffs of Dover,pending,high,Guitar,2026-04-03,2026-04-03T02:45:19.214Z,2026-04-03T02:53:08.379Z
+1775196484629654,Define scope,Outline the screens and initial CRUD flow,pending,high,Planning,2026-04-05,2026-04-02T09:00:00.000Z,2026-04-02T09:00:00.000Z
+1775196484629605,Design interface,Create a modern interface with light and dark mode,in_progress,medium,Design,2026-04-06,2026-04-02T10:00:00.000Z,2026-04-02T10:00:00.000Z
+1775196484629315,Test CSV persistence,"Validate insert, update, delete, and grouping through the API",done,low,Backend,2026-04-07,2026-04-02T11:00:00.000Z,2026-04-02T11:00:00.000Z
+1775196484629236,Quick test,"Validate insert, update, delete, and grouping through the API",done,low,Backend,2026-04-07,2026-04-02T11:00:00.000Z,2026-04-02T11:00:00.000Z
+1775196484629130,Review API docs,Check endpoint descriptions and examples,pending,medium,Backend,2026-04-08,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629960,Polish theme toggle,Improve contrast and spacing in light mode,in_progress,medium,UI,2026-04-09,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629661,Write release notes,Summarize the latest improvements for the repo,pending,low,Documentation,2026-04-14,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629383,Add seed tasks,Populate the CSV with more realistic examples,done,low,Data,2026-04-04,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629423,Prepare sprint board,Organize next priorities for the dashboard,pending,high,Planning,2026-04-06,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629200,Verify mobile layout,Check responsive spacing on smaller screens,in_progress,medium,Frontend,2026-04-10,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629780,Update README examples,Add clearer usage steps for local testing,pending,medium,Documentation,2026-04-11,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629206,Audit delete flow,Make sure cancel and confirm work correctly,done,medium,QA,2026-04-05,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629560,Create filter tests,Test status and priority filter combinations,pending,high,QA,2026-04-13,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629525,Check CSV escaping,Validate quotes and commas in saved values,in_progress,high,Backend,2026-04-15,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629787,Style empty state,Make the no-task message feel more polished,pending,low,UI,2026-04-16,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629578,Refine feedback banner,Soften the success and error presentation,done,low,UX,2026-04-08,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629758,Plan Swagger draft,Outline API documentation sections for later,pending,medium,API,2026-04-18,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629911,Review due date mask,Double-check DD/MM/YYYY formatting and validation,in_progress,medium,Frontend,2026-04-07,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+177519648462961,Tune card spacing,Adjust padding between title and metadata,done,low,Design,2026-04-09,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629557,Test sort order,Confirm newest and due date sorting behave correctly,pending,high,QA,2026-04-12,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629837,Organize categories,Normalize labels used across sample tasks,in_progress,medium,Data,2026-04-17,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629845,Clean dashboard copy,Make sidebar and helper text more concise,pending,low,Content,2026-04-20,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629518,Review accessibility,Check keyboard flow and focus visibility,in_progress,high,Accessibility,2026-04-21,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196484629122,Prepare backlog,Collect next ideas after current polish pass,pending,medium,Planning,2026-04-22,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470916706,Prepare demo,Review UI and endpoints,pending,medium,Frontend,2026-04-12,2026-04-03T03:34:33.064Z,2026-04-03T03:34:33.064Z
+1775196470917246,The Police,Every Breath You Take,in_progress,medium,Guitar,2026-04-07,2026-04-03T02:48:53.192Z,2026-04-03T02:52:13.988Z
+1775196470917963,Whitesnake,Is This Love,done,low,Guitar,2026-04-06,2026-04-03T02:48:16.841Z,2026-04-03T02:52:34.402Z
+1775196470917593,Metallica,For Whom The Bells Tolls,in_progress,low,Guitar,2026-04-05,2026-04-03T02:46:51.500Z,2026-04-03T02:52:43.374Z
+177519647091757,Pink Floyd,Coming Back to Life,pending,medium,Guitar,2026-04-04,2026-04-03T02:46:06.763Z,2026-04-03T02:52:52.410Z
+1775196470917250,Eric Johnson,Cliffs of Dover,pending,high,Guitar,2026-04-03,2026-04-03T02:45:19.214Z,2026-04-03T02:53:08.379Z
+1775196470917978,Define scope,Outline the screens and initial CRUD flow,pending,high,Planning,2026-04-05,2026-04-02T09:00:00.000Z,2026-04-02T09:00:00.000Z
+1775196470917447,Design interface,Create a modern interface with light and dark mode,in_progress,medium,Design,2026-04-06,2026-04-02T10:00:00.000Z,2026-04-02T10:00:00.000Z
+1775196470917853,Test CSV persistence,"Validate insert, update, delete, and grouping through the API",done,low,Backend,2026-04-07,2026-04-02T11:00:00.000Z,2026-04-02T11:00:00.000Z
+1775196470917929,Quick test,"Validate insert, update, delete, and grouping through the API",done,low,Backend,2026-04-07,2026-04-02T11:00:00.000Z,2026-04-02T11:00:00.000Z
+177519647091713,Review API docs,Check endpoint descriptions and examples,pending,medium,Backend,2026-04-08,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+177519647091775,Polish theme toggle,Improve contrast and spacing in light mode,in_progress,medium,UI,2026-04-09,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917826,Write release notes,Summarize the latest improvements for the repo,pending,low,Documentation,2026-04-14,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917280,Add seed tasks,Populate the CSV with more realistic examples,done,low,Data,2026-04-04,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917732,Prepare sprint board,Organize next priorities for the dashboard,pending,high,Planning,2026-04-06,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917578,Verify mobile layout,Check responsive spacing on smaller screens,in_progress,medium,Frontend,2026-04-10,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+177519647091774,Update README examples,Add clearer usage steps for local testing,pending,medium,Documentation,2026-04-11,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+177519647091795,Audit delete flow,Make sure cancel and confirm work correctly,done,medium,QA,2026-04-05,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917354,Create filter tests,Test status and priority filter combinations,pending,high,QA,2026-04-13,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917304,Check CSV escaping,Validate quotes and commas in saved values,in_progress,high,Backend,2026-04-15,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917896,Style empty state,Make the no-task message feel more polished,pending,low,UI,2026-04-16,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917677,Refine feedback banner,Soften the success and error presentation,done,low,UX,2026-04-08,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917203,Plan Swagger draft,Outline API documentation sections for later,pending,medium,API,2026-04-18,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917330,Review due date mask,Double-check DD/MM/YYYY formatting and validation,in_progress,medium,Frontend,2026-04-07,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917689,Tune card spacing,Adjust padding between title and metadata,done,low,Design,2026-04-09,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917776,Test sort order,Confirm newest and due date sorting behave correctly,pending,high,QA,2026-04-12,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917742,Organize categories,Normalize labels used across sample tasks,in_progress,medium,Data,2026-04-17,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917443,Clean dashboard copy,Make sidebar and helper text more concise,pending,low,Content,2026-04-20,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775196470917480,Review accessibility,Check keyboard flow and focus visibility,in_progress,high,Accessibility,2026-04-21,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+177519647091738,Prepare backlog,Collect next ideas after current polish pass,pending,medium,Planning,2026-04-22,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
 1775187273064,Prepare demo,Review UI and endpoints,pending,medium,Frontend,2026-04-12,2026-04-03T03:34:33.064Z,2026-04-03T03:34:33.064Z
 1775184533192,The Police,Every Breath You Take,in_progress,medium,Guitar,2026-04-07,2026-04-03T02:48:53.192Z,2026-04-03T02:52:13.988Z
 1775184496841,Whitesnake,Is This Love,done,low,Guitar,2026-04-06,2026-04-03T02:48:16.841Z,2026-04-03T02:52:34.402Z
@@ -9,3 +71,23 @@ id,title,description,status,priority,category,dueDate,createdAt,updatedAt
 2,Design interface,Create a modern interface with light and dark mode,in_progress,medium,Design,2026-04-06,2026-04-02T10:00:00.000Z,2026-04-02T10:00:00.000Z
 3,Test CSV persistence,"Validate insert, update, delete, and grouping through the API",done,low,Backend,2026-04-07,2026-04-02T11:00:00.000Z,2026-04-02T11:00:00.000Z
 4,Quick test,"Validate insert, update, delete, and grouping through the API",done,low,Backend,2026-04-07,2026-04-02T11:00:00.000Z,2026-04-02T11:00:00.000Z
+1775260000001,Review API docs,Check endpoint descriptions and examples,pending,medium,Backend,2026-04-08,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000002,Polish theme toggle,Improve contrast and spacing in light mode,in_progress,medium,UI,2026-04-09,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000003,Write release notes,Summarize the latest improvements for the repo,pending,low,Documentation,2026-04-14,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000004,Add seed tasks,Populate the CSV with more realistic examples,done,low,Data,2026-04-04,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000005,Prepare sprint board,Organize next priorities for the dashboard,pending,high,Planning,2026-04-06,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000006,Verify mobile layout,Check responsive spacing on smaller screens,in_progress,medium,Frontend,2026-04-10,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000007,Update README examples,Add clearer usage steps for local testing,pending,medium,Documentation,2026-04-11,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000008,Audit delete flow,Make sure cancel and confirm work correctly,done,medium,QA,2026-04-05,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000009,Create filter tests,Test status and priority filter combinations,pending,high,QA,2026-04-13,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000010,Check CSV escaping,Validate quotes and commas in saved values,in_progress,high,Backend,2026-04-15,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000011,Style empty state,Make the no-task message feel more polished,pending,low,UI,2026-04-16,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000012,Refine feedback banner,Soften the success and error presentation,done,low,UX,2026-04-08,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000013,Plan Swagger draft,Outline API documentation sections for later,pending,medium,API,2026-04-18,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000014,Review due date mask,Double-check DD/MM/YYYY formatting and validation,in_progress,medium,Frontend,2026-04-07,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000015,Tune card spacing,Adjust padding between title and metadata,done,low,Design,2026-04-09,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000016,Test sort order,Confirm newest and due date sorting behave correctly,pending,high,QA,2026-04-12,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000017,Organize categories,Normalize labels used across sample tasks,in_progress,medium,Data,2026-04-17,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000018,Clean dashboard copy,Make sidebar and helper text more concise,pending,low,Content,2026-04-20,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000019,Review accessibility,Check keyboard flow and focus visibility,in_progress,high,Accessibility,2026-04-21,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775260000020,Prepare backlog,Collect next ideas after current polish pass,pending,medium,Planning,2026-04-22,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z

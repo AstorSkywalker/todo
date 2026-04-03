@@ -1,12 +1,13 @@
 # TaskFlow CSV
 
-Modern To Do app with CSV persistence, light/dark mode, and a simple CRUD API without a relational database.
+Modern To Do app with CSV persistence, light/dark mode, SQLite mirroring, and a simple CRUD API.
 
 ## Features
 
 - Modern and responsive interface
 - Light and dark themes
 - Simple persistence in `data/todos.csv`
+- SQLite mirror in `data/todos.db`
 - REST API for creating, reading, updating, and deleting tasks
 - Grouped summaries by status, priority, or category
 - Dates displayed in Honduras-friendly `dd/mm/yyyy` format in the interface
@@ -18,6 +19,7 @@ Modern To Do app with CSV persistence, light/dark mode, and a simple CRUD API wi
 - Vanilla JavaScript
 - Node.js
 - CSV for local storage
+- SQLite via `better-sqlite3`
 
 ## Project structure
 
@@ -25,7 +27,8 @@ Modern To Do app with CSV persistence, light/dark mode, and a simple CRUD API wi
 - [styles.css](c:\Users\Nelson\Documents\GitHub\todo\styles.css): themes, layout, and component styling
 - [app.js](c:\Users\Nelson\Documents\GitHub\todo\app.js): frontend logic, rendering, and API integration
 - [server.js](c:\Users\Nelson\Documents\GitHub\todo\server.js): HTTP server and CRUD API
-- [data/todos.csv](c:\Users\Nelson\Documents\GitHub\todo\data\todos.csv): task storage
+- [data/todos.csv](c:\Users\Nelson\Documents\GitHub\todo\data\todos.csv): primary task storage
+- [sqliteService.js](c:\Users\Nelson\Documents\GitHub\todo\sqliteService.js): SQLite setup and mirroring
 - [package.json](c:\Users\Nelson\Documents\GitHub\todo\package.json): package metadata and start script
 
 ## Requirements
@@ -54,6 +57,18 @@ Tasks are stored in:
 ```text
 data/todos.csv
 ```
+
+And mirrored to:
+
+```text
+data/todos.db
+```
+
+Current storage model:
+
+- CSV is the primary source of truth
+- SQLite is synchronized on server startup and every write operation
+- Reads still come from the CSV for now
 
 Each row uses this structure:
 
@@ -236,6 +251,58 @@ Example `curl`:
 curl "http://localhost:3000/api/todos/group?by=status"
 ```
 
+### 7. Export tasks
+
+`GET /api/todos/export?format=csv`
+
+`GET /api/todos/export?format=json`
+
+Example `curl`:
+
+```bash
+curl -OJ "http://localhost:3000/api/todos/export?format=csv"
+curl -OJ "http://localhost:3000/api/todos/export?format=json"
+```
+
+### 8. Import tasks
+
+`POST /api/todos/import`
+
+Body:
+
+```json
+{
+  "format": "json",
+  "mode": "append",
+  "content": "[{\"title\":\"Imported task\",\"description\":\"Added from import\",\"status\":\"pending\",\"priority\":\"medium\",\"category\":\"Imported\",\"dueDate\":\"2026-04-25\"}]"
+}
+```
+
+Allowed values:
+
+- `format`: `csv` or `json`
+- `mode`: `append` or `replace`
+
+Example `curl`:
+
+```bash
+curl -X POST http://localhost:3000/api/todos/import \
+  -H "Content-Type: application/json" \
+  -d "{\"format\":\"json\",\"mode\":\"append\",\"content\":\"[{\\\"title\\\":\\\"Imported task\\\",\\\"description\\\":\\\"Added from import\\\",\\\"status\\\":\\\"pending\\\",\\\"priority\\\":\\\"medium\\\",\\\"category\\\":\\\"Imported\\\",\\\"dueDate\\\":\\\"2026-04-25\\\"}]\"}"
+```
+
+### 9. Storage status
+
+`GET /api/todos/storage`
+
+Returns the CSV file path and row count, plus the SQLite database path and row count.
+
+Example `curl`:
+
+```bash
+curl http://localhost:3000/api/todos/storage
+```
+
 ## Validation rules
 
 - `title` is required
@@ -244,8 +311,9 @@ curl "http://localhost:3000/api/todos/group?by=status"
 
 ## Technical notes
 
-- No Express or external database is used
+- No Express is used
 - The CSV file is parsed and rewritten directly from Node
+- SQLite is mirrored locally through `better-sqlite3`
 - Menus and date inputs adapt to light and dark themes
 - The UI translates status and priority values into friendly labels
 

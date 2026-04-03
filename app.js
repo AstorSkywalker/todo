@@ -1,11 +1,13 @@
-﻿const state = {
+const state = {
   items: [],
   editingId: null,
-  groupBy: 'status'
+  groupBy: 'status',
+  sortBy: 'newest'
 };
 
 const todoForm = document.querySelector('#todoForm');
 const titleInput = document.querySelector('#title');
+const titleError = document.querySelector('#titleError');
 const descriptionInput = document.querySelector('#description');
 const statusInput = document.querySelector('#status');
 const priorityInput = document.querySelector('#priority');
@@ -17,17 +19,43 @@ const dueDateError = document.querySelector('#dueDateError');
 const searchInput = document.querySelector('#searchInput');
 const filterStatus = document.querySelector('#filterStatus');
 const filterPriority = document.querySelector('#filterPriority');
+const filterCategory = document.querySelector('#filterCategory');
+const overdueOnly = document.querySelector('#overdueOnly');
+const dueTodayOnly = document.querySelector('#dueTodayOnly');
+const dueSoonOnly = document.querySelector('#dueSoonOnly');
+const sortTasks = document.querySelector('#sortTasks');
 const todoList = document.querySelector('#todoList');
+const activeFilters = document.querySelector('#activeFilters');
 const feedback = document.querySelector('#feedback');
 const formTitle = document.querySelector('#formTitle');
 const submitButton = document.querySelector('#submitButton');
 const cancelEditButton = document.querySelector('#cancelEditButton');
 const refreshButton = document.querySelector('#refreshButton');
+const importMode = document.querySelector('#importMode');
+const importButton = document.querySelector('#importButton');
+const exportCsvButton = document.querySelector('#exportCsvButton');
+const exportJsonButton = document.querySelector('#exportJsonButton');
+const importFileInput = document.querySelector('#importFileInput');
 const themeToggle = document.querySelector('#themeToggle');
 const themeLabel = document.querySelector('#themeLabel');
 const template = document.querySelector('#todoCardTemplate');
 const groupButtons = Array.from(document.querySelectorAll('[data-group]'));
 const groupResults = document.querySelector('#groupResults');
+const confirmModal = document.querySelector('#confirmModal');
+const confirmCancel = document.querySelector('#confirmCancel');
+const confirmAccept = document.querySelector('#confirmAccept');
+const confirmTaskName = document.querySelector('#confirmTaskName');
+const modalCloseDelay = 180;
+const csvCount = document.querySelector('#csvCount');
+const sqliteCount = document.querySelector('#sqliteCount');
+const storageNote = document.querySelector('#storageNote');
+const storageTimestamp = document.querySelector('#storageTimestamp');
+const listPreferencesKey = 'todo-list-preferences';
+
+let pendingDeleteId = null;
+let pendingDeleteTitle = '';
+let modalCloseTimer = null;
+let lastFocusedElement = null;
 
 const counters = {
   total: document.querySelector('#totalCount'),
@@ -39,10 +67,13 @@ const counters = {
 initialize();
 
 function initialize() {
+  restoreListPreferences();
   bindEvents();
   applySavedTheme();
   loadTodos();
   loadGroupSummary();
+  loadCategoryOptions();
+  loadStorageStatus();
 }
 
 function bindEvents() {
@@ -50,14 +81,31 @@ function bindEvents() {
   searchInput.addEventListener('input', debounce(refreshList, 250));
   filterStatus.addEventListener('change', refreshList);
   filterPriority.addEventListener('change', refreshList);
+  filterCategory.addEventListener('change', refreshList);
+  overdueOnly.addEventListener('change', refreshList);
+  dueTodayOnly.addEventListener('change', refreshList);
+  dueSoonOnly.addEventListener('change', refreshList);
+  sortTasks.addEventListener('change', handleSortChange);
+  titleInput.addEventListener('input', validateTitleField);
+  titleInput.addEventListener('blur', validateTitleField);
   dueDateInput.addEventListener('input', handleDueDateInput);
   dueDateInput.addEventListener('blur', normalizeDueDateField);
   dueDateButton.addEventListener('click', openDueDatePicker);
   dueDatePicker.addEventListener('change', syncDatePickerToInput);
   cancelEditButton.addEventListener('click', resetForm);
+  importButton.addEventListener('click', openImportPicker);
+  exportCsvButton.addEventListener('click', () => exportTodos('csv'));
+  exportJsonButton.addEventListener('click', () => exportTodos('json'));
+  importFileInput.addEventListener('change', handleImportFile);
+  confirmCancel.addEventListener('click', closeDeleteModal);
+  confirmAccept.addEventListener('click', confirmDeleteTask);
+  confirmModal.addEventListener('click', handleModalBackdropClick);
+  document.addEventListener('keydown', handleGlobalKeydown);
   refreshButton.addEventListener('click', async () => {
     await loadTodos();
     await loadGroupSummary();
+    await loadCategoryOptions();
+    await loadStorageStatus();
     showFeedback('Data reloaded from the CSV file.');
   });
   themeToggle.addEventListener('click', toggleTheme);
@@ -76,13 +124,17 @@ async function loadTodos() {
   if (searchInput.value.trim()) params.set('search', searchInput.value.trim());
   if (filterStatus.value) params.set('status', filterStatus.value);
   if (filterPriority.value) params.set('priority', filterPriority.value);
+  if (filterCategory.value) params.set('category', filterCategory.value);
 
   const query = params.toString() ? `?${params.toString()}` : '';
   const response = await fetch(`/api/todos${query}`);
   const data = await response.json();
 
-  state.items = data.items || [];
+  const filteredItems = applyQuickFilters(data.items || []);
+
+  state.items = sortTodoItems(filteredItems);
   renderSummary(data.summary || emptySummary());
+  renderActiveFilters();
   renderTodos();
 }
 
@@ -90,6 +142,49 @@ async function loadGroupSummary() {
   const response = await fetch(`/api/todos/group?by=${encodeURIComponent(state.groupBy)}`);
   const data = await response.json();
   renderGroupResults(data.groups || []);
+}
+
+async function loadCategoryOptions() {
+  const currentValue = filterCategory.value || filterCategory.dataset.savedValue || '';
+  const response = await fetch('/api/todos/group?by=category');
+  const data = await response.json();
+  const categories = (data.groups || [])
+    .map((group) => group.value)
+    .filter(Boolean)
+    .sort((left, right) => compareText(left, right));
+
+  filterCategory.innerHTML = '<option value="">All categories</option>';
+
+  categories.forEach((category) => {
+    const option = document.createElement('option');
+    option.value = category;
+    option.textContent = category;
+    filterCategory.appendChild(option);
+  });
+
+  if (categories.includes(currentValue)) {
+    filterCategory.value = currentValue;
+  }
+
+  delete filterCategory.dataset.savedValue;
+}
+
+async function loadStorageStatus() {
+  const response = await fetch('/api/todos/storage');
+  const data = await response.json();
+
+  csvCount.textContent = data.csv?.total ?? 0;
+  sqliteCount.textContent = data.sqlite?.total ?? 0;
+
+  if (data.csv?.total === data.sqlite?.total) {
+    storageNote.textContent = 'CSV and SQLite are currently in sync.';
+  } else {
+    storageNote.textContent = 'CSV and SQLite counts differ. A sync check may be needed.';
+  }
+
+  storageTimestamp.textContent = data.sqlite?.lastSyncAt
+    ? `Last sync: ${formatDateTime(data.sqlite.lastSyncAt)}`
+    : 'Last sync: not available yet.';
 }
 
 function renderTodos() {
@@ -102,6 +197,7 @@ function renderTodos() {
 
   state.items.forEach((item) => {
     const fragment = template.content.cloneNode(true);
+    const card = fragment.querySelector('.todo-card');
     const title = fragment.querySelector('.todo-title');
     const description = fragment.querySelector('.todo-description');
     const statusBadge = fragment.querySelector('.status-badge');
@@ -113,12 +209,22 @@ function renderTodos() {
     description.textContent = item.description || 'No description';
     statusBadge.textContent = formatStatus(item.status);
     statusBadge.classList.add(item.status);
+    const dueState = getDueState(item);
+    if (dueState.cardClass) {
+      card.classList.add(dueState.cardClass);
+    }
 
-    meta.innerHTML = [
+    const metaParts = [
       `<span>Priority: ${formatPriority(item.priority)}</span>`,
       `<span>Category: ${item.category || 'General'}</span>`,
       `<span>Due: ${formatDate(item.dueDate)}</span>`
-    ].join('');
+    ];
+
+    if (dueState.label) {
+      metaParts.push(`<span class="due-pill ${dueState.toneClass}">${dueState.label}</span>`);
+    }
+
+    meta.innerHTML = metaParts.join('');
 
     editButton.addEventListener('click', () => startEdit(item));
     deleteButton.addEventListener('click', () => removeTodo(item.id));
@@ -157,7 +263,14 @@ function renderGroupResults(groups) {
 async function handleSubmit(event) {
   event.preventDefault();
 
+  const titleValidation = validateTitleField();
   const dueDateValidation = validateDueDateField();
+  if (!titleValidation.valid) {
+    showTitleError(titleValidation.message);
+    titleInput.focus();
+    return;
+  }
+
   if (!dueDateValidation.valid) {
     showDueDateError(dueDateValidation.message);
     dueDateInput.focus();
@@ -194,6 +307,8 @@ async function handleSubmit(event) {
   resetForm();
   await loadTodos();
   await loadGroupSummary();
+  await loadCategoryOptions();
+  await loadStorageStatus();
 }
 
 function startEdit(item) {
@@ -205,6 +320,7 @@ function startEdit(item) {
   categoryInput.value = item.category;
   dueDateInput.value = formatDateForInput(item.dueDate);
   dueDatePicker.value = item.dueDate || '';
+  clearTitleError();
   clearDueDateError();
   formTitle.textContent = 'Edit task';
   submitButton.textContent = 'Update task';
@@ -213,8 +329,16 @@ function startEdit(item) {
 }
 
 async function removeTodo(id) {
-  const confirmed = window.confirm('This action will remove the task from the CSV file. Do you want to continue?');
-  if (!confirmed) return;
+  pendingDeleteId = id;
+  pendingDeleteTitle = state.items.find((item) => item.id === id)?.title || 'Untitled task';
+  openDeleteModal();
+}
+
+async function confirmDeleteTask() {
+  if (!pendingDeleteId) return;
+
+  const id = pendingDeleteId;
+  closeDeleteModal({ restoreFocus: false });
 
   const response = await fetch(`/api/todos/${id}`, { method: 'DELETE' });
   const result = await response.json();
@@ -231,6 +355,71 @@ async function removeTodo(id) {
   showFeedback('Task deleted successfully.');
   await loadTodos();
   await loadGroupSummary();
+  await loadCategoryOptions();
+  await loadStorageStatus();
+}
+
+function openImportPicker() {
+  importFileInput.value = '';
+  importFileInput.click();
+}
+
+async function handleImportFile(event) {
+  const [file] = event.target.files || [];
+  if (!file) {
+    return;
+  }
+
+  const format = inferImportFormat(file.name);
+  if (!format) {
+    showFeedback('Select a CSV or JSON file to import.', true);
+    return;
+  }
+
+  const content = await file.text();
+  const response = await fetch('/api/todos/import', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      format,
+      mode: importMode.value,
+      content
+    })
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    showFeedback(result.error || 'The file could not be imported.', true);
+    return;
+  }
+
+  showFeedback(result.message || 'Tasks imported successfully.');
+  await loadTodos();
+  await loadGroupSummary();
+  await loadCategoryOptions();
+  await loadStorageStatus();
+}
+
+async function exportTodos(format) {
+  const response = await fetch(`/api/todos/export?format=${encodeURIComponent(format)}`);
+
+  if (!response.ok) {
+    showFeedback('The export could not be generated.', true);
+    return;
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const fileName = getDownloadFileName(response, format);
+
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 function resetForm() {
@@ -238,6 +427,7 @@ function resetForm() {
   todoForm.reset();
   dueDateInput.value = '';
   dueDatePicker.value = '';
+  clearTitleError();
   clearDueDateError();
   formTitle.textContent = 'New task';
   submitButton.textContent = 'Save task';
@@ -273,7 +463,16 @@ function showFeedback(message, isError = false) {
 }
 
 function refreshList() {
+  normalizeQuickFilters();
+  saveListPreferences();
   loadTodos();
+}
+
+function handleSortChange() {
+  state.sortBy = sortTasks.value;
+  saveListPreferences();
+  state.items = sortTodoItems(state.items);
+  renderTodos();
 }
 
 function debounce(fn, delay) {
@@ -282,6 +481,299 @@ function debounce(fn, delay) {
     window.clearTimeout(timeoutId);
     timeoutId = window.setTimeout(() => fn(...args), delay);
   };
+}
+
+function sortTodoItems(items) {
+  const priorityRank = { high: 3, medium: 2, low: 1 };
+  const statusRank = { pending: 1, in_progress: 2, done: 3 };
+  const sortedItems = [...items];
+
+  sortedItems.sort((left, right) => {
+    switch (state.sortBy) {
+      case 'oldest':
+        return compareDates(left.createdAt, right.createdAt);
+      case 'due_soon':
+        return compareDueDates(left.dueDate, right.dueDate);
+      case 'due_late':
+        return compareDueDates(right.dueDate, left.dueDate);
+      case 'priority_high':
+        return (priorityRank[right.priority] || 0) - (priorityRank[left.priority] || 0);
+      case 'priority_low':
+        return (priorityRank[left.priority] || 0) - (priorityRank[right.priority] || 0);
+      case 'status':
+        return (statusRank[left.status] || 99) - (statusRank[right.status] || 99) || compareText(left.title, right.title);
+      case 'title':
+        return compareText(left.title, right.title);
+      case 'newest':
+      default:
+        return compareDates(right.createdAt, left.createdAt);
+    }
+  });
+
+  return sortedItems;
+}
+
+function compareDates(left, right) {
+  const leftValue = left ? new Date(left).getTime() : 0;
+  const rightValue = right ? new Date(right).getTime() : 0;
+  return leftValue - rightValue;
+}
+
+function compareDueDates(left, right) {
+  const leftValue = left ? new Date(`${left}T00:00:00`).getTime() : Number.POSITIVE_INFINITY;
+  const rightValue = right ? new Date(`${right}T00:00:00`).getTime() : Number.POSITIVE_INFINITY;
+  return leftValue - rightValue;
+}
+
+function inferImportFormat(fileName = '') {
+  const normalized = fileName.trim().toLowerCase();
+
+  if (normalized.endsWith('.csv')) return 'csv';
+  if (normalized.endsWith('.json')) return 'json';
+  return '';
+}
+
+function getDownloadFileName(response, format) {
+  const disposition = response.headers.get('Content-Disposition') || '';
+  const match = disposition.match(/filename=\"([^\"]+)\"/i);
+
+  if (match) {
+    return match[1];
+  }
+
+  return `todos-export.${format}`;
+}
+
+function saveListPreferences() {
+  const preferences = {
+    search: searchInput.value,
+    status: filterStatus.value,
+    priority: filterPriority.value,
+    category: filterCategory.value,
+    overdueOnly: overdueOnly.checked,
+    dueTodayOnly: dueTodayOnly.checked,
+    dueSoonOnly: dueSoonOnly.checked,
+    sortBy: sortTasks.value
+  };
+
+  localStorage.setItem(listPreferencesKey, JSON.stringify(preferences));
+}
+
+function restoreListPreferences() {
+  const rawPreferences = localStorage.getItem(listPreferencesKey);
+  if (!rawPreferences) {
+    return;
+  }
+
+  try {
+    const preferences = JSON.parse(rawPreferences);
+    searchInput.value = preferences.search || '';
+    filterStatus.value = preferences.status || '';
+    filterPriority.value = preferences.priority || '';
+    filterCategory.dataset.savedValue = preferences.category || '';
+    overdueOnly.checked = Boolean(preferences.overdueOnly);
+    dueTodayOnly.checked = Boolean(preferences.dueTodayOnly);
+    dueSoonOnly.checked = Boolean(preferences.dueSoonOnly);
+    sortTasks.value = preferences.sortBy || 'newest';
+    state.sortBy = sortTasks.value;
+    normalizeQuickFilters();
+  } catch (error) {
+    localStorage.removeItem(listPreferencesKey);
+  }
+}
+
+function applyQuickFilters(items) {
+  if (overdueOnly.checked) {
+    return items.filter((item) => getDueState(item).toneClass === 'overdue');
+  }
+
+  if (dueTodayOnly.checked) {
+    return items.filter((item) => getDueState(item).toneClass === 'due-today');
+  }
+
+  if (dueSoonOnly.checked) {
+    return items.filter((item) => getDueState(item).toneClass === 'due-soon');
+  }
+
+  return items;
+}
+
+function normalizeQuickFilters() {
+  const selected = [overdueOnly, dueTodayOnly, dueSoonOnly].filter((input) => input.checked);
+
+  if (selected.length <= 1) {
+    return;
+  }
+
+  const lastChecked = selected[selected.length - 1];
+  overdueOnly.checked = false;
+  dueTodayOnly.checked = false;
+  dueSoonOnly.checked = false;
+  lastChecked.checked = true;
+}
+
+function renderActiveFilters() {
+  const filters = [];
+
+  if (searchInput.value.trim()) {
+    filters.push({ key: 'search', label: `Search: ${searchInput.value.trim()}` });
+  }
+
+  if (filterStatus.value) {
+    filters.push({ key: 'status', label: `Status: ${formatStatus(filterStatus.value)}` });
+  }
+
+  if (filterPriority.value) {
+    filters.push({ key: 'priority', label: `Priority: ${formatPriority(filterPriority.value)}` });
+  }
+
+  if (filterCategory.value) {
+    filters.push({ key: 'category', label: `Category: ${filterCategory.value}` });
+  }
+
+  if (overdueOnly.checked) {
+    filters.push({ key: 'overdueOnly', label: 'Overdue only' });
+  }
+
+  if (dueTodayOnly.checked) {
+    filters.push({ key: 'dueTodayOnly', label: 'Due today only' });
+  }
+
+  if (dueSoonOnly.checked) {
+    filters.push({ key: 'dueSoonOnly', label: 'Due soon only' });
+  }
+
+  if (sortTasks.value !== 'newest') {
+    filters.push({ key: 'sortBy', label: `Sort: ${formatSortOption(sortTasks.value)}` });
+  }
+
+  if (!filters.length) {
+    activeFilters.classList.add('hidden');
+    activeFilters.innerHTML = '';
+    return;
+  }
+
+  activeFilters.classList.remove('hidden');
+  activeFilters.innerHTML = [
+    ...filters.map((filter) => (
+      `<button class="active-filter-pill" type="button" data-filter-key="${filter.key}" aria-label="Remove ${filter.label}"><span>${filter.label}</span><span class="filter-pill-close" aria-hidden="true">×</span></button>`
+    )),
+    '<button class="clear-filters-button" type="button" data-filter-key="clearAll">Clear all</button>'
+  ].join('');
+}
+
+activeFilters.addEventListener('click', handleActiveFilterClick);
+
+function handleActiveFilterClick(event) {
+  const button = event.target.closest('[data-filter-key]');
+  if (!button) {
+    return;
+  }
+
+  const { filterKey } = button.dataset;
+
+  if (filterKey === 'clearAll') {
+    clearAllFilters();
+    return;
+  }
+
+  clearFilter(filterKey);
+}
+
+function clearFilter(filterKey) {
+  switch (filterKey) {
+    case 'search':
+      searchInput.value = '';
+      break;
+    case 'status':
+      filterStatus.value = '';
+      break;
+    case 'priority':
+      filterPriority.value = '';
+      break;
+    case 'category':
+      filterCategory.value = '';
+      break;
+    case 'overdueOnly':
+      overdueOnly.checked = false;
+      break;
+    case 'dueTodayOnly':
+      dueTodayOnly.checked = false;
+      break;
+    case 'dueSoonOnly':
+      dueSoonOnly.checked = false;
+      break;
+    case 'sortBy':
+      sortTasks.value = 'newest';
+      state.sortBy = 'newest';
+      break;
+    default:
+      return;
+  }
+
+  refreshList();
+}
+
+function clearAllFilters() {
+  searchInput.value = '';
+  filterStatus.value = '';
+  filterPriority.value = '';
+  filterCategory.value = '';
+  overdueOnly.checked = false;
+  dueTodayOnly.checked = false;
+  dueSoonOnly.checked = false;
+  sortTasks.value = 'newest';
+  state.sortBy = 'newest';
+  refreshList();
+}
+
+function compareText(left = '', right = '') {
+  return left.localeCompare(right, 'en', { sensitivity: 'base' });
+}
+
+function getDueState(item) {
+  if (!item.dueDate || item.status === 'done') {
+    return { label: '', toneClass: '', cardClass: '' };
+  }
+
+  const today = startOfDay(new Date());
+  const dueDate = startOfDay(new Date(`${item.dueDate}T00:00:00`));
+  const differenceInDays = Math.round((dueDate.getTime() - today.getTime()) / 86400000);
+
+  if (differenceInDays < 0) {
+    return { label: 'Overdue', toneClass: 'overdue', cardClass: 'is-overdue' };
+  }
+
+  if (differenceInDays === 0) {
+    return { label: 'Due today', toneClass: 'due-today', cardClass: 'is-due-today' };
+  }
+
+  if (differenceInDays <= 3) {
+    return { label: 'Due soon', toneClass: 'due-soon', cardClass: 'is-due-soon' };
+  }
+
+  return { label: '', toneClass: '', cardClass: '' };
+}
+
+function startOfDay(date) {
+  const normalized = new Date(date);
+  normalized.setHours(0, 0, 0, 0);
+  return normalized;
+}
+
+function formatDateTime(dateValue) {
+  const safeDate = new Date(dateValue);
+  if (Number.isNaN(safeDate.getTime())) {
+    return dateValue;
+  }
+
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(safeDate);
 }
 
 function formatStatus(status) {
@@ -298,6 +790,19 @@ function formatPriority(priority) {
     medium: 'Medium',
     high: 'High'
   }[priority] || priority;
+}
+
+function formatSortOption(sortValue) {
+  return {
+    newest: 'Newest first',
+    oldest: 'Oldest first',
+    due_soon: 'Due date, soonest first',
+    due_late: 'Due date, latest first',
+    priority_high: 'Priority, high to low',
+    priority_low: 'Priority, low to high',
+    status: 'Status',
+    title: 'Title A-Z'
+  }[sortValue] || sortValue;
 }
 
 function formatGroupValue(groupBy, value) {
@@ -446,6 +951,32 @@ function validateDueDateField() {
   return { valid: true, message: '' };
 }
 
+function validateTitleField() {
+  const rawValue = titleInput.value.trim();
+  if (rawValue) {
+    clearTitleError();
+    return { valid: true, message: '' };
+  }
+
+  const message = 'Title is required.';
+  showTitleError(message);
+  return { valid: false, message };
+}
+
+function showTitleError(message) {
+  titleInput.setAttribute('aria-invalid', 'true');
+  titleInput.classList.add('field-input', 'is-invalid');
+  titleError.textContent = message;
+  titleError.classList.remove('hidden');
+}
+
+function clearTitleError() {
+  titleInput.removeAttribute('aria-invalid');
+  titleInput.classList.remove('field-input', 'is-invalid');
+  titleError.textContent = '';
+  titleError.classList.add('hidden');
+}
+
 function showDueDateError(message) {
   dueDateInput.setAttribute('aria-invalid', 'true');
   dueDateInput.parentElement.classList.add('is-invalid');
@@ -460,6 +991,84 @@ function clearDueDateError() {
   dueDateError.classList.add('hidden');
 }
 
+function openDeleteModal() {
+  window.clearTimeout(modalCloseTimer);
+  lastFocusedElement = document.activeElement;
+  confirmModal.classList.remove('hidden', 'is-closing');
+  confirmTaskName.textContent = pendingDeleteTitle;
+  confirmModal.setAttribute('aria-hidden', 'false');
+  confirmAccept.textContent = `Delete "${pendingDeleteTitle}"`;
+  document.body.style.overflow = 'hidden';
+  confirmCancel.focus();
+}
+
+function closeDeleteModal({ restoreFocus = true } = {}) {
+  if (confirmModal.classList.contains('hidden') || confirmModal.classList.contains('is-closing')) {
+    return;
+  }
+
+  pendingDeleteId = null;
+  pendingDeleteTitle = '';
+  confirmModal.classList.add('is-closing');
+  confirmModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  modalCloseTimer = window.setTimeout(() => {
+    confirmModal.classList.add('hidden');
+    confirmModal.classList.remove('is-closing');
+    confirmTaskName.textContent = '';
+    confirmAccept.textContent = 'Delete task';
+    if (restoreFocus && lastFocusedElement instanceof HTMLElement) {
+      lastFocusedElement.focus();
+    }
+    lastFocusedElement = null;
+  }, modalCloseDelay);
+}
+
+function handleModalBackdropClick(event) {
+  if (event.target === confirmModal) {
+    closeDeleteModal();
+  }
+}
+
+function handleGlobalKeydown(event) {
+  if (confirmModal.classList.contains('hidden')) {
+    return;
+  }
+
+  if (event.key === 'Escape') {
+    closeDeleteModal();
+    return;
+  }
+
+  if (event.key === 'Tab') {
+    trapModalFocus(event);
+  }
+}
+
+function trapModalFocus(event) {
+  const focusableElements = Array.from(
+    confirmModal.querySelectorAll('button:not([disabled])')
+  );
+
+  if (!focusableElements.length) {
+    return;
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  if (event.shiftKey && document.activeElement === firstElement) {
+    event.preventDefault();
+    lastElement.focus();
+    return;
+  }
+
+  if (!event.shiftKey && document.activeElement === lastElement) {
+    event.preventDefault();
+    firstElement.focus();
+  }
+}
+
 
 function emptySummary() {
   return {
@@ -469,3 +1078,4 @@ function emptySummary() {
     done: 0
   };
 }
+

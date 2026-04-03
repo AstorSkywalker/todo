@@ -5,5 +5,8 @@
   "description": "To Do app with CSV persistence and light/dark themes",
   "scripts": {
     "start": "node server.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.8.0"
   }
 }
