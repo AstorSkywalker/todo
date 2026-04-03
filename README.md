@@ -1,6 +1,6 @@
 # TaskFlow CSV
 
-Modern To Do app with CSV persistence, light/dark mode, SQLite mirroring, and a simple CRUD API.
+Modern To Do app with CSV persistence, light/dark mode, SQLite mirroring, interactive Swagger/OpenAPI docs, and a simple CRUD API.
 
 ## Features
 
@@ -9,10 +9,15 @@ Modern To Do app with CSV persistence, light/dark mode, SQLite mirroring, and a 
 - Simple persistence in `data/todos.csv`
 - SQLite mirror in `data/todos.db`
 - REST API for creating, reading, updating, and deleting tasks
+- Interactive API docs via Swagger UI at `/docs`
 - Grouped summaries by status, priority, or category
 - Sectioned dashboard with dedicated Filters, Grouping, and Tasks panels
 - Active filter pills with one-click removal and a clear-all action
 - Quick date filters for overdue, due today, and due soon tasks
+- Due date range filters with `DD/MM/YYYY` masked inputs
+- Card and compact table-like task views
+- Multiple color schemes saved in the browser
+- Automated backend test suite
 - Dates displayed in Honduras-friendly `dd/mm/yyyy` format in the interface
 
 ## Tech stack
@@ -29,9 +34,17 @@ Modern To Do app with CSV persistence, light/dark mode, SQLite mirroring, and a 
 - [index.html](c:\Users\Nelson\Documents\GitHub\todo\index.html): main UI structure
 - [styles.css](c:\Users\Nelson\Documents\GitHub\todo\styles.css): themes, layout, and component styling
 - [app.js](c:\Users\Nelson\Documents\GitHub\todo\app.js): frontend logic, rendering, and API integration
-- [server.js](c:\Users\Nelson\Documents\GitHub\todo\server.js): HTTP server and CRUD API
+- [server.js](c:\Users\Nelson\Documents\GitHub\todo\server.js): HTTP server startup and static file serving
+- [routes/todos.js](c:\Users\Nelson\Documents\GitHub\todo\routes\todos.js): `/api/todos` route handling
+- [services/csvService.js](c:\Users\Nelson\Documents\GitHub\todo\services\csvService.js): CSV persistence and parsing
+- [services/todoService.js](c:\Users\Nelson\Documents\GitHub\todo\services\todoService.js): CRUD, grouping, import/export, and storage logic
+- [utils/http.js](c:\Users\Nelson\Documents\GitHub\todo\utils\http.js): shared HTTP helpers
+- [utils/validation.js](c:\Users\Nelson\Documents\GitHub\todo\utils\validation.js): payload validation and normalization
 - [data/todos.csv](c:\Users\Nelson\Documents\GitHub\todo\data\todos.csv): primary task storage
 - [sqliteService.js](c:\Users\Nelson\Documents\GitHub\todo\sqliteService.js): SQLite setup and mirroring
+- [openapi.json](c:\Users\Nelson\Documents\GitHub\todo\openapi.json): OpenAPI 3.0 specification
+- [docs.html](c:\Users\Nelson\Documents\GitHub\todo\docs.html): Swagger UI page
+- [scripts/run-tests.js](c:\Users\Nelson\Documents\GitHub\todo\scripts\run-tests.js): automated backend tests
 - [package.json](c:\Users\Nelson\Documents\GitHub\todo\package.json): package metadata and start script
 
 ## Requirements
@@ -51,6 +64,24 @@ npm start
 
 ```text
 http://localhost:3000
+```
+
+API docs:
+
+```text
+http://localhost:3000/docs
+```
+
+OpenAPI spec:
+
+```text
+http://localhost:3000/openapi.json
+```
+
+Run backend tests:
+
+```bash
+node scripts/run-tests.js
 ```
 
 ## Dashboard layout
@@ -82,6 +113,19 @@ Current storage model:
 - CSV is the primary source of truth
 - SQLite is synchronized on server startup and every write operation
 - Reads still come from the CSV for now
+
+## API documentation
+
+The project now includes:
+
+- `Swagger UI` at `/docs`
+- `OpenAPI 3.0` JSON at `/openapi.json`
+
+This lets you:
+
+- inspect endpoints and schemas
+- try requests interactively from the browser
+- reuse the spec in external tools later
 
 Each row uses this structure:
 
@@ -148,6 +192,11 @@ The UI also includes client-side quick filters for:
 - `Due soon`
 
 These quick filters can be combined, so for example you can view overdue and due-today tasks together.
+
+The dashboard also adds client-side range filters for:
+
+- `Due from`
+- `Due to`
 
 Example:
 
@@ -335,6 +384,8 @@ curl http://localhost:3000/api/todos/storage
 - No Express is used
 - The CSV file is parsed and rewritten directly from Node
 - SQLite is mirrored locally through `better-sqlite3`
+- The backend is modularized into `routes`, `services`, and `utils`
+- OpenAPI is served locally and rendered through Swagger UI
 - Menus and date inputs adapt to light and dark themes
 - The UI translates status and priority values into friendly labels
 
@@ -345,22 +396,20 @@ curl http://localhost:3000/api/todos/storage
 - [x] Light and dark themes
 - [x] Filtering and grouping
 - [x] Basic API documentation
+- [x] Swagger / OpenAPI
 - [x] `curl` examples
 - [x] Visual validation for invalid dates
+- [x] Import and export tasks
+- [x] Automated tests
 - [ ] Auto-refresh when the CSV changes
-- [ ] Swagger / OpenAPI
-- [ ] Import and export tasks
-- [ ] Automated tests
 - [ ] Optional migration to SQLite
 
 ## Possible improvements
 
-- Add Swagger or OpenAPI documentation for the API
 - Detect CSV file changes in real time
-- Add CSV import/export
 - Highlight overdue or upcoming tasks
+- Add frontend smoke tests
 - Add authentication
-- Add automated tests
 - Migrate from CSV to SQLite if the project grows
 
 ## License

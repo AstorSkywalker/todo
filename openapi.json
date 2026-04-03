@@ -1,0 +1,462 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TaskFlow CSV API",
+    "version": "1.0.0",
+    "description": "REST API for TaskFlow CSV, including CRUD operations, grouping, import/export, and storage status."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Todos"
+    },
+    {
+      "name": "Storage"
+    },
+    {
+      "name": "Docs"
+    }
+  ],
+  "paths": {
+    "/api/todos": {
+      "get": {
+        "tags": ["Todos"],
+        "summary": "List tasks",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "search",
+            "schema": { "type": "string" }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "schema": {
+              "type": "string",
+              "enum": ["pending", "in_progress", "done"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "priority",
+            "schema": {
+              "type": "string",
+              "enum": ["low", "medium", "high"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "category",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Todo" }
+                    },
+                    "summary": { "$ref": "#/components/schemas/Summary" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Todos"],
+        "summary": "Create a task",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TodoInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created task",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Todo" }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todos/{id}": {
+      "get": {
+        "tags": ["Todos"],
+        "summary": "Get a task by id",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Todo" }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Todos"],
+        "summary": "Update a task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TodoInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated task",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Todo" }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Todos"],
+        "summary": "Delete a task",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted task metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "item": { "$ref": "#/components/schemas/Todo" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todos/group": {
+      "get": {
+        "tags": ["Todos"],
+        "summary": "Group tasks",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "by",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["status", "priority", "category"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Grouped totals",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "groupBy": { "type": "string" },
+                    "groups": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/GroupResult" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid group parameter",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todos/export": {
+      "get": {
+        "tags": ["Todos"],
+        "summary": "Export tasks",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "format",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["csv", "json"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Export file"
+          },
+          "400": {
+            "description": "Invalid export format",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todos/import": {
+      "post": {
+        "tags": ["Todos"],
+        "summary": "Import tasks",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ImportRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Import result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "imported": { "type": "integer" },
+                    "total": { "type": "integer" },
+                    "mode": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Import error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todos/storage": {
+      "get": {
+        "tags": ["Storage"],
+        "summary": "Get CSV and SQLite storage status",
+        "responses": {
+          "200": {
+            "description": "Storage counts and sync data",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StorageStatus" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "tags": ["Docs"],
+        "summary": "Download the OpenAPI specification",
+        "responses": {
+          "200": {
+            "description": "OpenAPI JSON document"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TodoInput": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "done"]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "category": { "type": "string" },
+          "dueDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-04-25"
+          }
+        }
+      },
+      "Todo": {
+        "allOf": [
+          { "$ref": "#/components/schemas/TodoInput" },
+          {
+            "type": "object",
+            "required": ["id", "createdAt", "updatedAt"],
+            "properties": {
+              "id": { "type": "string" },
+              "createdAt": { "type": "string", "format": "date-time" },
+              "updatedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        ]
+      },
+      "Summary": {
+        "type": "object",
+        "properties": {
+          "total": { "type": "integer" },
+          "pending": { "type": "integer" },
+          "inProgress": { "type": "integer" },
+          "done": { "type": "integer" },
+          "highPriority": { "type": "integer" }
+        }
+      },
+      "GroupResult": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "string" },
+          "total": { "type": "integer" }
+        }
+      },
+      "ImportRequest": {
+        "type": "object",
+        "required": ["format", "mode", "content"],
+        "properties": {
+          "format": {
+            "type": "string",
+            "enum": ["csv", "json"]
+          },
+          "mode": {
+            "type": "string",
+            "enum": ["append", "replace"]
+          },
+          "content": { "type": "string" }
+        }
+      },
+      "StorageStatus": {
+        "type": "object",
+        "properties": {
+          "csv": {
+            "type": "object",
+            "properties": {
+              "file": { "type": "string" },
+              "total": { "type": "integer" }
+            }
+          },
+          "sqlite": {
+            "type": "object",
+            "properties": {
+              "dbFile": { "type": "string" },
+              "total": { "type": "integer" },
+              "lastSyncAt": { "type": "string", "format": "date-time", "nullable": true }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" }
+        }
+      }
+    }
+  }
+}

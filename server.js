@@ -32,6 +32,9 @@ const PORT = process.env.PORT || 3000;
 const PUBLIC_FILES = {
   '/': 'index.html',
   '/index.html': 'index.html',
+  '/docs': 'docs.html',
+  '/docs.html': 'docs.html',
+  '/openapi.json': 'openapi.json',
   '/styles.css': 'styles.css',
   '/app.js': 'app.js'
 };
@@ -75,7 +78,8 @@ function serveStaticFile(res, fileName) {
   const contentType = {
     '.html': 'text/html; charset=utf-8',
     '.css': 'text/css; charset=utf-8',
-    '.js': 'application/javascript; charset=utf-8'
+    '.js': 'application/javascript; charset=utf-8',
+    '.json': 'application/json; charset=utf-8'
   }[extension] || 'text/plain; charset=utf-8';
 
   fs.readFile(filePath, (error, data) => {
