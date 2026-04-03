@@ -31,6 +31,9 @@ const activeFilterCount = document.querySelector('#activeFilterCount');
 const filtersPanel = document.querySelector('.filters-panel');
 const filtersBody = document.querySelector('#filtersBody');
 const toggleFiltersButton = document.querySelector('#toggleFiltersButton');
+const groupingPanel = document.querySelector('.grouping-panel');
+const groupingBody = document.querySelector('#groupingBody');
+const toggleGroupingButton = document.querySelector('#toggleGroupingButton');
 const feedback = document.querySelector('#feedback');
 const formTitle = document.querySelector('#formTitle');
 const submitButton = document.querySelector('#submitButton');
@@ -57,6 +60,7 @@ const storageNote = document.querySelector('#storageNote');
 const storageTimestamp = document.querySelector('#storageTimestamp');
 const listPreferencesKey = 'todo-list-preferences';
 const filtersPanelStateKey = 'todo-filters-collapsed';
+const groupingPanelStateKey = 'todo-grouping-collapsed';
 
 let pendingDeleteId = null;
 let pendingDeleteTitle = '';
@@ -75,6 +79,7 @@ initialize();
 function initialize() {
   restoreListPreferences();
   restoreFiltersPanelState();
+  restoreGroupingPanelState();
   bindEvents();
   applySavedTheme();
   loadTodos();
@@ -94,6 +99,7 @@ function bindEvents() {
   dueSoonOnly.addEventListener('change', refreshList);
   sortTasks.addEventListener('change', handleSortChange);
   toggleFiltersButton.addEventListener('click', toggleFiltersPanel);
+  toggleGroupingButton.addEventListener('click', toggleGroupingPanel);
   titleInput.addEventListener('input', validateTitleField);
   titleInput.addEventListener('blur', validateTitleField);
   dueDateInput.addEventListener('input', handleDueDateInput);
@@ -612,6 +618,31 @@ function restoreFiltersPanelState() {
   filtersBody.classList.add('hidden');
   toggleFiltersButton.setAttribute('aria-expanded', 'false');
   toggleFiltersButton.setAttribute('aria-label', 'Expand filters');
+}
+
+function toggleGroupingPanel() {
+  const isCollapsed = groupingPanel.classList.toggle('is-collapsed');
+  groupingBody.classList.toggle('hidden', isCollapsed);
+  toggleGroupingButton.setAttribute('aria-expanded', String(!isCollapsed));
+  toggleGroupingButton.setAttribute('aria-label', isCollapsed ? 'Expand grouping' : 'Collapse grouping');
+  localStorage.setItem(groupingPanelStateKey, isCollapsed ? 'collapsed' : 'expanded');
+}
+
+function restoreGroupingPanelState() {
+  const savedState = localStorage.getItem(groupingPanelStateKey);
+
+  if (savedState !== 'collapsed') {
+    groupingPanel.classList.remove('is-collapsed');
+    groupingBody.classList.remove('hidden');
+    toggleGroupingButton.setAttribute('aria-expanded', 'true');
+    toggleGroupingButton.setAttribute('aria-label', 'Collapse grouping');
+    return;
+  }
+
+  groupingPanel.classList.add('is-collapsed');
+  groupingBody.classList.add('hidden');
+  toggleGroupingButton.setAttribute('aria-expanded', 'false');
+  toggleGroupingButton.setAttribute('aria-label', 'Expand grouping');
 }
 
 function applyQuickFilters(items) {

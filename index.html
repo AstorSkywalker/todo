@@ -244,16 +244,21 @@
                 </div>
                 <p class="muted section-note">Switch the grouping lens to spot patterns across status, priority, or category.</p>
               </div>
+              <button id="toggleGroupingButton" class="panel-toggle" type="button" aria-expanded="true" aria-controls="groupingBody" aria-label="Collapse grouping">
+                <span class="panel-toggle-icon" aria-hidden="true"></span>
+              </button>
             </div>
 
-            <div class="group-toolbar">
-              <span>Group summary by:</span>
-              <button class="chip active" data-group="status" type="button">Status</button>
-              <button class="chip" data-group="priority" type="button">Priority</button>
-              <button class="chip" data-group="category" type="button">Category</button>
-            </div>
+            <div id="groupingBody">
+              <div class="group-toolbar">
+                <span>Group summary by:</span>
+                <button class="chip active" data-group="status" type="button">Status</button>
+                <button class="chip" data-group="priority" type="button">Priority</button>
+                <button class="chip" data-group="category" type="button">Category</button>
+              </div>
 
-            <div id="groupResults" class="group-results"></div>
+              <div id="groupResults" class="group-results"></div>
+            </div>
           </section>
 
           <section class="glass-card panel list-panel">

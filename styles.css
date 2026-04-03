@@ -976,11 +976,13 @@ body.light .date-icon-button:hover {
   position: relative;
 }
 
-.filters-panel.is-collapsed .panel-toggle-icon {
+.filters-panel.is-collapsed .panel-toggle-icon,
+.grouping-panel.is-collapsed .panel-toggle-icon {
   transform: rotate(180deg);
 }
 
-.filters-panel.is-collapsed .panel-heading {
+.filters-panel.is-collapsed .panel-heading,
+.grouping-panel.is-collapsed .panel-heading {
   margin-bottom: 0;
 }
 
