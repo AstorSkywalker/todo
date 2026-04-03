@@ -179,9 +179,12 @@
                 </div>
                 <p class="muted section-note">Search first, then refine by status, priority, category, or time-sensitive flags.</p>
               </div>
+              <button id="toggleFiltersButton" class="panel-toggle" type="button" aria-expanded="true" aria-controls="filtersBody" aria-label="Collapse filters">
+                <span class="panel-toggle-icon" aria-hidden="true"></span>
+              </button>
             </div>
 
-            <div class="filters">
+            <div id="filtersBody" class="filters">
               <label class="search-field">
                 <span class="filter-label">Search tasks</span>
                 <input id="searchInput" type="search" placeholder="Search by title, category, or description" />

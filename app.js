@@ -28,6 +28,9 @@ const todoList = document.querySelector('#todoList');
 const activeFilters = document.querySelector('#activeFilters');
 const visibleCount = document.querySelector('#visibleCount');
 const activeFilterCount = document.querySelector('#activeFilterCount');
+const filtersPanel = document.querySelector('.filters-panel');
+const filtersBody = document.querySelector('#filtersBody');
+const toggleFiltersButton = document.querySelector('#toggleFiltersButton');
 const feedback = document.querySelector('#feedback');
 const formTitle = document.querySelector('#formTitle');
 const submitButton = document.querySelector('#submitButton');
@@ -53,6 +56,7 @@ const sqliteCount = document.querySelector('#sqliteCount');
 const storageNote = document.querySelector('#storageNote');
 const storageTimestamp = document.querySelector('#storageTimestamp');
 const listPreferencesKey = 'todo-list-preferences';
+const filtersPanelStateKey = 'todo-filters-collapsed';
 
 let pendingDeleteId = null;
 let pendingDeleteTitle = '';
@@ -70,6 +74,7 @@ initialize();
 
 function initialize() {
   restoreListPreferences();
+  restoreFiltersPanelState();
   bindEvents();
   applySavedTheme();
   loadTodos();
@@ -88,6 +93,7 @@ function bindEvents() {
   dueTodayOnly.addEventListener('change', refreshList);
   dueSoonOnly.addEventListener('change', refreshList);
   sortTasks.addEventListener('change', handleSortChange);
+  toggleFiltersButton.addEventListener('click', toggleFiltersPanel);
   titleInput.addEventListener('input', validateTitleField);
   titleInput.addEventListener('blur', validateTitleField);
   dueDateInput.addEventListener('input', handleDueDateInput);
@@ -581,6 +587,31 @@ function restoreListPreferences() {
   } catch (error) {
     localStorage.removeItem(listPreferencesKey);
   }
+}
+
+function toggleFiltersPanel() {
+  const isCollapsed = filtersPanel.classList.toggle('is-collapsed');
+  filtersBody.classList.toggle('hidden', isCollapsed);
+  toggleFiltersButton.setAttribute('aria-expanded', String(!isCollapsed));
+  toggleFiltersButton.setAttribute('aria-label', isCollapsed ? 'Expand filters' : 'Collapse filters');
+  localStorage.setItem(filtersPanelStateKey, isCollapsed ? 'collapsed' : 'expanded');
+}
+
+function restoreFiltersPanelState() {
+  const savedState = localStorage.getItem(filtersPanelStateKey);
+
+  if (savedState !== 'collapsed') {
+    filtersPanel.classList.remove('is-collapsed');
+    filtersBody.classList.remove('hidden');
+    toggleFiltersButton.setAttribute('aria-expanded', 'true');
+    toggleFiltersButton.setAttribute('aria-label', 'Collapse filters');
+    return;
+  }
+
+  filtersPanel.classList.add('is-collapsed');
+  filtersBody.classList.add('hidden');
+  toggleFiltersButton.setAttribute('aria-expanded', 'false');
+  toggleFiltersButton.setAttribute('aria-label', 'Expand filters');
 }
 
 function applyQuickFilters(items) {

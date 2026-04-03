@@ -209,6 +209,48 @@ button {
   margin-bottom: 18px;
 }
 
+.panel-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.panel-toggle:hover {
+  transform: translateY(-1px);
+  background: rgba(105, 177, 255, 0.12);
+  color: var(--primary);
+}
+
+.panel-toggle-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.panel-toggle-icon::before {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='black'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.51a.75.75 0 0 1-1.08 0l-4.25-4.51a.75.75 0 0 1 .02-1.06Z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='black'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.51a.75.75 0 0 1-1.08 0l-4.25-4.51a.75.75 0 0 1 .02-1.06Z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
 .section-title-row {
   display: flex;
   align-items: center;
@@ -932,6 +974,14 @@ body.light .date-icon-button:hover {
 .grouping-panel,
 .list-panel {
   position: relative;
+}
+
+.filters-panel.is-collapsed .panel-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.filters-panel.is-collapsed .panel-heading {
+  margin-bottom: 0;
 }
 
 .modal-backdrop {
