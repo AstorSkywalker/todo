@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow CSV README</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Project Docs</p>
+      <h1>TaskFlow CSV README</h1>
+      <p class="muted kicker">This page renders the project README as readable documentation instead of showing the raw Markdown source.</p>
+      <div class="header-actions">
+        <a href="/README.md" target="_blank" rel="noopener noreferrer">Open raw README</a>
+        <a href="/study-guide/" target="_blank" rel="noopener noreferrer">Open study guide</a>
+        <a href="/docs" target="_blank" rel="noopener noreferrer">Open Swagger UI</a>
+      </div>
+    </header>
+
+    <main class="content-stack">
+      <article id="readmeContent" class="lesson">
+        <p class="muted">Loading README...</p>
+      </article>
+    </main>
+  </div>
+
+  <script>
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function applyInlineMarkdown(text) {
+      let result = escapeHtml(text);
+      result = result.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img class="markdown-image" alt="$1" src="$2" />');
+      result = result.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+      result = result.replace(/`([^`]+)`/g, '<code>$1</code>');
+      result = result.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      result = result.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      return result;
+    }
+
+    function renderMarkdown(markdown) {
+      const lines = markdown.replace(/\r\n/g, '\n').split('\n');
+      const output = [];
+      let inCodeBlock = false;
+      let codeBuffer = [];
+      let listType = null;
+      let paragraphBuffer = [];
+
+      function flushParagraph() {
+        if (!paragraphBuffer.length) return;
+        output.push('<p>' + applyInlineMarkdown(paragraphBuffer.join(' ')) + '</p>');
+        paragraphBuffer = [];
+      }
+
+      function flushList() {
+        if (!listType) return;
+        output.push(`</${listType}>`);
+        listType = null;
+      }
+
+      function flushCodeBlock() {
+        if (!inCodeBlock) return;
+        output.push('<pre><code>' + escapeHtml(codeBuffer.join('\n')) + '</code></pre>');
+        inCodeBlock = false;
+        codeBuffer = [];
+      }
+
+      for (const line of lines) {
+        if (line.startsWith('```')) {
+          flushParagraph();
+          flushList();
+          if (inCodeBlock) {
+            flushCodeBlock();
+          } else {
+            inCodeBlock = true;
+            codeBuffer = [];
+          }
+          continue;
+        }
+
+        if (inCodeBlock) {
+          codeBuffer.push(line);
+          continue;
+        }
+
+        if (!line.trim()) {
+          flushParagraph();
+          flushList();
+          continue;
+        }
+
+        const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
+        if (headingMatch) {
+          flushParagraph();
+          flushList();
+          const level = headingMatch[1].length;
+          output.push(`<h${level}>${applyInlineMarkdown(headingMatch[2])}</h${level}>`);
+          continue;
+        }
+
+        const unorderedMatch = line.match(/^-\s+(.*)$/);
+        if (unorderedMatch) {
+          flushParagraph();
+          if (listType !== 'ul') {
+            flushList();
+            listType = 'ul';
+            output.push('<ul>');
+          }
+          output.push('<li>' + applyInlineMarkdown(unorderedMatch[1]) + '</li>');
+          continue;
+        }
+
+        const orderedMatch = line.match(/^\d+\.\s+(.*)$/);
+        if (orderedMatch) {
+          flushParagraph();
+          if (listType !== 'ol') {
+            flushList();
+            listType = 'ol';
+            output.push('<ol>');
+          }
+          output.push('<li>' + applyInlineMarkdown(orderedMatch[1]) + '</li>');
+          continue;
+        }
+
+        flushList();
+        paragraphBuffer.push(line.trim());
+      }
+
+      flushParagraph();
+      flushList();
+      flushCodeBlock();
+
+      return output.join('\n');
+    }
+
+    async function loadReadme() {
+      const container = document.getElementById('readmeContent');
+      try {
+        const response = await fetch('/README.md');
+        const markdown = await response.text();
+        container.innerHTML = renderMarkdown(markdown);
+      } catch (error) {
+        container.innerHTML = '<div class="note"><p><strong>Could not load the README preview.</strong> Try opening the raw README file instead.</p></div>';
+      }
+    }
+
+    loadReadme();
+  </script>
+</body>
+</html>

@@ -34,6 +34,15 @@ Run the app locally with `npm start`, then open:
 - Todos API: `http://localhost:3000/api/todos`
 - Storage status API: `http://localhost:3000/api/todos/storage`
 
+## Study Guide
+
+The project includes a separate long-form study guide designed to teach the full build step by step.
+
+- Local study guide URL: `http://localhost:3000/study-guide`
+- Study guide entry file: [study-guide/index.html](c:\Users\Nelson\Documents\GitHub\todo\study-guide\index.html)
+
+The guide is intentionally separated from the main application so you can study the project architecture, frontend, backend, testing, and documentation without mixing tutorial content into the production app files.
+
 ## Screenshots
 
 ### Dashboard overview

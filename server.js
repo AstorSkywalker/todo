@@ -32,6 +32,9 @@ const PORT = process.env.PORT || 3000;
 const PUBLIC_FILES = {
   '/': 'index.html',
   '/index.html': 'index.html',
+  '/readme': 'readme-viewer.html',
+  '/readme.html': 'readme-viewer.html',
+  '/README.md': 'README.md',
   '/docs': 'docs.html',
   '/docs.html': 'docs.html',
   '/study-guide': 'study-guide/index.html',
@@ -95,7 +98,8 @@ function serveStaticFile(res, fileName) {
     '.html': 'text/html; charset=utf-8',
     '.css': 'text/css; charset=utf-8',
     '.js': 'application/javascript; charset=utf-8',
-    '.json': 'application/json; charset=utf-8'
+    '.json': 'application/json; charset=utf-8',
+    '.md': 'text/markdown; charset=utf-8'
   }[extension] || 'text/plain; charset=utf-8';
 
   fs.readFile(filePath, (error, data) => {

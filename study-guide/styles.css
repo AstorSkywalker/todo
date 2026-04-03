@@ -41,9 +41,9 @@ a:hover {
 }
 
 .page-shell {
-  max-width: 1380px;
+  max-width: 1320px;
   margin: 0 auto;
-  padding: 28px;
+  padding: 36px 32px 44px;
 }
 
 .hero,
@@ -190,6 +190,23 @@ h3 {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
 
+.chapter-links {
+  list-style: decimal-leading-zero;
+  margin: 0;
+  padding-left: 1.6rem;
+  grid-template-columns: 1fr;
+}
+
+.chapter-links li {
+  margin: 0;
+  color: var(--primary);
+  padding-left: 0.2rem;
+}
+
+.chapter-links li::marker {
+  font-weight: 700;
+}
+
 .link-card {
   display: block;
   padding: 18px;
@@ -243,6 +260,7 @@ table {
   overflow: hidden;
   border-radius: 18px;
   border: 1px solid var(--border);
+  table-layout: auto;
 }
 
 th, td {
@@ -255,6 +273,23 @@ th, td {
 th {
   color: var(--primary);
   background: rgba(255,255,255,0.03);
+}
+
+.lesson-map-table th:first-child,
+.lesson-map-table td:first-child {
+  width: 140px;
+  min-width: 140px;
+  white-space: nowrap;
+}
+
+.markdown-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 18px 0;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 ul, ol {
@@ -270,6 +305,7 @@ ul, ol {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 16px;
+  align-items: center;
 }
 
 .header-actions a {
@@ -280,6 +316,11 @@ ul, ol {
   border-radius: 14px;
   background: var(--panel-2);
   border: 1px solid var(--border);
+  min-height: 48px;
+}
+
+.header-actions a:hover {
+  text-decoration: none;
 }
 
 .chapter-nav {
@@ -315,7 +356,7 @@ hr {
 
 @media (max-width: 720px) {
   .page-shell {
-    padding: 16px;
+    padding: 18px;
   }
 
   .hero,

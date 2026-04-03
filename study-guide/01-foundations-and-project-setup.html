@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
 </head>
 <body>
   <div class="page-shell">
@@ -23,7 +23,10 @@
         <ul>
           <li><a href="#purpose">Project purpose</a></li>
           <li><a href="#stack">Technology stack</a></li>
+          <li><a href="#installation">Installation guide</a></li>
           <li><a href="#folder">Folder structure</a></li>
+          <li><a href="#file-map">Detailed file map</a></li>
+          <li><a href="#start-project">How to start the project</a></li>
           <li><a href="#startup">How startup works</a></li>
           <li><a href="#build-order">Recommended build order</a></li>
           <li><a href="#why-csv">Why CSV first</a></li>
@@ -70,8 +73,35 @@
             </table>
           </section>
 
+          <section id="installation">
+            <h2>3. Installation Guide and Required Tools</h2>
+            <p>If you are starting from zero, the easiest way to succeed is to install the small set of tools this project depends on and to understand what each one does for you.</p>
+            <table>
+              <thead>
+                <tr><th>Tool</th><th>Why you need it</th><th>How to verify it</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Node.js 18+</td><td>Runs the server, tests, and package scripts.</td><td><code>node -v</code> and <code>npm -v</code></td></tr>
+                <tr><td>Git</td><td>Tracks the project history and lets you create checkpoints, commits, and pushes.</td><td><code>git --version</code></td></tr>
+                <tr><td>VS Code</td><td>Comfortable editor for HTML, CSS, JavaScript, Markdown, and terminal work.</td><td>Open the folder and confirm the integrated terminal works.</td></tr>
+                <tr><td>Modern browser</td><td>Runs the dashboard, Swagger UI, and study guide.</td><td>Open <code>http://localhost:3000</code> once the app is running.</td></tr>
+              </tbody>
+            </table>
+            <p>To set up the project on a fresh machine, the simplest sequence is:</p>
+            <ol>
+              <li>Install Node.js from the official website.</li>
+              <li>Install Git if it is not already available.</li>
+              <li>Clone the repository or copy the project folder.</li>
+              <li>Open the folder in VS Code.</li>
+              <li>Run <code>npm install</code> to install the dependency declared in <code>package.json</code>.</li>
+            </ol>
+            <div class="callout">
+              <p><strong>What npm install does here:</strong> it reads <code>package.json</code>, downloads <code>better-sqlite3</code>, and creates <code>node_modules/</code> so the backend can mirror data into SQLite.</p>
+            </div>
+          </section>
+
           <section id="folder">
-            <h2>3. Folder Structure and Why It Matters</h2>
+            <h2>4. Folder Structure and Why It Matters</h2>
             <p>At the beginning, the project had only a few root files. As it grew, the backend was modularized and the repository gained clearer structure.</p>
             <pre><code>todo/
   app.js
@@ -108,10 +138,63 @@
               <li><code>scripts/</code>: development utilities, especially tests</li>
               <li><code>study-guide/</code>: learning material kept separate from the app</li>
             </ul>
+            <p>This structure matters because it lowers confusion. A student or teammate can tell where to look for layout, styling, browser logic, routing, persistence, testing, and documentation without opening every file randomly.</p>
+          </section>
+
+          <section id="file-map">
+            <h2>5. Detailed File Map and Responsibilities</h2>
+            <table>
+              <thead>
+                <tr><th>File or folder</th><th>Responsibility</th><th>Why it exists</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>index.html</code></td><td>Main dashboard markup</td><td>Defines the visible app shell, forms, cards, filters, templates, and panel structure.</td></tr>
+                <tr><td><code>styles.css</code></td><td>Main app styling</td><td>Holds the theme tokens, layout rules, pills, table view, cards, transitions, chart styles, and responsive behavior.</td></tr>
+                <tr><td><code>app.js</code></td><td>Frontend behavior</td><td>Owns browser state, fetch calls, rendering, filtering, sorting, localStorage, view modes, chart generation, and interaction logic.</td></tr>
+                <tr><td><code>server.js</code></td><td>Server bootstrap</td><td>Starts the HTTP server, serves static files, exposes docs, and delegates API requests to routes.</td></tr>
+                <tr><td><code>routes/todos.js</code></td><td>API route handling</td><td>Keeps endpoint-specific request routing out of the bootstrap file.</td></tr>
+                <tr><td><code>services/csvService.js</code></td><td>CSV persistence</td><td>Reads, writes, escapes, and parses the CSV storage file.</td></tr>
+                <tr><td><code>services/todoService.js</code></td><td>Business logic</td><td>Implements CRUD, grouping, import/export, summaries, and storage status behavior.</td></tr>
+                <tr><td><code>utils/http.js</code></td><td>HTTP helpers</td><td>Centralizes JSON responses and request body handling.</td></tr>
+                <tr><td><code>utils/validation.js</code></td><td>Validation and normalization</td><td>Protects the backend from malformed payloads and invalid imported data.</td></tr>
+                <tr><td><code>sqliteService.js</code></td><td>SQLite mirror</td><td>Initializes the database, syncs CSV data into SQLite, and tracks last sync status.</td></tr>
+                <tr><td><code>openapi.json</code></td><td>OpenAPI description</td><td>Documents the REST API in a standard machine-readable format.</td></tr>
+                <tr><td><code>docs.html</code></td><td>Swagger UI page</td><td>Displays interactive API documentation and testing controls in the browser.</td></tr>
+                <tr><td><code>readme-viewer.html</code></td><td>README preview page</td><td>Renders the Markdown README as styled documentation for easier reading in the browser.</td></tr>
+                <tr><td><code>README.md</code></td><td>Repository documentation</td><td>Explains the project publicly on GitHub and locally.</td></tr>
+                <tr><td><code>scripts/run-tests.js</code></td><td>Automated tests</td><td>Provides a lightweight backend test suite without requiring a larger test framework.</td></tr>
+                <tr><td><code>study-guide/</code></td><td>Learning material</td><td>Separates tutorial content from production app files so the app stays clean.</td></tr>
+                <tr><td><code>data/</code></td><td>Persisted app data</td><td>Stores the CSV source of truth and the mirrored SQLite database file.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="start-project">
+            <h2>6. How To Start The Project Clearly</h2>
+            <p>A beginner often knows the files are present but still feels unsure about the exact startup sequence. Use this process every time:</p>
+            <ol>
+              <li>Open a terminal in the project root.</li>
+              <li>Run <code>npm install</code> once after cloning or when dependencies change.</li>
+              <li>Run <code>npm start</code> to start the Node server.</li>
+              <li>Wait for the server message that shows the local URL.</li>
+              <li>Open <code>http://localhost:3000</code> in your browser.</li>
+              <li>Optionally open <code>http://localhost:3000/docs</code> for Swagger UI and <code>http://localhost:3000/study-guide</code> for the companion lessons.</li>
+            </ol>
+            <p>The most important URLs to remember are:</p>
+            <ul>
+              <li><code>http://localhost:3000</code> for the app</li>
+              <li><code>http://localhost:3000/docs</code> for Swagger UI</li>
+              <li><code>http://localhost:3000/openapi.json</code> for the OpenAPI file</li>
+              <li><code>http://localhost:3000/readme</code> for the README preview</li>
+              <li><code>http://localhost:3000/study-guide</code> for the full tutorial companion</li>
+            </ul>
+            <div class="note">
+              <p><strong>Practical tip:</strong> if you change backend files, restart the server. If you only change frontend HTML, CSS, or JavaScript, often a browser refresh is enough.</p>
+            </div>
           </section>
 
           <section id="startup">
-            <h2>4. How Startup Works</h2>
+            <h2>7. How Startup Works</h2>
             <p>When you run <code>npm start</code>, Node executes <code>server.js</code>. That file is now deliberately small. Its job is to:</p>
             <ol>
               <li>ensure storage files exist</li>
@@ -122,10 +205,11 @@
               <li>send API requests to the route handler</li>
             </ol>
             <p>This is a clean pattern because startup logic stays separate from endpoint logic.</p>
+            <p>From a teaching perspective, this is a powerful design choice. It means you can study startup, routing, business logic, CSV persistence, validation, and docs as separate concerns instead of trying to understand everything in one giant file.</p>
           </section>
 
           <section id="build-order">
-            <h2>5. Recommended Build Order From Zero</h2>
+            <h2>8. Recommended Build Order From Zero</h2>
             <p>If you were teaching someone from nothing, the order should be practical:</p>
             <ol>
               <li>Create <code>index.html</code>, <code>styles.css</code>, and <code>app.js</code>.</li>
@@ -145,14 +229,14 @@
           </section>
 
           <section id="why-csv">
-            <h2>6. Why CSV First, Then SQLite</h2>
+            <h2>9. Why CSV First, Then SQLite</h2>
             <p>CSV was chosen first because it is extremely transparent. A beginner can open the file and inspect exactly what is stored. That gives immediate feedback and reduces fear around persistence.</p>
             <p>SQLite was added later because it introduces better structure and a more realistic database story, while still staying local and lightweight.</p>
             <p>That storage strategy teaches an important software lesson: <strong>you do not need the final architecture on day one</strong>. You can evolve your design as the product proves its needs.</p>
           </section>
 
           <section id="environment">
-            <h2>7. Environment and Tools</h2>
+            <h2>10. Environment and Tools</h2>
             <p>To recreate the project comfortably, you should understand the surrounding tools as well:</p>
             <ul>
               <li><strong>VS Code:</strong> editing, terminal, Markdown preview, source control panel.</li>
@@ -166,11 +250,12 @@
         </article>
 
         <nav class="chapter-nav">
-          <a href="index.html">Back to study guide index</a>
-          <a href="02-html-structure-and-dashboard-layout.html">Next lesson: HTML structure</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/02-html-structure-and-dashboard-layout.html">Next lesson: HTML structure</a>
         </nav>
       </main>
     </div>
   </div>
 </body>
 </html>
+
