@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 25: How To Read A Codebase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 25</p>
+      <h1>How To Read A Codebase</h1>
+      <p class="kicker muted">Learn a calm method for studying an unfamiliar project without overwhelm by moving from the big picture to one feature at a time.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#fear">Why codebases feel overwhelming</a></li>
+          <li><a href="#order">The reading order</a></li>
+          <li><a href="#feature-trace">How to trace one feature</a></li>
+          <li><a href="#questions">Questions to ask as you read</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="fear">
+            <h2>1. Why Codebases Feel Overwhelming</h2>
+            <p>Most codebases feel overwhelming when you try to understand every file at the same time. That creates noise instead of clarity.</p>
+            <p>A better goal is simpler: first understand the shape of the system, then follow one feature through it.</p>
+            <div class="callout">
+              <p><strong>Key reading principle:</strong> do not begin with line-by-line detail. Begin with the system map, then zoom in.</p>
+            </div>
+          </section>
+
+          <section id="order">
+            <h2>2. The Best Reading Order</h2>
+            <p>For this project, a strong reading order looks like this:</p>
+            <ol>
+              <li>read the README for goals and features</li>
+              <li>open the study-guide index for the mental map</li>
+              <li>inspect <code>index.html</code> to see the visible structure</li>
+              <li>inspect <code>app.js</code> to understand state and rendering</li>
+              <li>inspect <code>server.js</code> and <code>routes/todos.js</code> to understand request entry points</li>
+              <li>inspect services and utilities to understand deeper behavior</li>
+            </ol>
+            <p>This works because it follows the same path a user and a request both take through the app.</p>
+          </section>
+
+          <section id="feature-trace">
+            <h2>3. How To Trace One Feature End To End</h2>
+            <p>Pick one feature. For example: deleting a task.</p>
+            <ol>
+              <li>find the delete button in the markup</li>
+              <li>find the event handler in <code>app.js</code></li>
+              <li>find the request sent to the API</li>
+              <li>find the matching backend route</li>
+              <li>find the service function that performs the delete</li>
+              <li>find the CSV and SQLite write behavior</li>
+              <li>return to the frontend and see how the list refreshes</li>
+            </ol>
+            <p>This is one of the strongest habits in software learning. Feature tracing turns a large codebase into a guided path.</p>
+            <pre><code>UI click
+  -&gt; app.js event
+  -&gt; fetch('/api/todos/:id', { method: 'DELETE' })
+  -&gt; routes/todos.js
+  -&gt; todoService.deleteTodo()
+  -&gt; csvService + sqliteService
+  -&gt; frontend refresh</code></pre>
+          </section>
+
+          <section id="questions">
+            <h2>4. Questions To Ask As You Read</h2>
+            <ul>
+              <li>What responsibility does this file own?</li>
+              <li>What data comes in?</li>
+              <li>What data goes out?</li>
+              <li>What other file does it depend on?</li>
+              <li>Is this file UI, state, routing, validation, or storage?</li>
+              <li>What would break if I changed this line?</li>
+            </ul>
+            <p>These questions keep reading active. They turn code reading from passive scanning into real understanding.</p>
+          </section>
+
+          <section id="mistakes">
+            <h2>5. Common Mistakes</h2>
+            <ul>
+              <li><strong>Reading every file with equal weight:</strong> not all files are equally important at the start.</li>
+              <li><strong>Jumping straight into implementation detail:</strong> mental maps should come first.</li>
+              <li><strong>Ignoring naming and structure:</strong> file names often already describe responsibilities.</li>
+              <li><strong>Not tracing a single feature end-to-end:</strong> this is the fastest path to real understanding.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>6. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Choose one feature in the app and write the file-by-file path you would follow to understand it from UI to storage.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A good answer should follow one feature in order, not list unrelated files.</p>
+                <pre><code>Example: theme switching
+
+1. index.html
+- find the theme switch control
+
+2. app.js
+- find the event listener
+- find where localStorage is updated
+- find where the theme class or dataset changes
+
+3. styles.css
+- inspect the token changes between dark and light mode
+
+4. reload the page
+- verify saved preference is restored from localStorage</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should read like a route through the codebase. The strongest answers move from visible UI, to behavior, to persistence, to styling when relevant.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can choose one feature and trace it confidently through markup, JavaScript, backend, and storage when needed, you are learning how to read real codebases effectively.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/24-debugging-workflows.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

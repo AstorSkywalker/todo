@@ -121,8 +121,18 @@ ORACLE_WALLET_PATH=...</code></pre>
             <p>This is a production-grade design habit: behavior changes through configuration, not by editing source code directly.</p>
           </section>
 
+          <section id="mistakes">
+            <h2>7. Common Mistakes</h2>
+            <ul>
+              <li><strong>Trying to jump directly from CSV to production Oracle:</strong> a staged migration is much safer.</li>
+              <li><strong>Hardcoding credentials:</strong> future database work should move through environment-based configuration.</li>
+              <li><strong>Coupling storage logic too tightly to routes:</strong> repository-style thinking will make the transition easier.</li>
+              <li><strong>Treating Oracle as only an installation detail:</strong> the real work is also architectural and operational.</li>
+            </ul>
+          </section>
+
           <section id="exercise">
-            <h2>7. Exercise and Checkpoint</h2>
+            <h2>8. Exercise and Checkpoint</h2>
             <div class="exercise-stack">
               <div class="exercise-card">
                 <h3>Problem</h3>
