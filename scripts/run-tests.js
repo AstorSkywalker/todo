@@ -34,6 +34,18 @@ async function requestJson(url, options) {
   return { response, data };
 }
 
+async function seedTasks(items) {
+  for (const item of items) {
+    const { response } = await requestJson(`${baseUrl}/api/todos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item)
+    });
+
+    assert.equal(response.status, 201);
+  }
+}
+
 async function runTest(name, fn) {
   try {
     resetStorage();
@@ -197,15 +209,7 @@ async function main() {
       }
     ];
 
-    for (const payload of payloads) {
-      const { response } = await requestJson(`${baseUrl}/api/todos`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      assert.equal(response.status, 201);
-    }
+    await seedTasks(payloads);
 
     const storage = await requestJson(`${baseUrl}/api/todos/storage`);
     assert.equal(storage.response.status, 200);
@@ -258,6 +262,166 @@ async function main() {
     assert.equal(exported.status, 200);
     assert.equal(exportedBody.items.length, 2);
     assert.equal(exportedBody.items[0].title, 'Imported one');
+  });
+
+  await runTest('grouping endpoint returns grouped totals and rejects invalid groups', async () => {
+    await seedTasks([
+      {
+        title: 'API docs',
+        description: '',
+        status: 'pending',
+        priority: 'medium',
+        category: 'Docs',
+        dueDate: '2026-04-13'
+      },
+      {
+        title: 'Ship API',
+        description: '',
+        status: 'in_progress',
+        priority: 'high',
+        category: 'Backend',
+        dueDate: '2026-04-14'
+      },
+      {
+        title: 'Retrospective',
+        description: '',
+        status: 'pending',
+        priority: 'low',
+        category: 'Docs',
+        dueDate: '2026-04-15'
+      }
+    ]);
+
+    const grouped = await requestJson(`${baseUrl}/api/todos/group?by=category`);
+    assert.equal(grouped.response.status, 200);
+    const docsGroup = grouped.data.groups.find((group) => group.value === 'Docs');
+    const backendGroup = grouped.data.groups.find((group) => group.value === 'Backend');
+    assert.equal(docsGroup.total, 2);
+    assert.equal(backendGroup.total, 1);
+
+    const invalid = await requestJson(`${baseUrl}/api/todos/group?by=owner`);
+    assert.equal(invalid.response.status, 400);
+    assert.match(invalid.data.error, /Invalid by parameter/i);
+  });
+
+  await runTest('list endpoint filters by search, status, priority, and category', async () => {
+    await seedTasks([
+      {
+        title: 'Review keyboard flow',
+        description: 'Accessibility pass',
+        status: 'in_progress',
+        priority: 'high',
+        category: 'Accessibility',
+        dueDate: '2026-04-18'
+      },
+      {
+        title: 'Publish release notes',
+        description: 'Docs for rollout',
+        status: 'pending',
+        priority: 'medium',
+        category: 'Docs',
+        dueDate: '2026-04-19'
+      },
+      {
+        title: 'Fix CSV export',
+        description: 'Backend bugfix',
+        status: 'done',
+        priority: 'high',
+        category: 'Backend',
+        dueDate: '2026-04-20'
+      }
+    ]);
+
+    const bySearch = await requestJson(`${baseUrl}/api/todos?search=keyboard`);
+    assert.equal(bySearch.response.status, 200);
+    assert.equal(bySearch.data.items.length, 1);
+    assert.equal(bySearch.data.items[0].category, 'Accessibility');
+
+    const byStatusPriority = await requestJson(`${baseUrl}/api/todos?status=in_progress&priority=high`);
+    assert.equal(byStatusPriority.response.status, 200);
+    assert.equal(byStatusPriority.data.items.length, 1);
+    assert.equal(byStatusPriority.data.items[0].title, 'Review keyboard flow');
+
+    const byCategory = await requestJson(`${baseUrl}/api/todos?category=Docs`);
+    assert.equal(byCategory.response.status, 200);
+    assert.equal(byCategory.data.items.length, 1);
+    assert.equal(byCategory.data.items[0].title, 'Publish release notes');
+  });
+
+  await runTest('API returns expected errors for invalid requests', async () => {
+    const invalidCreate = await requestJson(`${baseUrl}/api/todos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Broken status',
+        description: '',
+        status: 'started',
+        priority: 'medium',
+        category: 'QA',
+        dueDate: '2026-04-18'
+      })
+    });
+    assert.equal(invalidCreate.response.status, 400);
+
+    const missingUpdate = await requestJson(`${baseUrl}/api/todos/not-found-id`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: 'Does not exist',
+        description: '',
+        status: 'pending',
+        priority: 'low',
+        category: 'General',
+        dueDate: '2026-04-18'
+      })
+    });
+    assert.equal(missingUpdate.response.status, 404);
+
+    const missingDelete = await requestJson(`${baseUrl}/api/todos/not-found-id`, {
+      method: 'DELETE'
+    });
+    assert.equal(missingDelete.response.status, 404);
+
+    const invalidImport = await requestJson(`${baseUrl}/api/todos/import`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        format: 'xml',
+        mode: 'append',
+        content: '<todos />'
+      })
+    });
+    assert.equal(invalidImport.response.status, 400);
+
+    const invalidExport = await requestJson(`${baseUrl}/api/todos/export?format=xml`);
+    assert.equal(invalidExport.response.status, 400);
+  });
+
+  await runTest('CSV import/export preserves quoted text and commas', async () => {
+    const csvContent = [
+      'id,title,description,status,priority,category,dueDate,createdAt,updatedAt',
+      'abc123,"Quoted task","Keep ""quoted"" values, commas, and notes",pending,high,Backend,2026-04-22,2026-04-03T10:00:00.000Z,2026-04-03T10:00:00.000Z'
+    ].join('\n');
+
+    const imported = await requestJson(`${baseUrl}/api/todos/import`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        format: 'csv',
+        mode: 'replace',
+        content: csvContent
+      })
+    });
+
+    assert.equal(imported.response.status, 200);
+    assert.equal(imported.data.imported, 1);
+
+    const exported = await fetch(`${baseUrl}/api/todos/export?format=csv`);
+    const exportedBody = await exported.text();
+
+    assert.equal(exported.status, 200);
+    assert.match(exportedBody, /"Keep ""quoted"" values, commas, and notes"/);
+    assert.match(exportedBody, /abc123,Quoted task,/);
   });
 
   await new Promise((resolve, reject) => {
