@@ -11,6 +11,14 @@ Aplicacion To Do moderna con persistencia en archivo CSV, interfaz light/dark y 
 - Agrupacion de resultados por estado, prioridad o categoria
 - Fechas mostradas en formato de Honduras (`dd/mm/aaaa` en la interfaz)
 
+## Tecnologias usadas
+
+- HTML5
+- CSS3
+- JavaScript vanilla
+- Node.js
+- CSV como almacenamiento local
+
 ## Estructura del proyecto
 
 - [index.html](c:\Users\Nelson\Documents\GitHub\todo\index.html): estructura principal de la interfaz
@@ -241,9 +249,31 @@ curl "http://localhost:3000/api/todos/group?by=status"
 - Los menus y la fecha se adaptan al tema claro/oscuro
 - La UI traduce al espanol los estados y prioridades visibles
 
-## Ideas para siguientes pasos
+## Roadmap
+
+- [x] CRUD completo de tareas
+- [x] Persistencia en CSV
+- [x] Tema claro y oscuro
+- [x] Filtros y agrupacion de tareas
+- [x] Documentacion basica de la API
+- [x] Ejemplos `curl`
+- [x] Validacion visual de fechas invalidas
+- [ ] Auto-refresh cuando cambie el CSV
+- [ ] Swagger / OpenAPI
+- [ ] Importar y exportar tareas
+- [ ] Tests automatizados
+- [ ] Migracion opcional a SQLite
+
+## Posibles mejoras
 
 - Agregar Swagger o OpenAPI para documentar la API
+- Detectar cambios del archivo CSV en tiempo real
 - Agregar exportacion/importacion de CSV
+- Resaltar tareas vencidas o proximas a vencer
 - Agregar autenticacion
 - Agregar tests automatizados
+- Migrar de CSV a SQLite si el proyecto crece
+
+## Licencia
+
+Este proyecto puede distribuirse bajo la licencia MIT.
