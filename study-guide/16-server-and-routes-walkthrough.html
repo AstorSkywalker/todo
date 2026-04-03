@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 16 - server.js and routes Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 16</p>
+      <h1>Line-by-Line Walkthrough: server.js and routes</h1>
+      <p class="muted kicker">This lesson reads the backend entry point and route layer as real code, not just architecture diagrams. The goal is to understand what happens from startup to HTTP branching to JSON responses.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#imports">Imports and mental model</a></li>
+          <li><a href="#public-files">Static file map</a></li>
+          <li><a href="#create-app-server">createAppServer()</a></li>
+          <li><a href="#static-serving">serveStaticFile()</a></li>
+          <li><a href="#route-file">routes/todos.js walkthrough</a></li>
+          <li><a href="#patterns">Important backend patterns</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="imports">
+            <h2>1. Imports and Mental Model</h2>
+            <pre><code>const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const { URL } = require('url');</code></pre>
+            <p>The first thing to notice is that this server is intentionally lightweight. It does not use Express. That means every line teaches more about how Node's built-in HTTP server works.</p>
+            <pre><code>const { handleTodosApi } = require('./routes/todos');
+const { sendJson } = require('./utils/http');</code></pre>
+            <p>These imports already tell a story:</p>
+            <ul>
+              <li><code>handleTodosApi</code> owns the todo routes</li>
+              <li><code>sendJson</code> standardizes API responses</li>
+              <li>the server entry point delegates instead of doing everything itself</li>
+            </ul>
+          </section>
+
+          <section id="public-files">
+            <h2>2. The Static File Map</h2>
+            <pre><code>const PUBLIC_FILES = {
+  '/': 'index.html',
+  '/docs': 'docs.html',
+  '/study-guide': 'study-guide/index.html',
+  '/openapi.json': 'openapi.json',
+  '/styles.css': 'styles.css',
+  '/app.js': 'app.js'
+};</code></pre>
+            <p>This object is a simple router for static assets. Instead of a framework abstraction, the app keeps a small explicit map. That makes it easy to teach and easy to inspect.</p>
+            <p>The design lesson here is clarity over cleverness. A small explicit object is often better than a complicated automatic system in a learning project.</p>
+          </section>
+
+          <section id="create-app-server">
+            <h2>3. Understanding <code>createAppServer()</code></h2>
+            <pre><code>function createAppServer() {
+  ensureDataFile();
+  initializeSqlite();
+  syncTodosToSqlite(readTodos());
+
+  return http.createServer(async (req, res) =&gt; {
+    const requestUrl = new URL(req.url, `http://${req.headers.host}`);
+    ...
+  });
+}</code></pre>
+            <p>This function does two jobs:</p>
+            <ol>
+              <li>prepare storage before serving requests</li>
+              <li>return a server instance with request handling logic</li>
+            </ol>
+            <p>That startup sequence is important. If the CSV file does not exist or SQLite is not initialized, the server could start in a broken state. Good startup code prevents later surprises.</p>
+            <pre><code>if (requestUrl.pathname.startsWith('/api/todos')) {
+  await handleTodosApi(req, res, requestUrl);
+  return;
+}</code></pre>
+            <p>This is the API gate. Any request beginning with <code>/api/todos</code> leaves the bootstrap file and enters the route layer.</p>
+          </section>
+
+          <section id="static-serving">
+            <h2>4. How <code>serveStaticFile()</code> Works</h2>
+            <pre><code>const filePath = path.join(__dirname, fileName);
+const normalizedPath = path.normalize(filePath);
+const workspacePath = path.normalize(__dirname + path.sep);</code></pre>
+            <p>This part is about safety. The server normalizes paths before reading files so a malformed request cannot wander outside the project directory.</p>
+            <pre><code>const contentType = {
+  '.html': 'text/html; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.js': 'application/javascript; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.md': 'text/markdown; charset=utf-8'
+}[extension] || 'text/plain; charset=utf-8';</code></pre>
+            <p>This mapping is one of those small but important details. Browsers need the right content type to interpret files correctly.</p>
+          </section>
+
+          <section id="route-file">
+            <h2>5. Reading <code>routes/todos.js</code></h2>
+            <pre><code>if (req.method === 'GET' &amp;&amp; pathParts[2] === 'storage') {
+  sendJson(res, 200, getStorageStatus());
+  return;
+}</code></pre>
+            <p>The route file is organized as a sequence of method/path checks. Each block answers a very specific question:</p>
+            <ul>
+              <li>Is this an export request?</li>
+              <li>Is this a storage status request?</li>
+              <li>Is this an import request?</li>
+              <li>Is this a list request?</li>
+              <li>Is this a group request?</li>
+              <li>Is this an item-by-id request?</li>
+            </ul>
+            <pre><code>const result = createTodo(body);
+
+if (result.error) {
+  sendJson(res, result.statusCode, { error: result.error });
+  return;
+}
+
+sendJson(res, result.statusCode, result.item);</code></pre>
+            <p>This pattern appears repeatedly and it is a good one to learn: route handlers ask services for a result object, then translate that object into an HTTP response.</p>
+          </section>
+
+          <section id="patterns">
+            <h2>6. Important Backend Patterns To Notice</h2>
+            <table>
+              <thead>
+                <tr><th>Pattern</th><th>What it means</th><th>Why it helps</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Early returns</td><td>Each route branch ends quickly once matched.</td><td>Keeps control flow readable.</td></tr>
+                <tr><td>Service result objects</td><td>Services return data plus status or error info.</td><td>Keeps routes thin and predictable.</td></tr>
+                <tr><td>Shared helpers</td><td><code>readBody</code> and <code>sendJson</code> are reused.</td><td>Reduces repetition.</td></tr>
+                <tr><td>Startup orchestration</td><td>Initialization happens before request handling.</td><td>Makes the app safer to boot.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Add a tiny static route so visiting <code>/ping.txt</code> returns a plain text response saying <code>TaskFlow is alive</code>.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>The quickest way is to intercept that path in <code>createAppServer()</code> before the static file mapping.</p>
+                <pre><code>if (requestUrl.pathname === '/ping.txt') {
+  res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
+  res.end('TaskFlow is alive');
+  return;
+}</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Opening <code>/ping.txt</code> in the browser should show a simple line of plain text. That confirms you understand how requests are branched before the rest of the routing system runs.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how requests move from <code>server.js</code> into <code>routes/todos.js</code> and back out as JSON, you understand the outer shell of the backend.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/15-dashboard-design-principles.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/17-services-validation-and-storage-walkthrough.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 18 - Chart Masterclass</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 18</p>
+      <h1>Chart Masterclass</h1>
+      <p class="muted kicker">This lesson teaches the workload chart as both engineering and design: how visible tasks become day buckets, how those buckets become SVG geometry, and how geometry becomes a modern glowing chart.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#goal">What the chart is trying to show</a></li>
+          <li><a href="#buckets">Bucket generation</a></li>
+          <li><a href="#geometry">Turning data into geometry</a></li>
+          <li><a href="#path">Smooth SVG path generation</a></li>
+          <li><a href="#layers">Line, area, blur, dots, labels</a></li>
+          <li><a href="#responsiveness">Responsiveness and why dots are HTML overlays</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="goal">
+            <h2>1. What The Chart Is Actually Showing</h2>
+            <p>The workload chart is not a random decoration. It answers a real question:</p>
+            <p><strong>How many visible tasks are due on each of the next 14 days?</strong></p>
+            <p>That matters because the chart must always reflect the currently visible task list, not every task in storage. This is why filters and chart rendering are connected.</p>
+          </section>
+
+          <section id="buckets">
+            <h2>2. Bucket Generation</h2>
+            <pre><code>function buildWorkloadBuckets(items) {
+  const today = startOfDay(new Date());
+  const buckets = Array.from({ length: 14 }, (_, index) =&gt; {
+    const date = new Date(today);
+    date.setDate(today.getDate() + index);
+    return {
+      key: date.toISOString().slice(0, 10),
+      label: ...,
+      shortLabel: ...,
+      total: 0
+    };
+  });
+}</code></pre>
+            <p>This function creates 14 day-buckets before it looks at any tasks. Then it walks through the visible items and increments the matching bucket.</p>
+            <p>The chart therefore begins as a data-shaping problem, not a drawing problem.</p>
+          </section>
+
+          <section id="geometry">
+            <h2>3. Turning Data Into Geometry</h2>
+            <pre><code>const width = 760;
+const height = 145;
+const paddingX = 26;
+const paddingTop = 18;
+const paddingBottom = 24;</code></pre>
+            <p>These values define the internal coordinate system. The chart cannot draw intelligently until it knows the drawing area.</p>
+            <pre><code>const points = buckets.map((bucket, index) =&gt; ({
+  x: paddingX + (index / (buckets.length - 1)) * chartWidth,
+  y: paddingTop + (1 - bucket.total / peak) * chartHeight
+}));</code></pre>
+            <p>This is the key chart formula:</p>
+            <ul>
+              <li><code>x</code> comes from the bucket position in time</li>
+              <li><code>y</code> comes from the bucket total relative to the peak</li>
+            </ul>
+            <p>In other words, the chart is just data translated into coordinates.</p>
+          </section>
+
+          <section id="path">
+            <h2>4. Smooth SVG Path Generation</h2>
+            <pre><code>function createSmoothPath(points) {
+  if (points.length === 1) {
+    return `M ${points[0].x} ${points[0].y}`;
+  }
+
+  let path = `M ${points[0].x} ${points[0].y}`;
+
+  for (let index = 0; index &lt; points.length - 1; index += 1) {
+    const current = points[index];
+    const next = points[index + 1];
+    const controlX = (current.x + next.x) / 2;
+    path += ` C ${controlX} ${current.y}, ${controlX} ${next.y}, ${next.x} ${next.y}`;
+  }
+
+  return path;
+}</code></pre>
+            <p>This function is one of the most beautiful parts of the app because it turns simple points into a smooth curve with cubic Bezier commands.</p>
+            <p>The learning lesson here is big: advanced visuals often come from a few lines of geometry, not from giant libraries.</p>
+          </section>
+
+          <section id="layers">
+            <h2>5. The Chart Is Built In Layers</h2>
+            <ol>
+              <li>background shell card</li>
+              <li>grid lines</li>
+              <li>blurred area</li>
+              <li>main area fill</li>
+              <li>line stroke</li>
+              <li>fixed-size overlay dots</li>
+              <li>labels underneath</li>
+            </ol>
+            <pre><code>&lt;svg id="workloadChart" class="workload-chart" viewBox="0 0 760 145"&gt;&lt;/svg&gt;
+&lt;div id="workloadChartDots" class="chart-dots-layer"&gt;&lt;/div&gt;
+&lt;div id="workloadChartLabels" class="chart-labels"&gt;&lt;/div&gt;</code></pre>
+            <p>That structure is why the chart feels polished. It is not just one path in an SVG. It is a stack of coordinated visual layers.</p>
+          </section>
+
+          <section id="responsiveness">
+            <h2>6. Responsiveness and Why The Dots Are HTML</h2>
+            <p>Originally the dots were SVG circles, but resizing made them stretch or shrink visually in ways that looked wrong. The fix was to move dots into an HTML overlay.</p>
+            <pre><code>&lt;div id="workloadChartDots" class="chart-dots-layer"&gt;&lt;/div&gt;</code></pre>
+            <p>Why is this better?</p>
+            <ul>
+              <li>the SVG can stay responsive</li>
+              <li>the dots can keep a stable pixel size</li>
+              <li>the chart still feels aligned because the dots are positioned from the same computed coordinates</li>
+            </ul>
+            <div class="callout">
+              <p><strong>Important chart lesson:</strong> sometimes the best visual solution is hybrid. The line can live in SVG while markers live in HTML.</p>
+            </div>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Change the chart from a 14-day window to a 7-day window.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Update the bucket generator first, because the rest of the chart depends on the number of buckets it receives.</p>
+                <pre><code>const buckets = Array.from({ length: 7 }, (_, index) =&gt; {
+  const date = new Date(today);
+  date.setDate(today.getDate() + index);
+  return {
+    key: date.toISOString().slice(0, 10),
+    label: ...,
+    shortLabel: ...,
+    total: 0
+  };
+});</code></pre>
+                <p>You do not need to rewrite the geometry formulas because they already adapt to the bucket count.</p>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>The chart should show only seven labels along the bottom, and the line should redistribute itself across the full width of the chart instead of leaving unused space.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how buckets, points, paths, area fill, blur, and overlay dots work together, you really understand how the chart was built.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/17-services-validation-and-storage-walkthrough.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

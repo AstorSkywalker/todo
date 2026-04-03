@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 17 - Services, Validation, and Storage Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 17</p>
+      <h1>Line-by-Line Walkthrough: Services, Validation, and Storage</h1>
+      <p class="muted kicker">This lesson focuses on the backend's working core: the todo service, CSV helpers, validation rules, import/export logic, and the CSV-to-SQLite mirror relationship.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#list-todos">listTodos()</a></li>
+          <li><a href="#crud">Create, update, delete</a></li>
+          <li><a href="#grouping">Grouping and storage status</a></li>
+          <li><a href="#import-export">Import and export</a></li>
+          <li><a href="#csv-service">CSV service walkthrough</a></li>
+          <li><a href="#validation">Validation helpers</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="list-todos">
+            <h2>1. Understanding <code>listTodos()</code></h2>
+            <pre><code>const todos = readTodos();
+const search = filters.search?.trim().toLowerCase();</code></pre>
+            <p>The first line loads raw data. The next lines normalize the filters so comparisons become easier and safer. Good services usually normalize inputs early.</p>
+            <pre><code>const filtered = todos.filter((todo) =&gt; {
+  const matchesSearch = !search || [todo.title, todo.description, todo.category]
+    .join(' ')
+    .toLowerCase()
+    .includes(search);
+  ...
+  return matchesSearch &amp;&amp; matchesStatus &amp;&amp; matchesPriority &amp;&amp; matchesCategory;
+});</code></pre>
+            <p>This is a classic filter pipeline. It reads clearly because each condition has a name. That is an underrated technique when writing readable code.</p>
+          </section>
+
+          <section id="crud">
+            <h2>2. Create, Update, and Delete</h2>
+            <pre><code>const payload = normalizePayload(body);
+const validationError = validateTodo(payload);</code></pre>
+            <p>Every write operation begins the same way: normalize, validate, then mutate data. That order matters because it prevents invalid rows from reaching storage.</p>
+            <pre><code>const newTodo = {
+  id: String(Date.now()),
+  ...payload,
+  createdAt: now,
+  updatedAt: now
+};</code></pre>
+            <p>The creation logic is intentionally simple. For a learning project, a timestamp-based id is enough to keep the code approachable.</p>
+            <pre><code>todos.unshift(newTodo);
+writeTodos(todos);</code></pre>
+            <p>This shows the current storage model very clearly: everything is read into memory, changed in memory, and then rewritten to disk.</p>
+          </section>
+
+          <section id="grouping">
+            <h2>3. Grouping and Storage Status</h2>
+            <pre><code>const allowed = new Set(['status', 'priority', 'category']);</code></pre>
+            <p>This line is small, but it teaches API safety. The backend does not trust arbitrary group keys from the query string.</p>
+            <pre><code>return {
+  csv: {
+    file: DATA_FILE,
+    total: todos.length
+  },
+  sqlite: getSqliteSummary()
+};</code></pre>
+            <p>The storage status endpoint is a great example of a visibility feature. It turns architecture into observable data, which helps both debugging and learning.</p>
+          </section>
+
+          <section id="import-export">
+            <h2>4. Import and Export Logic</h2>
+            <pre><code>if (!['csv', 'json'].includes(normalizedFormat)) {
+  return { error: 'Invalid import format. Use csv or json.', statusCode: 400 };
+}</code></pre>
+            <p>Import and export are full of validation checks because file-based features are easy places for malformed data to enter the system.</p>
+            <pre><code>const mergedTodos = normalizedMode === 'replace'
+  ? normalizedTodos
+  : [...normalizedTodos, ...todos];</code></pre>
+            <p>This one expression captures the whole append-versus-replace behavior. Code like this is worth studying because it compresses a product decision into a readable rule.</p>
+          </section>
+
+          <section id="csv-service">
+            <h2>5. Reading <code>csvService.js</code></h2>
+            <pre><code>function ensureDataFile() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+
+  if (!fs.existsSync(DATA_FILE)) {
+    const header = 'id,title,description,status,priority,category,dueDate,createdAt,updatedAt\\n';
+    fs.writeFileSync(DATA_FILE, header, 'utf8');
+  }
+}</code></pre>
+            <p>This function is a perfect example of safe startup behavior. The app guarantees the file exists before anyone tries to read it.</p>
+            <pre><code>function writeTodos(todos) {
+  fs.writeFileSync(DATA_FILE, buildCsvContent(todos), 'utf8');
+  syncTodosToSqlite(todos);
+}</code></pre>
+            <p>This line is architecturally important. It proves that CSV is still primary and SQLite is the mirror. Every CSV write pushes the same state into SQLite.</p>
+            <pre><code>function parseCsvLine(line) {
+  ...
+  if (char === '\"') {
+    if (inQuotes &amp;&amp; nextChar === '\"') {
+      current += '\"';
+      index += 1;
+    } else {
+      inQuotes = !inQuotes;
+    }
+  }
+}</code></pre>
+            <p>This parser is worth studying carefully because it demonstrates a common file-format skill: quoted commas and escaped quotes are not trivial if you have never written a parser before.</p>
+          </section>
+
+          <section id="validation">
+            <h2>6. Validation Helpers As A Shared Rulebook</h2>
+            <p>The validation helpers make backend behavior consistent. Even without opening the whole file, you should understand the purpose of each function:</p>
+            <ul>
+              <li><code>normalizePayload()</code> prepares incoming data</li>
+              <li><code>validateTodo()</code> checks business rules</li>
+              <li><code>normalizeImportedTodos()</code> cleans file-import rows and resolves ids</li>
+              <li><code>isValidIsoDate()</code> protects the backend from malformed dates</li>
+            </ul>
+            <p>When rules live together like this, tests become more focused and future storage migrations become easier.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Add a new validation rule that blocks titles shorter than 3 characters.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>This belongs in the validation helper, not scattered across multiple services.</p>
+                <pre><code>function validateTodo(payload) {
+  if (!payload.title.trim()) {
+    return 'Title is required.';
+  }
+
+  if (payload.title.trim().length &lt; 3) {
+    return 'Title must be at least 3 characters.';
+  }
+
+  ...
+}</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Trying to create a task named <code>Hi</code> should now return a <code>400</code> error with the new validation message. Longer titles should keep working normally.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how service logic, CSV helpers, and validation functions cooperate, you understand the working core of the backend.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/16-server-and-routes-walkthrough.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/18-chart-masterclass.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
