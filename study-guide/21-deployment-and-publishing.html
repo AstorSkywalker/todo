@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 21 - Deployment and Publishing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 21</p>
+      <h1>Deployment and Publishing</h1>
+      <p class="muted kicker">This lesson explains how to think about publishing the project in its current state, what works well for portfolio sharing, what gets tricky with file-based persistence, and how the deployment story changes as the storage model evolves.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#github">GitHub as publication</a></li>
+          <li><a href="#local-demo">Local demo publishing</a></li>
+          <li><a href="#live-demo">Live demo hosting</a></li>
+          <li><a href="#persistence">Why file persistence changes deployment</a></li>
+          <li><a href="#future-production">Future production path</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="github">
+            <h2>1. GitHub Is Already A Form Of Publishing</h2>
+            <p>Publishing does not always mean deploying a live URL. For a project like this, GitHub is already part of the publishing story because it provides:</p>
+            <ul>
+              <li>source code access</li>
+              <li>screenshots</li>
+              <li>README documentation</li>
+              <li>Swagger/OpenAPI references</li>
+              <li>the study guide</li>
+            </ul>
+            <p>That means the project is already portfolio-ready even before a public live deployment exists.</p>
+          </section>
+
+          <section id="local-demo">
+            <h2>2. Publishing As A Local Demo</h2>
+            <p>The simplest reliable way to demonstrate the app is still local execution:</p>
+            <pre><code>npm install
+npm start</code></pre>
+            <p>Then open:</p>
+            <ul>
+              <li><code>http://localhost:3000</code></li>
+              <li><code>http://localhost:3000/docs</code></li>
+              <li><code>http://localhost:3000/study-guide</code></li>
+            </ul>
+            <p>This is the most predictable deployment mode because the CSV file and SQLite file are fully under your control on your own machine.</p>
+          </section>
+
+          <section id="live-demo">
+            <h2>3. Live Demo Hosting</h2>
+            <p>If you want a public URL, the app needs a Node-friendly host because it is not a purely static site. Hosts that can run a Node server are much better candidates than static-only platforms.</p>
+            <table>
+              <thead>
+                <tr><th>Option</th><th>Fit for current app</th><th>Important note</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>GitHub Pages</td><td>Poor</td><td>Static only, no backend.</td></tr>
+                <tr><td>Netlify</td><td>Poor</td><td>Static-first; file persistence is not a good match.</td></tr>
+                <tr><td>Vercel</td><td>Poor</td><td>Local file persistence is not the right fit.</td></tr>
+                <tr><td>Render</td><td>Reasonable demo option</td><td>Good for Node, but persistence needs care.</td></tr>
+                <tr><td>Railway</td><td>Reasonable demo option</td><td>Good for Node, but local files are still a concern.</td></tr>
+                <tr><td>VPS / VM</td><td>Strong</td><td>More control, more operational responsibility.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="persistence">
+            <h2>4. Why File Persistence Changes Deployment</h2>
+            <p>The app currently stores its primary data in:</p>
+            <ul>
+              <li><code>data/todos.csv</code></li>
+              <li><code>data/todos.db</code> as a mirror</li>
+            </ul>
+            <p>That is excellent for local learning, but it changes the hosting story because many cloud platforms treat local disk as temporary or resettable.</p>
+            <div class="callout">
+              <p><strong>Main deployment lesson:</strong> an app can be fully valid as a local full-stack app even if its current storage strategy is not yet ideal for production hosting.</p>
+            </div>
+            <p>This is not a failure of the architecture. It is simply a natural consequence of using file-based persistence.</p>
+          </section>
+
+          <section id="future-production">
+            <h2>5. Future Production Path</h2>
+            <p>The future production story becomes stronger as the storage system evolves:</p>
+            <ol>
+              <li><strong>Current state:</strong> CSV primary, SQLite mirror</li>
+              <li><strong>Intermediate future:</strong> optional SQLite-primary reads</li>
+              <li><strong>Advanced future:</strong> Oracle Database 26ai on-prem or OCI Autonomous Database</li>
+              <li><strong>Production-ready hosting:</strong> Node app + real database + environment-based configuration</li>
+            </ol>
+            <p>This is a healthy engineering roadmap because it does not force production complexity too early, but it leaves a clear path toward it.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>6. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Write a simple publishing recommendation for the project in its current state using only three steps.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A practical answer should separate portfolio publishing from live hosting realities.</p>
+                <pre><code>1. Publish the project cleanly on GitHub with README, screenshots, Swagger docs, and study guide.
+2. Run it locally for reliable demonstrations because CSV and SQLite work best there today.
+3. Use a Node-friendly host only for a demo deployment, and move toward a real database before treating it as production-ready.</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should feel realistic and honest. A strong deployment explanation does not pretend the current storage model is perfect for production; it explains the tradeoff clearly and proposes the next step.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain the difference between publishing a portfolio project, hosting a live demo, and deploying a production-style system, you understand the deployment story of this app.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/20-utils-and-sqlite-walkthrough.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
