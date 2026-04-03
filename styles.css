@@ -96,6 +96,7 @@ button {
   gap: 24px;
   padding: 24px;
   align-items: start;
+  transition: grid-template-columns 0.32s ease, gap 0.32s ease;
 }
 
 .app-shell.sidebar-collapsed {
@@ -126,6 +127,7 @@ button {
   height: calc(100vh - 48px);
   overflow-y: auto;
   overflow-x: hidden;
+  transition: padding 0.28s ease, border-radius 0.28s ease, box-shadow 0.28s ease, background 0.28s ease;
 }
 
 .sidebar-header {
@@ -137,16 +139,19 @@ button {
 
 .sidebar-copy {
   min-width: 0;
+  transition: opacity 0.22s ease, transform 0.28s ease;
 }
 
 .sidebar-body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  transition: opacity 0.18s ease, transform 0.24s ease;
 }
 
 .sidebar-toggle {
   flex: 0 0 auto;
+  transition: transform 0.22s ease, background 0.22s ease, color 0.22s ease;
 }
 
 .sidebar-toggle .panel-toggle-icon {
@@ -166,13 +171,15 @@ button {
 .sidebar.is-collapsed .sidebar-header {
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 18px;
   min-height: 100%;
 }
 
 .sidebar.is-collapsed .sidebar-copy {
   text-align: center;
+  margin-top: auto;
+  transform: translateY(0);
 }
 
 .sidebar.is-collapsed .eyebrow {
@@ -183,6 +190,7 @@ button {
 }
 
 .sidebar.is-collapsed .sidebar-toggle {
+  order: -1;
   align-self: center;
 }
 
@@ -275,7 +283,7 @@ button {
 
 .chart-shell {
   position: relative;
-  padding: 18px 18px 12px;
+  padding: 14px 16px 10px;
   border-radius: 24px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
   border: 1px solid var(--border);
@@ -285,14 +293,14 @@ button {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 760 / 260;
+  aspect-ratio: 760 / 145;
 }
 
 .chart-dots-layer {
   position: absolute;
-  inset: 18px 18px auto 18px;
+  inset: 14px 16px auto 16px;
   height: auto;
-  aspect-ratio: 760 / 260;
+  aspect-ratio: 760 / 145;
   pointer-events: none;
 }
 
@@ -348,9 +356,9 @@ body.light .chart-dot {
   display: grid;
   grid-template-columns: repeat(14, minmax(0, 1fr));
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 6px;
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   text-align: center;
 }
 
@@ -566,13 +574,6 @@ h3 {
   gap: 14px;
 }
 
-.appearance-controls {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  align-items: center;
-}
-
 .theme-palette {
   display: flex;
   flex-direction: column;
@@ -581,6 +582,10 @@ h3 {
 
 .compact-palette {
   gap: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
 }
 
 .theme-palette label {
@@ -595,6 +600,10 @@ h3 {
 
 .compact-palette label {
   display: none;
+}
+
+.compact-palette select {
+  width: 100%;
 }
 
 .study-guide-box .secondary-button,
@@ -645,6 +654,7 @@ body.light .toggle-thumb {
 
 .icon-only-toggle {
   justify-content: center;
+  align-self: flex-start;
   min-height: 44px;
   min-width: 108px;
   padding: 8px 10px;

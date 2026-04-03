@@ -26,6 +26,8 @@
           <li><a href="#cards">Cards and surfaces</a></li>
           <li><a href="#themes">Dark/light mode</a></li>
           <li><a href="#palettes">Color scheme selector</a></li>
+          <li><a href="#kpis">Summary cards and gradients</a></li>
+          <li><a href="#chart-look">Chart visuals and glow</a></li>
           <li><a href="#compact">Compact table styling</a></li>
           <li><a href="#inputs">Inputs and pills</a></li>
           <li><a href="#motion">Transitions and motion</a></li>
@@ -80,15 +82,37 @@
               <li>shadow depth</li>
             </ul>
             <p>This gives the UI a coherent visual language without needing identical components everywhere.</p>
+            <pre><code>.glass-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+}
+
+.sidebar,
+.hero,
+.panel,
+.stat-card {
+  border-radius: 28px;
+}</code></pre>
+            <p>This is a good general dashboard technique: define one strong base card style, then let specialized components build on top of it.</p>
           </section>
 
           <section id="themes">
             <h2>4. Dark and Light Mode</h2>
             <p>The light/dark system works by toggling a class on <code>body</code>. When <code>body.light</code> is present, many CSS variables change. Components then inherit new values automatically.</p>
             <p>That is cleaner than writing entirely separate stylesheets for dark and light mode because the component rules stay mostly the same.</p>
+            <pre><code>body.light {
+  --bg: #eef3f8;
+  --surface: rgba(255, 255, 255, 0.82);
+  --text: #142136;
+  --muted: #5b6980;
+  --primary: #0e79d1;
+}</code></pre>
             <div class="callout">
               <p><strong>Core concept:</strong> theme switching becomes simple when components depend on tokens, not hardcoded colors.</p>
             </div>
+            <p>The design decision here is important if you want to build modern dashboards in general: dark mode and light mode should not feel like two unrelated products. They should feel like the same visual system expressed with different tokens.</p>
           </section>
 
           <section id="palettes">
@@ -104,10 +128,80 @@
               <li>danger/warning/success tones</li>
               <li>form control visuals</li>
             </ul>
+            <pre><code>body[data-color-scheme='cyberpunk'] {
+  --bg: #0b0b10;
+  --primary: #ffe23d;
+  --success: #00f0ff;
+  --danger: #ff4d8d;
+}</code></pre>
+            <p>That pattern is useful beyond this project. A modern dashboard often feels more custom and artistic when the palette is a top-level design system decision rather than a few random accent colors.</p>
+          </section>
+
+          <section id="kpis">
+            <h2>6. Summary Cards, Color, Gradients, and Visual Punch</h2>
+            <p>The four KPI cards at the top of the dashboard use the same structure but different accent classes. That is a classic dashboard technique because it creates consistency with variation.</p>
+            <pre><code>.stat-card {
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  inset: auto -20px -20px auto;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.accent-blue  { background: linear-gradient(135deg, rgba(79, 155, 255, 0.18), var(--surface-strong)); }
+.accent-gold  { background: linear-gradient(135deg, rgba(255, 175, 74, 0.18), var(--surface-strong)); }
+.accent-coral { background: linear-gradient(135deg, rgba(255, 104, 111, 0.16), var(--surface-strong)); }
+.accent-green { background: linear-gradient(135deg, rgba(65, 207, 147, 0.16), var(--surface-strong)); }</code></pre>
+            <p>Why does this look modern?</p>
+            <ul>
+              <li>the gradient is subtle, not loud</li>
+              <li>the accent tint sits on top of the same dark surface family</li>
+              <li>the pseudo-element bubble adds visual depth without extra HTML</li>
+              <li>the cards share one geometry, so the page feels designed, not improvised</li>
+            </ul>
+          </section>
+
+          <section id="chart-look">
+            <h2>7. How The Chart Gets Its Glow, Blur, and Modern Look</h2>
+            <p>The chart is visually modern for three main reasons:</p>
+            <ul>
+              <li>the chart lives inside a distinct shell card</li>
+              <li>the area under the line fades out with a gradient</li>
+              <li>a blurred copy of the area is drawn first to create a glow</li>
+            </ul>
+            <pre><code>.chart-shell {
+  position: relative;
+  padding: 14px 16px 10px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border);
+}
+
+.chart-area-blur {
+  fill: url(#chartAreaGradient);
+  opacity: 0.9;
+}
+
+.chart-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}</code></pre>
+            <p>This is a great dashboard lesson in general: a chart can look premium even when it is custom-built, as long as the container, color, glow, and spacing are treated as part of the design system.</p>
           </section>
 
           <section id="compact">
-            <h2>6. Compact Table-Like Styling</h2>
+            <h2>8. Compact Table-Like Styling</h2>
             <p>The compact task view is one of the most educational CSS sections because it simulates table behavior using a grid layout rather than a literal HTML table.</p>
             <p>Important concepts include:</p>
             <ul>
@@ -121,7 +215,7 @@
           </section>
 
           <section id="inputs">
-            <h2>7. Inputs, Chips, Pills, and Micro Components</h2>
+            <h2>9. Inputs, Chips, Pills, and Micro Components</h2>
             <p>Many small visual elements repeat across the app:</p>
             <ul>
               <li>status badges</li>
@@ -143,7 +237,7 @@
           </section>
 
           <section id="motion">
-            <h2>8. Transitions and Motion</h2>
+            <h2>10. Transitions and Motion</h2>
             <p>The project uses transitions in several meaningful ways:</p>
             <ul>
               <li>chevron rotation on collapsible sections</li>
@@ -152,7 +246,20 @@
               <li>theme switch thumb movement</li>
               <li>modal entrance and exit animation</li>
             </ul>
+            <pre><code>.panel-toggle-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.primary-button:hover,
+.secondary-button:hover,
+.ghost-button:hover {
+  transform: translateY(-1px);
+}</code></pre>
             <p>These are not just decorative. They help users understand state change. For example, when a panel collapses, both the arrow and the body move, so the user understands what happened.</p>
+            <p>You also noticed something important artistically: the interface has soft color transitions and motion transitions. Those two layers work together. Color gives mood. Motion gives feedback.</p>
           </section>
         </article>
 

@@ -14,7 +14,7 @@
     <aside id="sidebar" class="sidebar glass-card">
       <div class="sidebar-header">
         <div class="sidebar-copy">
-          <p class="eyebrow">TaskFlow CSV</p>
+          <p class="eyebrow">TaskFlow</p>
           <h1>Your modern list with simple persistence</h1>
           <p class="muted">CSV tasks with a synced SQLite mirror.</p>
         </div>
@@ -26,28 +26,26 @@
         <div id="sidebarBody" class="sidebar-body">
           <div class="api-box appearance-box">
             <h2>Appearance</h2>
-            <div class="appearance-controls">
-              <button id="themeToggle" class="theme-toggle icon-only-toggle" type="button" aria-label="Change theme">
-                <span class="theme-icon moon-icon" aria-hidden="true"></span>
-                <span class="toggle-track">
-                  <span class="toggle-thumb"></span>
-                </span>
-                <span class="theme-icon sun-icon" aria-hidden="true"></span>
-                <span id="themeLabel" class="visually-hidden">Dark</span>
-              </button>
+            <button id="themeToggle" class="theme-toggle icon-only-toggle" type="button" aria-label="Change theme">
+              <span class="theme-icon moon-icon" aria-hidden="true"></span>
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+              <span class="theme-icon sun-icon" aria-hidden="true"></span>
+              <span id="themeLabel" class="visually-hidden">Dark</span>
+            </button>
 
-              <div class="theme-palette compact-palette">
-                <select id="colorSchemeSelect" aria-label="Select color scheme">
-                  <option value="default">Default</option>
-                  <option value="aurora">Aurora</option>
-                  <option value="eighties">80s</option>
-                  <option value="cyberpunk">Cyberpunk</option>
-                  <option value="ember">Ember</option>
-                  <option value="forest">Forest</option>
-                  <option value="neon">Neon</option>
-                  <option value="rose">Rose Quartz</option>
-                </select>
-              </div>
+            <div class="theme-palette compact-palette">
+              <select id="colorSchemeSelect" aria-label="Select color scheme">
+                <option value="default">Default</option>
+                <option value="aurora">Aurora</option>
+                <option value="eighties">80s</option>
+                <option value="cyberpunk">Cyberpunk</option>
+                <option value="ember">Ember</option>
+                <option value="forest">Forest</option>
+                <option value="neon">Neon</option>
+                <option value="rose">Rose Quartz</option>
+              </select>
             </div>
           </div>
 
@@ -145,7 +143,7 @@
           <div id="chartBody" class="collapsible-body">
             <div class="collapsible-body-inner">
               <div class="chart-shell">
-                <svg id="workloadChart" class="workload-chart" viewBox="0 0 760 260" preserveAspectRatio="xMidYMid meet" aria-label="Task due workload chart"></svg>
+                <svg id="workloadChart" class="workload-chart" viewBox="0 0 760 145" preserveAspectRatio="xMidYMid meet" aria-label="Task due workload chart"></svg>
                 <div id="workloadChartDots" class="chart-dots-layer" aria-hidden="true"></div>
                 <div id="workloadChartLabels" class="chart-labels"></div>
               </div>

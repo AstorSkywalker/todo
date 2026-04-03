@@ -411,10 +411,10 @@ function renderWorkloadChart(items) {
   }
 
   const width = 760;
-  const height = 260;
+  const height = 145;
   const paddingX = 26;
-  const paddingTop = 24;
-  const paddingBottom = 34;
+  const paddingTop = 18;
+  const paddingBottom = 24;
   const chartWidth = width - paddingX * 2;
   const chartHeight = height - paddingTop - paddingBottom;
 

@@ -25,6 +25,7 @@
           <li><a href="#shell">App shell</a></li>
           <li><a href="#sidebar">Sidebar</a></li>
           <li><a href="#hero">Hero and stats</a></li>
+          <li><a href="#visual-dashboard">Visual dashboard composition</a></li>
           <li><a href="#form">Task form</a></li>
           <li><a href="#filters">Filters and grouping</a></li>
           <li><a href="#tasks">Task list and templates</a></li>
@@ -82,10 +83,40 @@
               <li>analytics section for the workload chart</li>
             </ol>
             <p>This structure teaches a classic dashboard principle: summary first, then analysis, then detailed work surfaces.</p>
+            <pre><code>&lt;section class="stats-grid"&gt;
+  &lt;article class="stat-card glass-card accent-blue"&gt;...&lt;/article&gt;
+  &lt;article class="stat-card glass-card accent-gold"&gt;...&lt;/article&gt;
+  &lt;article class="stat-card glass-card accent-coral"&gt;...&lt;/article&gt;
+  &lt;article class="stat-card glass-card accent-green"&gt;...&lt;/article&gt;
+&lt;/section&gt;</code></pre>
+          </section>
+
+          <section id="visual-dashboard">
+            <h2>5. How To Compose A Modern Dashboard Visually</h2>
+            <p>If you want to create cool, modern dashboards in general, the first thing to understand is visual hierarchy. This project uses a repeated pattern:</p>
+            <ol>
+              <li>global identity or controls on the left</li>
+              <li>headline and actions at the top</li>
+              <li>fast summary cards immediately below</li>
+              <li>a chart or visual analysis area after that</li>
+              <li>detailed workflow panels lower on the page</li>
+            </ol>
+            <p>That ordering matters because the eye first wants to understand <em>where it is</em>, then <em>what the numbers are</em>, then <em>what actions are possible</em>.</p>
+            <p>Cards are created as semantic wrappers with consistent classes. A dashboard card is usually just an <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, or <code>&lt;div&gt;</code> with a reusable visual class:</p>
+            <pre><code>&lt;article class="glass-card analytics-card chart-panel"&gt;
+  &lt;div class="panel-heading analytics-heading"&gt;
+    &lt;div&gt;
+      &lt;p class="eyebrow"&gt;Chart&lt;/p&gt;
+      &lt;h3&gt;Due workload curve&lt;/h3&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="chart-shell"&gt;...&lt;/div&gt;
+&lt;/article&gt;</code></pre>
+            <p>The secret is that the HTML stays structurally simple, while the CSS gives the card its personality: radius, shadow, border, background, blur, spacing, and glow.</p>
           </section>
 
           <section id="form">
-            <h2>5. Task Form HTML</h2>
+            <h2>6. Task Form HTML</h2>
             <p>The task form is a complete input surface for creating and editing tasks. Important HTML ideas used here include:</p>
             <ul>
               <li>hidden input for task id during edits</li>
@@ -107,7 +138,7 @@
           </section>
 
           <section id="filters">
-            <h2>6. Filters and Grouping Sections</h2>
+            <h2>7. Filters and Grouping Sections</h2>
             <p>The right-hand working column is intentionally split into independent panels:</p>
             <ul>
               <li><strong>Filters</strong>: search, selects, due range, quick due-state chips</li>
@@ -124,7 +155,7 @@
           </section>
 
           <section id="tasks">
-            <h2>7. Task List Templates</h2>
+            <h2>8. Task List Templates</h2>
             <p>Instead of building task cards entirely with string concatenation, the project uses HTML <code>&lt;template&gt;</code> elements. This is a powerful native browser feature.</p>
             <p>There are two task templates:</p>
             <ul>
@@ -135,7 +166,7 @@
           </section>
 
           <section id="docs-page">
-            <h2>8. The Documentation Page HTML</h2>
+            <h2>9. The Documentation Page HTML</h2>
             <p>The project also includes a separate documentation page, <code>docs.html</code>. This page is not part of the task dashboard itself. It exists to render Swagger UI and now also includes its own theme and palette controls that share settings with the main app.</p>
             <p>This teaches a very practical pattern: you can have more than one HTML entry point in the same project, as long as the server knows how to serve them.</p>
           </section>
