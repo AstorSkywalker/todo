@@ -1,4 +1,5 @@
 id,title,description,status,priority,category,dueDate,createdAt,updatedAt
+1775213958461,string,string,pending,low,string,2026-04-25,2026-04-03T10:59:18.461Z,2026-04-03T10:59:18.461Z
 1775199865546,oh no!,past due example.,pending,medium,Guitarra,2026-04-01,2026-04-03T07:04:25.546Z,2026-04-03T07:04:25.546Z
 1775199065256,SQLite,new task,pending,medium,General,2026-04-03,2026-04-03T06:51:05.256Z,2026-04-03T06:51:05.256Z
 1775196484629527,Prepare demo,Review UI and endpoints,pending,medium,Frontend,2026-04-12,2026-04-03T03:34:33.064Z,2026-04-03T03:34:33.064Z
