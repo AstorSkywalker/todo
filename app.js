@@ -717,6 +717,7 @@ function applySavedTheme() {
 
 function updateThemeLabel(theme) {
   themeLabel.textContent = theme === 'light' ? 'Light' : 'Dark';
+  themeToggle.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
 }
 
 function handleColorSchemeChange() {

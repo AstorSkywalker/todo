@@ -123,7 +123,7 @@ button {
   gap: 22px;
   position: sticky;
   top: 24px;
-  max-height: calc(100vh - 48px);
+  height: calc(100vh - 48px);
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -166,7 +166,9 @@ button {
 .sidebar.is-collapsed .sidebar-header {
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   gap: 18px;
+  min-height: 100%;
 }
 
 .sidebar.is-collapsed .sidebar-copy {
@@ -564,10 +566,21 @@ h3 {
   gap: 14px;
 }
 
+.appearance-controls {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+
 .theme-palette {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.compact-palette {
+  gap: 0;
 }
 
 .theme-palette label {
@@ -580,35 +593,18 @@ h3 {
   margin-top: 0;
 }
 
+.compact-palette label {
+  display: none;
+}
+
 .study-guide-box .secondary-button,
-.api-actions .secondary-button,
-.api-actions .ghost-button {
+.api-actions .secondary-button {
   width: 100%;
 }
 
 .api-actions {
   display: grid;
   gap: 10px;
-  margin-bottom: 12px;
-}
-
-.api-link-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.api-link-list li + li {
-  margin-top: 8px;
-}
-
-.api-link-list a {
-  display: inline-flex;
-  text-decoration: none;
-}
-
-.api-link-list code {
-  display: inline-block;
 }
 
 .theme-toggle {
@@ -645,6 +641,38 @@ h3 {
 
 body.light .toggle-thumb {
   transform: translateX(20px);
+}
+
+.icon-only-toggle {
+  justify-content: center;
+  min-height: 44px;
+  min-width: 108px;
+  padding: 8px 10px;
+}
+
+.theme-icon {
+  display: inline-flex;
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  opacity: 0.78;
+  flex: 0 0 auto;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.moon-icon {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M21 14.2A9 9 0 0 1 9.8 3a1 1 0 0 0-1.28 1.28A9 9 0 1 0 19.72 15.5 1 1 0 0 0 21 14.2Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M21 14.2A9 9 0 0 1 9.8 3a1 1 0 0 0-1.28 1.28A9 9 0 1 0 19.72 15.5 1 1 0 0 0 21 14.2Z'/%3E%3C/svg%3E");
+}
+
+.sun-icon {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Zm0-16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 19a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1Zm10-9a1 1 0 0 1-1 1h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1ZM5 12a1 1 0 0 1-1 1H3a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1Zm12.66 6.24a1 1 0 0 1 1.42 0l.7.71a1 1 0 0 1-1.41 1.41l-.71-.7a1 1 0 0 1 0-1.42ZM5.63 5.63a1 1 0 0 1 1.41 0l.71.71A1 1 0 1 1 6.34 7.75l-.71-.71a1 1 0 0 1 0-1.41Zm12.02-1.42a1 1 0 0 1 0 1.42l-.71.71a1 1 0 0 1-1.41-1.42l.7-.71a1 1 0 0 1 1.42 0ZM7.05 16.95a1 1 0 0 1 0 1.41l-.71.7a1 1 0 0 1-1.41-1.41l.7-.71a1 1 0 0 1 1.42 0Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12Zm0-16a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 19a1 1 0 0 1 1 1v1a1 1 0 1 1-2 0v-1a1 1 0 0 1 1-1Zm10-9a1 1 0 0 1-1 1h-1a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1ZM5 12a1 1 0 0 1-1 1H3a1 1 0 1 1 0-2h1a1 1 0 0 1 1 1Zm12.66 6.24a1 1 0 0 1 1.42 0l.7.71a1 1 0 0 1-1.41 1.41l-.71-.7a1 1 0 0 1 0-1.42ZM5.63 5.63a1 1 0 0 1 1.41 0l.71.71A1 1 0 1 1 6.34 7.75l-.71-.71a1 1 0 0 1 0-1.41Zm12.02-1.42a1 1 0 0 1 0 1.42l-.71.71a1 1 0 0 1-1.41-1.42l.7-.71a1 1 0 0 1 1.42 0ZM7.05 16.95a1 1 0 0 1 0 1.41l-.71.7a1 1 0 0 1-1.41-1.41l.7-.71a1 1 0 0 1 1.42 0Z'/%3E%3C/svg%3E");
 }
 
 body[data-color-scheme='aurora'] {
@@ -1020,6 +1048,18 @@ body.light[data-color-scheme='rose'] {
 .storage-note {
   margin-bottom: 0;
   overflow-wrap: anywhere;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .todo-form,
@@ -2014,6 +2054,7 @@ body.light .modal-backdrop {
 
   .sidebar {
     position: static;
+    height: auto;
     max-height: none;
   }
 
@@ -2050,6 +2091,10 @@ body.light .modal-backdrop {
   .form-row,
   .filter-grid,
   .date-range-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .appearance-controls {
     grid-template-columns: 1fr;
   }
 

@@ -16,40 +16,40 @@
         <div class="sidebar-copy">
           <p class="eyebrow">TaskFlow CSV</p>
           <h1>Your modern list with simple persistence</h1>
-          <p class="muted">Manage tasks with light and dark mode, and keep everything stored in a reviewable CSV file with a synchronized SQLite mirror.</p>
+          <p class="muted">CSV tasks with a synced SQLite mirror.</p>
         </div>
         <button id="toggleSidebarButton" class="panel-toggle sidebar-toggle" type="button" aria-expanded="true" aria-controls="sidebarBody" aria-label="Collapse sidebar">
           <span class="panel-toggle-icon" aria-hidden="true"></span>
         </button>
       </div>
 
-      <div id="sidebarBody" class="sidebar-body">
-        <div class="api-box appearance-box">
-          <h2>Appearance</h2>
-          <div class="theme-switcher">
-            <span>Theme</span>
-            <button id="themeToggle" class="theme-toggle" type="button" aria-label="Change theme">
-              <span class="toggle-track">
-                <span class="toggle-thumb"></span>
-              </span>
-              <span id="themeLabel">Dark</span>
-            </button>
-          </div>
+        <div id="sidebarBody" class="sidebar-body">
+          <div class="api-box appearance-box">
+            <h2>Appearance</h2>
+            <div class="appearance-controls">
+              <button id="themeToggle" class="theme-toggle icon-only-toggle" type="button" aria-label="Change theme">
+                <span class="theme-icon moon-icon" aria-hidden="true"></span>
+                <span class="toggle-track">
+                  <span class="toggle-thumb"></span>
+                </span>
+                <span class="theme-icon sun-icon" aria-hidden="true"></span>
+                <span id="themeLabel" class="visually-hidden">Dark</span>
+              </button>
 
-          <div class="theme-palette">
-            <label for="colorSchemeSelect">Color scheme</label>
-            <select id="colorSchemeSelect" aria-label="Select color scheme">
-              <option value="default">Default</option>
-              <option value="aurora">Aurora</option>
-              <option value="eighties">80s</option>
-              <option value="cyberpunk">Cyberpunk</option>
-              <option value="ember">Ember</option>
-              <option value="forest">Forest</option>
-              <option value="neon">Neon</option>
-              <option value="rose">Rose Quartz</option>
-            </select>
+              <div class="theme-palette compact-palette">
+                <select id="colorSchemeSelect" aria-label="Select color scheme">
+                  <option value="default">Default</option>
+                  <option value="aurora">Aurora</option>
+                  <option value="eighties">80s</option>
+                  <option value="cyberpunk">Cyberpunk</option>
+                  <option value="ember">Ember</option>
+                  <option value="forest">Forest</option>
+                  <option value="neon">Neon</option>
+                  <option value="rose">Rose Quartz</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </div>
 
         <div class="api-box study-guide-box">
           <h2>Study guide</h2>
@@ -60,15 +60,7 @@
           <h2>Included APIs</h2>
           <div class="api-actions">
             <a class="secondary-button" href="/docs" target="_blank" rel="noopener noreferrer">Open Swagger UI</a>
-            <a class="ghost-button" href="/openapi.json" target="_blank" rel="noopener noreferrer">Open OpenAPI JSON</a>
           </div>
-          <ul class="api-link-list">
-            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>GET /api/todos</code></a></li>
-            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>POST /api/todos</code></a></li>
-            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>PUT /api/todos/:id</code></a></li>
-            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>DELETE /api/todos/:id</code></a></li>
-            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>GET /api/todos/group?by=status</code></a></li>
-          </ul>
         </div>
 
         <div class="api-box storage-box">
@@ -92,7 +84,7 @@
         <div>
           <p class="eyebrow">Main dashboard</p>
           <h2>Organize, filter, and group your tasks</h2>
-          <p class="muted">A lightweight interface for working with CSV-based data backed by a synchronized SQLite mirror, without losing a modern experience.</p>
+          <p class="muted">Modern task management with CSV storage and SQLite sync.</p>
         </div>
         <div class="hero-actions">
           <select id="importMode" aria-label="Import mode">
