@@ -107,6 +107,42 @@
         </article>
       </section>
 
+      <section class="analytics-grid">
+        <article class="glass-card analytics-card chart-panel">
+          <div class="panel-heading analytics-heading">
+            <div>
+              <p class="eyebrow">Chart</p>
+              <h3>Due workload curve</h3>
+              <p class="muted section-note">A rolling 14-day view of visible task due dates with a soft area glow.</p>
+            </div>
+            <div class="chart-heading-actions">
+              <div class="chart-summary">
+                <div class="chart-summary-item">
+                  <span>Peak day</span>
+                  <strong id="chartPeakValue">0</strong>
+                </div>
+                <div class="chart-summary-item">
+                  <span>Visible due tasks</span>
+                  <strong id="chartVisibleDue">0</strong>
+                </div>
+              </div>
+              <button id="toggleChartButton" class="panel-toggle" type="button" aria-expanded="true" aria-controls="chartBody" aria-label="Collapse chart">
+                <span class="panel-toggle-icon" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
+          <div id="chartBody" class="collapsible-body">
+            <div class="collapsible-body-inner">
+              <div class="chart-shell">
+                <svg id="workloadChart" class="workload-chart" viewBox="0 0 760 260" preserveAspectRatio="xMidYMid meet" aria-label="Task due workload chart"></svg>
+                <div id="workloadChartDots" class="chart-dots-layer" aria-hidden="true"></div>
+                <div id="workloadChartLabels" class="chart-labels"></div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
       <section class="content-grid">
         <div class="glass-card panel form-panel">
           <div class="panel-heading">

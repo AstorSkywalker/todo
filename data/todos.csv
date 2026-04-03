@@ -91,3 +91,103 @@ id,title,description,status,priority,category,dueDate,createdAt,updatedAt
 1775260000018,Clean dashboard copy,Make sidebar and helper text more concise,pending,low,Content,2026-04-20,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
 1775260000019,Review accessibility,Check keyboard flow and focus visibility,in_progress,high,Accessibility,2026-04-21,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
 1775260000020,Prepare backlog,Collect next ideas after current polish pass,pending,medium,Planning,2026-04-22,2026-04-02T23:45:12.074Z,2026-04-02T23:45:12.074Z
+1775200000001,Review release notes,For next sprint and keep the workflow smooth.,pending,high,Frontend,2026-03-31,2026-04-03T06:17:00.000Z,2026-04-03T06:26:00.000Z
+1775200000002,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,in_progress,low,Backend,2026-04-01,2026-04-03T06:34:00.000Z,2026-04-03T06:43:00.000Z
+1775200000003,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,done,medium,API,2026-04-02,2026-04-03T06:51:00.000Z,2026-04-03T07:00:00.000Z
+1775200000004,Check API docs,For the current milestone and keep the workflow smooth.,pending,high,Docs,2026-04-03,2026-04-03T07:08:00.000Z,2026-04-03T07:17:00.000Z
+1775200000005,Update sync flow,To reduce regressions and keep the workflow smooth.,in_progress,low,QA,2026-04-04,2026-04-03T07:25:00.000Z,2026-04-03T07:34:00.000Z
+1775200000006,Refine filter logic,And document findings and keep the workflow smooth.,done,medium,Design,2026-04-05,2026-04-03T07:42:00.000Z,2026-04-03T07:51:00.000Z
+1775200000007,Audit theme palette,With a quick validation pass and keep the workflow smooth.,pending,high,DevOps,2026-04-06,2026-04-03T07:59:00.000Z,2026-04-03T08:08:00.000Z
+1775200000008,Ship table view,Before the Friday demo and keep the workflow smooth.,in_progress,low,Planning,2026-04-07,2026-04-03T08:16:00.000Z,2026-04-03T08:25:00.000Z
+1775200000009,Polish status rules,After the latest feedback and keep the workflow smooth.,done,medium,Research,2026-04-08,2026-04-03T08:33:00.000Z,2026-04-03T08:42:00.000Z
+1775200000010,Coordinate import mapping,To improve clarity and keep the workflow smooth.,pending,high,Support,2026-04-09,2026-04-03T08:50:00.000Z,2026-04-03T08:59:00.000Z
+1775200000011,Review release notes,For next sprint and keep the workflow smooth.,in_progress,low,Frontend,2026-04-10,2026-04-03T09:07:00.000Z,2026-04-03T09:16:00.000Z
+1775200000012,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,done,medium,Backend,2026-04-11,2026-04-03T09:24:00.000Z,2026-04-03T09:33:00.000Z
+1775200000013,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,pending,high,API,2026-04-12,2026-04-03T09:41:00.000Z,2026-04-03T09:50:00.000Z
+1775200000014,Check API docs,For the current milestone and keep the workflow smooth.,in_progress,low,Docs,2026-04-13,2026-04-03T09:58:00.000Z,2026-04-03T10:07:00.000Z
+1775200000015,Update sync flow,To reduce regressions and keep the workflow smooth.,done,medium,QA,2026-04-14,2026-04-03T10:15:00.000Z,2026-04-03T10:24:00.000Z
+1775200000016,Refine filter logic,And document findings and keep the workflow smooth.,pending,high,Design,2026-04-15,2026-04-03T10:32:00.000Z,2026-04-03T10:41:00.000Z
+1775200000017,Audit theme palette,With a quick validation pass and keep the workflow smooth.,in_progress,low,DevOps,2026-04-16,2026-04-03T10:49:00.000Z,2026-04-03T10:58:00.000Z
+1775200000018,Ship table view,Before the Friday demo and keep the workflow smooth.,done,medium,Planning,2026-03-30,2026-04-03T11:06:00.000Z,2026-04-03T11:15:00.000Z
+1775200000019,Polish status rules,After the latest feedback and keep the workflow smooth.,pending,high,Research,2026-03-31,2026-04-03T11:23:00.000Z,2026-04-03T11:32:00.000Z
+1775200000020,Coordinate import mapping,To improve clarity and keep the workflow smooth.,in_progress,low,Support,2026-04-01,2026-04-03T11:40:00.000Z,2026-04-03T11:49:00.000Z
+1775200000021,Review release notes,For next sprint and keep the workflow smooth.,done,medium,Frontend,2026-04-02,2026-04-03T11:57:00.000Z,2026-04-03T12:06:00.000Z
+1775200000022,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,pending,high,Backend,2026-04-03,2026-04-03T12:14:00.000Z,2026-04-03T12:23:00.000Z
+1775200000023,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,in_progress,low,API,2026-04-04,2026-04-03T12:31:00.000Z,2026-04-03T12:40:00.000Z
+1775200000024,Check API docs,For the current milestone and keep the workflow smooth.,done,medium,Docs,2026-04-05,2026-04-03T12:48:00.000Z,2026-04-03T12:57:00.000Z
+1775200000025,Update sync flow,To reduce regressions and keep the workflow smooth.,pending,high,QA,2026-04-06,2026-04-03T13:05:00.000Z,2026-04-03T13:14:00.000Z
+1775200000026,Refine filter logic,And document findings and keep the workflow smooth.,in_progress,low,Design,2026-04-07,2026-04-03T13:22:00.000Z,2026-04-03T13:31:00.000Z
+1775200000027,Audit theme palette,With a quick validation pass and keep the workflow smooth.,done,medium,DevOps,2026-04-08,2026-04-03T13:39:00.000Z,2026-04-03T13:48:00.000Z
+1775200000028,Ship table view,Before the Friday demo and keep the workflow smooth.,pending,high,Planning,2026-04-09,2026-04-03T13:56:00.000Z,2026-04-03T14:05:00.000Z
+1775200000029,Polish status rules,After the latest feedback and keep the workflow smooth.,in_progress,low,Research,2026-04-10,2026-04-03T14:13:00.000Z,2026-04-03T14:22:00.000Z
+1775200000030,Coordinate import mapping,To improve clarity and keep the workflow smooth.,done,medium,Support,2026-04-11,2026-04-03T14:30:00.000Z,2026-04-03T14:39:00.000Z
+1775200000031,Review release notes,For next sprint and keep the workflow smooth.,pending,high,Frontend,2026-04-12,2026-04-03T14:47:00.000Z,2026-04-03T14:56:00.000Z
+1775200000032,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,in_progress,low,Backend,2026-04-13,2026-04-03T15:04:00.000Z,2026-04-03T15:13:00.000Z
+1775200000033,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,done,medium,API,2026-04-14,2026-04-03T15:21:00.000Z,2026-04-03T15:30:00.000Z
+1775200000034,Check API docs,For the current milestone and keep the workflow smooth.,pending,high,Docs,2026-04-15,2026-04-03T15:38:00.000Z,2026-04-03T15:47:00.000Z
+1775200000035,Update sync flow,To reduce regressions and keep the workflow smooth.,in_progress,low,QA,2026-04-16,2026-04-03T15:55:00.000Z,2026-04-03T16:04:00.000Z
+1775200000036,Refine filter logic,And document findings and keep the workflow smooth.,done,medium,Design,2026-03-30,2026-04-03T16:12:00.000Z,2026-04-03T16:21:00.000Z
+1775200000037,Audit theme palette,With a quick validation pass and keep the workflow smooth.,pending,high,DevOps,2026-03-31,2026-04-03T16:29:00.000Z,2026-04-03T16:38:00.000Z
+1775200000038,Ship table view,Before the Friday demo and keep the workflow smooth.,in_progress,low,Planning,2026-04-01,2026-04-03T16:46:00.000Z,2026-04-03T16:55:00.000Z
+1775200000039,Polish status rules,After the latest feedback and keep the workflow smooth.,done,medium,Research,2026-04-02,2026-04-03T17:03:00.000Z,2026-04-03T17:12:00.000Z
+1775200000040,Coordinate import mapping,To improve clarity and keep the workflow smooth.,pending,high,Support,2026-04-03,2026-04-03T17:20:00.000Z,2026-04-03T17:29:00.000Z
+1775200000041,Review release notes,For next sprint and keep the workflow smooth.,in_progress,low,Frontend,2026-04-04,2026-04-03T17:37:00.000Z,2026-04-03T17:46:00.000Z
+1775200000042,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,done,medium,Backend,2026-04-05,2026-04-03T17:54:00.000Z,2026-04-03T18:03:00.000Z
+1775200000043,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,pending,high,API,2026-04-06,2026-04-03T18:11:00.000Z,2026-04-03T18:20:00.000Z
+1775200000044,Check API docs,For the current milestone and keep the workflow smooth.,in_progress,low,Docs,2026-04-07,2026-04-03T18:28:00.000Z,2026-04-03T18:37:00.000Z
+1775200000045,Update sync flow,To reduce regressions and keep the workflow smooth.,done,medium,QA,2026-04-08,2026-04-03T18:45:00.000Z,2026-04-03T18:54:00.000Z
+1775200000046,Refine filter logic,And document findings and keep the workflow smooth.,pending,high,Design,2026-04-09,2026-04-03T19:02:00.000Z,2026-04-03T19:11:00.000Z
+1775200000047,Audit theme palette,With a quick validation pass and keep the workflow smooth.,in_progress,low,DevOps,2026-04-10,2026-04-03T19:19:00.000Z,2026-04-03T19:28:00.000Z
+1775200000048,Ship table view,Before the Friday demo and keep the workflow smooth.,done,medium,Planning,2026-04-11,2026-04-03T19:36:00.000Z,2026-04-03T19:45:00.000Z
+1775200000049,Polish status rules,After the latest feedback and keep the workflow smooth.,pending,high,Research,2026-04-12,2026-04-03T19:53:00.000Z,2026-04-03T20:02:00.000Z
+1775200000050,Coordinate import mapping,To improve clarity and keep the workflow smooth.,in_progress,low,Support,2026-04-13,2026-04-03T20:10:00.000Z,2026-04-03T20:19:00.000Z
+1775200000051,Review release notes,For next sprint and keep the workflow smooth.,done,medium,Frontend,2026-04-14,2026-04-03T20:27:00.000Z,2026-04-03T20:36:00.000Z
+1775200000052,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,pending,high,Backend,2026-04-15,2026-04-03T20:44:00.000Z,2026-04-03T20:53:00.000Z
+1775200000053,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,in_progress,low,API,2026-04-16,2026-04-03T21:01:00.000Z,2026-04-03T21:10:00.000Z
+1775200000054,Check API docs,For the current milestone and keep the workflow smooth.,done,medium,Docs,2026-03-30,2026-04-03T21:18:00.000Z,2026-04-03T21:27:00.000Z
+1775200000055,Update sync flow,To reduce regressions and keep the workflow smooth.,pending,high,QA,2026-03-31,2026-04-03T21:35:00.000Z,2026-04-03T21:44:00.000Z
+1775200000056,Refine filter logic,And document findings and keep the workflow smooth.,in_progress,low,Design,2026-04-01,2026-04-03T21:52:00.000Z,2026-04-03T22:01:00.000Z
+1775200000057,Audit theme palette,With a quick validation pass and keep the workflow smooth.,done,medium,DevOps,2026-04-02,2026-04-03T22:09:00.000Z,2026-04-03T22:18:00.000Z
+1775200000058,Ship table view,Before the Friday demo and keep the workflow smooth.,pending,high,Planning,2026-04-03,2026-04-03T22:26:00.000Z,2026-04-03T22:35:00.000Z
+1775200000059,Polish status rules,After the latest feedback and keep the workflow smooth.,in_progress,low,Research,2026-04-04,2026-04-03T22:43:00.000Z,2026-04-03T22:52:00.000Z
+1775200000060,Coordinate import mapping,To improve clarity and keep the workflow smooth.,done,medium,Support,2026-04-05,2026-04-03T23:00:00.000Z,2026-04-03T23:09:00.000Z
+1775200000061,Review release notes,For next sprint and keep the workflow smooth.,pending,high,Frontend,2026-04-06,2026-04-03T23:17:00.000Z,2026-04-03T23:26:00.000Z
+1775200000062,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,in_progress,low,Backend,2026-04-07,2026-04-03T23:34:00.000Z,2026-04-03T23:43:00.000Z
+1775200000063,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,done,medium,API,2026-04-08,2026-04-03T23:51:00.000Z,2026-04-04T00:00:00.000Z
+1775200000064,Check API docs,For the current milestone and keep the workflow smooth.,pending,high,Docs,2026-04-09,2026-04-04T00:08:00.000Z,2026-04-04T00:17:00.000Z
+1775200000065,Update sync flow,To reduce regressions and keep the workflow smooth.,in_progress,low,QA,2026-04-10,2026-04-04T00:25:00.000Z,2026-04-04T00:34:00.000Z
+1775200000066,Refine filter logic,And document findings and keep the workflow smooth.,done,medium,Design,2026-04-11,2026-04-04T00:42:00.000Z,2026-04-04T00:51:00.000Z
+1775200000067,Audit theme palette,With a quick validation pass and keep the workflow smooth.,pending,high,DevOps,2026-04-12,2026-04-04T00:59:00.000Z,2026-04-04T01:08:00.000Z
+1775200000068,Ship table view,Before the Friday demo and keep the workflow smooth.,in_progress,low,Planning,2026-04-13,2026-04-04T01:16:00.000Z,2026-04-04T01:25:00.000Z
+1775200000069,Polish status rules,After the latest feedback and keep the workflow smooth.,done,medium,Research,2026-04-14,2026-04-04T01:33:00.000Z,2026-04-04T01:42:00.000Z
+1775200000070,Coordinate import mapping,To improve clarity and keep the workflow smooth.,pending,high,Support,2026-04-15,2026-04-04T01:50:00.000Z,2026-04-04T01:59:00.000Z
+1775200000071,Review release notes,For next sprint and keep the workflow smooth.,in_progress,low,Frontend,2026-04-16,2026-04-04T02:07:00.000Z,2026-04-04T02:16:00.000Z
+1775200000072,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,done,medium,Backend,2026-03-30,2026-04-04T02:24:00.000Z,2026-04-04T02:33:00.000Z
+1775200000073,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,pending,high,API,2026-03-31,2026-04-04T02:41:00.000Z,2026-04-04T02:50:00.000Z
+1775200000074,Check API docs,For the current milestone and keep the workflow smooth.,in_progress,low,Docs,2026-04-01,2026-04-04T02:58:00.000Z,2026-04-04T03:07:00.000Z
+1775200000075,Update sync flow,To reduce regressions and keep the workflow smooth.,done,medium,QA,2026-04-02,2026-04-04T03:15:00.000Z,2026-04-04T03:24:00.000Z
+1775200000076,Refine filter logic,And document findings and keep the workflow smooth.,pending,high,Design,2026-04-03,2026-04-04T03:32:00.000Z,2026-04-04T03:41:00.000Z
+1775200000077,Audit theme palette,With a quick validation pass and keep the workflow smooth.,in_progress,low,DevOps,2026-04-04,2026-04-04T03:49:00.000Z,2026-04-04T03:58:00.000Z
+1775200000078,Ship table view,Before the Friday demo and keep the workflow smooth.,done,medium,Planning,2026-04-05,2026-04-04T04:06:00.000Z,2026-04-04T04:15:00.000Z
+1775200000079,Polish status rules,After the latest feedback and keep the workflow smooth.,pending,high,Research,2026-04-06,2026-04-04T04:23:00.000Z,2026-04-04T04:32:00.000Z
+1775200000080,Coordinate import mapping,To improve clarity and keep the workflow smooth.,in_progress,low,Support,2026-04-07,2026-04-04T04:40:00.000Z,2026-04-04T04:49:00.000Z
+1775200000081,Review release notes,For next sprint and keep the workflow smooth.,done,medium,Frontend,2026-04-08,2026-04-04T04:57:00.000Z,2026-04-04T05:06:00.000Z
+1775200000082,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,pending,high,Backend,2026-04-09,2026-04-04T05:14:00.000Z,2026-04-04T05:23:00.000Z
+1775200000083,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,in_progress,low,API,2026-04-10,2026-04-04T05:31:00.000Z,2026-04-04T05:40:00.000Z
+1775200000084,Check API docs,For the current milestone and keep the workflow smooth.,done,medium,Docs,2026-04-11,2026-04-04T05:48:00.000Z,2026-04-04T05:57:00.000Z
+1775200000085,Update sync flow,To reduce regressions and keep the workflow smooth.,pending,high,QA,2026-04-12,2026-04-04T06:05:00.000Z,2026-04-04T06:14:00.000Z
+1775200000086,Refine filter logic,And document findings and keep the workflow smooth.,in_progress,low,Design,2026-04-13,2026-04-04T06:22:00.000Z,2026-04-04T06:31:00.000Z
+1775200000087,Audit theme palette,With a quick validation pass and keep the workflow smooth.,done,medium,DevOps,2026-04-14,2026-04-04T06:39:00.000Z,2026-04-04T06:48:00.000Z
+1775200000088,Ship table view,Before the Friday demo and keep the workflow smooth.,pending,high,Planning,2026-04-15,2026-04-04T06:56:00.000Z,2026-04-04T07:05:00.000Z
+1775200000089,Polish status rules,After the latest feedback and keep the workflow smooth.,in_progress,low,Research,2026-04-16,2026-04-04T07:13:00.000Z,2026-04-04T07:22:00.000Z
+1775200000090,Coordinate import mapping,To improve clarity and keep the workflow smooth.,done,medium,Support,2026-03-30,2026-04-04T07:30:00.000Z,2026-04-04T07:39:00.000Z
+1775200000091,Review release notes,For next sprint and keep the workflow smooth.,pending,high,Frontend,2026-03-31,2026-04-04T07:47:00.000Z,2026-04-04T07:56:00.000Z
+1775200000092,Draft CSV parser,Before stakeholder review and keep the workflow smooth.,in_progress,low,Backend,2026-04-01,2026-04-04T08:04:00.000Z,2026-04-04T08:13:00.000Z
+1775200000093,Prepare dashboard layout,With edge cases in mind and keep the workflow smooth.,done,medium,API,2026-04-02,2026-04-04T08:21:00.000Z,2026-04-04T08:30:00.000Z
+1775200000094,Check API docs,For the current milestone and keep the workflow smooth.,pending,high,Docs,2026-04-03,2026-04-04T08:38:00.000Z,2026-04-04T08:47:00.000Z
+1775200000095,Update sync flow,To reduce regressions and keep the workflow smooth.,in_progress,low,QA,2026-04-04,2026-04-04T08:55:00.000Z,2026-04-04T09:04:00.000Z
+1775200000096,Refine filter logic,And document findings and keep the workflow smooth.,done,medium,Design,2026-04-05,2026-04-04T09:12:00.000Z,2026-04-04T09:21:00.000Z
+1775200000097,Audit theme palette,With a quick validation pass and keep the workflow smooth.,pending,high,DevOps,2026-04-06,2026-04-04T09:29:00.000Z,2026-04-04T09:38:00.000Z
+1775200000098,Ship table view,Before the Friday demo and keep the workflow smooth.,in_progress,low,Planning,2026-04-07,2026-04-04T09:46:00.000Z,2026-04-04T09:55:00.000Z
+1775200000099,Polish status rules,After the latest feedback and keep the workflow smooth.,done,medium,Research,2026-04-08,2026-04-04T10:03:00.000Z,2026-04-04T10:12:00.000Z
+1775200000100,Coordinate import mapping,To improve clarity and keep the workflow smooth.,pending,high,Support,2026-04-09,2026-04-04T10:20:00.000Z,2026-04-04T10:29:00.000Z

@@ -30,6 +30,14 @@ const todoList = document.querySelector('#todoList');
 const activeFilters = document.querySelector('#activeFilters');
 const visibleCount = document.querySelector('#visibleCount');
 const activeFilterCount = document.querySelector('#activeFilterCount');
+const workloadChart = document.querySelector('#workloadChart');
+const workloadChartDots = document.querySelector('#workloadChartDots');
+const workloadChartLabels = document.querySelector('#workloadChartLabels');
+const chartPeakValue = document.querySelector('#chartPeakValue');
+const chartVisibleDue = document.querySelector('#chartVisibleDue');
+const chartPanel = document.querySelector('.chart-panel');
+const chartBody = document.querySelector('#chartBody');
+const toggleChartButton = document.querySelector('#toggleChartButton');
 const compactHeader = document.querySelector('#compactHeader');
 const viewToggleButtons = Array.from(document.querySelectorAll('[data-view-mode]'));
 const densityToggleButtons = Array.from(document.querySelectorAll('[data-density-mode]'));
@@ -69,6 +77,7 @@ const storageTimestamp = document.querySelector('#storageTimestamp');
 const listPreferencesKey = 'todo-list-preferences';
 const filtersPanelStateKey = 'todo-filters-collapsed';
 const groupingPanelStateKey = 'todo-grouping-collapsed';
+const chartPanelStateKey = 'todo-chart-collapsed';
 const colorSchemeKey = 'todo-color-scheme';
 
 let pendingDeleteId = null;
@@ -91,6 +100,7 @@ function initialize() {
   updateDensityButtons();
   restoreFiltersPanelState();
   restoreGroupingPanelState();
+  restoreChartPanelState();
   bindEvents();
   applySavedTheme();
   loadTodos();
@@ -120,6 +130,7 @@ function bindEvents() {
   });
   toggleFiltersButton.addEventListener('click', toggleFiltersPanel);
   toggleGroupingButton.addEventListener('click', toggleGroupingPanel);
+  toggleChartButton.addEventListener('click', toggleChartPanel);
   titleInput.addEventListener('input', validateTitleField);
   titleInput.addEventListener('blur', validateTitleField);
   dueDateInput.addEventListener('input', handleDueDateInput);
@@ -169,6 +180,7 @@ async function loadTodos() {
 
   state.items = sortTodoItems(filteredItems);
   renderSummary(data.summary || emptySummary());
+  renderWorkloadChart(state.items);
   renderActiveFilters();
   renderResultsStrip();
   renderTodos();
@@ -327,6 +339,127 @@ function renderSummary(summary) {
   counters.pending.textContent = summary.pending || 0;
   counters.progress.textContent = summary.inProgress || 0;
   counters.done.textContent = summary.done || 0;
+}
+
+function renderWorkloadChart(items) {
+  const buckets = buildWorkloadBuckets(items);
+  const totalDueTasks = buckets.reduce((sum, bucket) => sum + bucket.total, 0);
+  const peak = buckets.reduce((max, bucket) => Math.max(max, bucket.total), 0);
+  chartPeakValue.textContent = peak;
+  chartVisibleDue.textContent = totalDueTasks;
+
+  workloadChartLabels.innerHTML = buckets
+    .map((bucket) => `<span>${bucket.shortLabel}</span>`)
+    .join('');
+
+  if (!buckets.length || peak === 0) {
+    workloadChartDots.innerHTML = '';
+    workloadChart.innerHTML = `
+      <defs>
+        <linearGradient id="chartAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.32"></stop>
+          <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"></stop>
+        </linearGradient>
+      </defs>
+      <text x="380" y="132" text-anchor="middle" fill="var(--muted)" font-size="15">No due-date trend to display</text>
+    `;
+    return;
+  }
+
+  const width = 760;
+  const height = 260;
+  const paddingX = 26;
+  const paddingTop = 24;
+  const paddingBottom = 34;
+  const chartWidth = width - paddingX * 2;
+  const chartHeight = height - paddingTop - paddingBottom;
+
+  const points = buckets.map((bucket, index) => {
+    const x = paddingX + (chartWidth / Math.max(buckets.length - 1, 1)) * index;
+    const y = paddingTop + chartHeight - ((bucket.total / peak) * chartHeight);
+    return { x, y, total: bucket.total };
+  });
+
+  const linePath = createSmoothPath(points);
+  const areaPath = `${linePath} L ${points[points.length - 1].x} ${height - paddingBottom} L ${points[0].x} ${height - paddingBottom} Z`;
+  const gridLines = Array.from({ length: 4 }, (_, index) => {
+    const y = paddingTop + (chartHeight / 3) * index;
+    return `<line x1="${paddingX}" y1="${y}" x2="${width - paddingX}" y2="${y}" class="chart-grid-line"></line>`;
+  }).join('');
+
+  workloadChartDots.innerHTML = points
+    .map((point) => {
+      const left = ((point.x / width) * 100).toFixed(3);
+      const top = ((point.y / height) * 100).toFixed(3);
+      return `<span class="chart-dot" style="left:${left}%; top:${top}%;" title="${point.total} tasks"></span>`;
+    })
+    .join('');
+
+  workloadChart.innerHTML = `
+    <defs>
+      <linearGradient id="chartAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.42"></stop>
+        <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"></stop>
+      </linearGradient>
+      <filter id="chartGlow" x="-20%" y="-20%" width="140%" height="150%">
+        <feGaussianBlur stdDeviation="10" result="blur"></feGaussianBlur>
+      </filter>
+    </defs>
+    ${gridLines}
+    <path d="${areaPath}" class="chart-area-blur" filter="url(#chartGlow)"></path>
+    <path d="${areaPath}" class="chart-area"></path>
+    <path d="${linePath}" class="chart-line"></path>
+  `;
+}
+
+function buildWorkloadBuckets(items) {
+  const today = startOfDay(new Date());
+  const buckets = Array.from({ length: 14 }, (_, index) => {
+    const date = new Date(today);
+    date.setDate(today.getDate() + index);
+    return {
+      key: date.toISOString().slice(0, 10),
+      label: new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short' }).format(date),
+      shortLabel: new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit' }).format(date),
+      total: 0
+    };
+  });
+
+  const bucketMap = new Map(buckets.map((bucket) => [bucket.key, bucket]));
+
+  items.forEach((item) => {
+    if (!item.dueDate) {
+      return;
+    }
+
+    const bucket = bucketMap.get(item.dueDate);
+    if (bucket) {
+      bucket.total += 1;
+    }
+  });
+
+  return buckets;
+}
+
+function createSmoothPath(points) {
+  if (!points.length) {
+    return '';
+  }
+
+  if (points.length === 1) {
+    return `M ${points[0].x} ${points[0].y}`;
+  }
+
+  let path = `M ${points[0].x} ${points[0].y}`;
+
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const current = points[index];
+    const next = points[index + 1];
+    const controlX = (current.x + next.x) / 2;
+    path += ` C ${controlX} ${current.y}, ${controlX} ${next.y}, ${next.x} ${next.y}`;
+  }
+
+  return path;
 }
 
 function renderGroupResults(groups) {
@@ -903,6 +1036,34 @@ function restoreGroupingPanelState() {
   groupingBody.setAttribute('aria-hidden', 'true');
   toggleGroupingButton.setAttribute('aria-expanded', 'false');
   toggleGroupingButton.setAttribute('aria-label', 'Expand grouping');
+}
+
+function toggleChartPanel() {
+  const isCollapsed = chartPanel.classList.toggle('is-collapsed');
+  chartBody.inert = isCollapsed;
+  chartBody.setAttribute('aria-hidden', String(isCollapsed));
+  toggleChartButton.setAttribute('aria-expanded', String(!isCollapsed));
+  toggleChartButton.setAttribute('aria-label', isCollapsed ? 'Expand chart' : 'Collapse chart');
+  localStorage.setItem(chartPanelStateKey, isCollapsed ? 'collapsed' : 'expanded');
+}
+
+function restoreChartPanelState() {
+  const savedState = localStorage.getItem(chartPanelStateKey);
+
+  if (savedState !== 'collapsed') {
+    chartPanel.classList.remove('is-collapsed');
+    chartBody.inert = false;
+    chartBody.setAttribute('aria-hidden', 'false');
+    toggleChartButton.setAttribute('aria-expanded', 'true');
+    toggleChartButton.setAttribute('aria-label', 'Collapse chart');
+    return;
+  }
+
+  chartPanel.classList.add('is-collapsed');
+  chartBody.inert = true;
+  chartBody.setAttribute('aria-hidden', 'true');
+  toggleChartButton.setAttribute('aria-expanded', 'false');
+  toggleChartButton.setAttribute('aria-label', 'Expand chart');
 }
 
 function applyQuickFilters(items) {
