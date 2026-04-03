@@ -25,7 +25,10 @@
           <li><a href="#local-demo">Local demo publishing</a></li>
           <li><a href="#live-demo">Live demo hosting</a></li>
           <li><a href="#persistence">Why file persistence changes deployment</a></li>
+          <li><a href="#architecture">Deployment architecture view</a></li>
           <li><a href="#future-production">Future production path</a></li>
+          <li><a href="#env">Why environment setup matters</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
           <li><a href="#exercise">Exercise and checkpoint</a></li>
         </ul>
       </aside>
@@ -91,8 +94,38 @@ npm start</code></pre>
             <p>This is not a failure of the architecture. It is simply a natural consequence of using file-based persistence.</p>
           </section>
 
+          <section id="architecture">
+            <h2>5. Deployment Architecture View</h2>
+            <p>One of the easiest ways to understand deployment is to picture the system as layers instead of as one single app.</p>
+            <div class="diagram-group">
+              <div class="diagram-lane">
+                <div class="diagram-lane-title">Current Local Architecture</div>
+                <div class="diagram-flow compact-flow">
+                  <div class="diagram-node primary">Browser UI</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node warning">Node server</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node success">CSV file</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node success">SQLite mirror</div>
+                </div>
+              </div>
+              <div class="diagram-lane">
+                <div class="diagram-lane-title">Future Hosted Architecture</div>
+                <div class="diagram-flow compact-flow">
+                  <div class="diagram-node primary">Browser UI</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node warning">Node app on host</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node danger">Managed database</div>
+                </div>
+                <p class="diagram-note">The big hosting change is not only where the server runs. It is also where the durable data lives.</p>
+              </div>
+            </div>
+          </section>
+
           <section id="future-production">
-            <h2>5. Future Production Path</h2>
+            <h2>6. Future Production Path</h2>
             <p>The future production story becomes stronger as the storage system evolves:</p>
             <ol>
               <li><strong>Current state:</strong> CSV primary, SQLite mirror</li>
@@ -103,8 +136,25 @@ npm start</code></pre>
             <p>This is a healthy engineering roadmap because it does not force production complexity too early, but it leaves a clear path toward it.</p>
           </section>
 
+          <section id="env">
+            <h2>7. Why Environment Setup Matters</h2>
+            <p>As soon as an app leaves the purely local phase, configuration becomes more important. A deployment environment usually needs at least:</p>
+            <ul>
+              <li>the port to run on</li>
+              <li>the storage mode</li>
+              <li>database credentials or connection details</li>
+              <li>possibly secret keys in future versions</li>
+            </ul>
+            <pre><code>PORT=3000
+STORAGE_MODE=csv
+ORACLE_USER=...
+ORACLE_PASSWORD=...
+ORACLE_CONNECT_STRING=...</code></pre>
+            <p>This is one reason environment-based design matters. It lets the same code behave differently in local study mode, demo mode, or future production mode.</p>
+          </section>
+
           <section id="mistakes">
-            <h2>6. Common Mistakes</h2>
+            <h2>8. Common Mistakes</h2>
             <ul>
               <li><strong>Confusing GitHub publication with live hosting:</strong> a public repository is not the same as a running deployed app.</li>
               <li><strong>Ignoring file-persistence limits:</strong> some platforms can run Node but still are not a good long-term fit for writable local files.</li>
@@ -114,7 +164,7 @@ npm start</code></pre>
           </section>
 
           <section id="exercise">
-            <h2>7. Exercise and Checkpoint</h2>
+            <h2>9. Exercise and Checkpoint</h2>
             <div class="exercise-stack">
               <div class="exercise-card">
                 <h3>Problem</h3>
@@ -139,7 +189,7 @@ npm start</code></pre>
         <nav class="chapter-nav">
           <a href="/study-guide/20-utils-and-sqlite-walkthrough.html">Previous lesson</a>
           <a href="/study-guide/">Back to study guide index</a>
-          <a href="/study-guide/22-oracle-future-architecture.html">Next lesson</a>
+          <a href="/study-guide/26-environment-and-configuration.html">Next lesson</a>
         </nav>
       </main>
     </div>

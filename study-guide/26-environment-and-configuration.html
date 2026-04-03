@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 26: Environment and Configuration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 26</p>
+      <h1>Environment and Configuration</h1>
+      <p class="kicker muted">Learn how apps move from hardcoded local assumptions into configurable systems that can run locally, in demos, and later against more advanced database backends.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#why">Why configuration matters</a></li>
+          <li><a href="#values">What should become configurable</a></li>
+          <li><a href="#env-files">Environment variables and env files</a></li>
+          <li><a href="#modes">Storage mode thinking</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="why">
+            <h2>1. Why Configuration Matters</h2>
+            <p>A beginner project often starts with assumptions hardcoded directly into the codebase. That is normal. But as the project grows, some values should become configurable rather than fixed.</p>
+            <p>This matters because the app may need to run in different contexts:</p>
+            <ul>
+              <li>your local machine</li>
+              <li>a demo host</li>
+              <li>a future Oracle-backed environment</li>
+            </ul>
+            <div class="callout">
+              <p><strong>Main lesson:</strong> code should describe behavior, while configuration should describe environment-specific choices.</p>
+            </div>
+          </section>
+
+          <section id="values">
+            <h2>2. What Should Become Configurable</h2>
+            <p>For this project, the most important future configuration points are:</p>
+            <ul>
+              <li>server port</li>
+              <li>storage mode</li>
+              <li>database connection details</li>
+              <li>optional future secrets or service keys</li>
+            </ul>
+            <pre><code>PORT=3000
+STORAGE_MODE=csv
+SQLITE_DB_PATH=data/todos.db
+ORACLE_USER=...
+ORACLE_PASSWORD=...
+ORACLE_CONNECT_STRING=...</code></pre>
+            <p>Not every value needs to be configurable immediately, but these are the values most likely to vary across environments.</p>
+          </section>
+
+          <section id="env-files">
+            <h2>3. Environment Variables and Env Files</h2>
+            <p>In many Node projects, environment variables are used to avoid hardcoding sensitive or environment-specific values directly in source files.</p>
+            <pre><code>const port = process.env.PORT || 3000;
+const storageMode = process.env.STORAGE_MODE || 'csv';</code></pre>
+            <p>That gives the app flexibility without rewriting logic every time the runtime context changes.</p>
+            <p>Later, a project might use a <code>.env</code> file in local development and real platform environment settings in hosted environments.</p>
+          </section>
+
+          <section id="modes">
+            <h2>4. Storage Mode Thinking</h2>
+            <p>One of the healthiest future ideas for this app is to think in storage modes instead of one permanent storage assumption.</p>
+            <pre><code>if (storageMode === 'csv') {
+  // CSV-first behavior
+}
+
+if (storageMode === 'sqlite') {
+  // SQLite-first behavior
+}
+
+if (storageMode === 'oracle') {
+  // Oracle-backed behavior
+}</code></pre>
+            <p>This is valuable because it turns a future migration into a design evolution instead of a total rewrite.</p>
+          </section>
+
+          <section id="mistakes">
+            <h2>5. Common Mistakes</h2>
+            <ul>
+              <li><strong>Hardcoding every path and credential:</strong> this makes future deployment harder than it needs to be.</li>
+              <li><strong>Configuring too much too early:</strong> not every project needs dozens of env values on day one.</li>
+              <li><strong>Mixing environment concerns into unrelated files:</strong> centralize configuration thinking where possible.</li>
+              <li><strong>Confusing configuration with business logic:</strong> environment values should guide behavior, not replace good code structure.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>6. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Write a simple environment plan for this app that supports the current local mode and one future Oracle mode.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A strong answer should separate general app settings from Oracle-specific settings.</p>
+                <pre><code>General:
+PORT=3000
+STORAGE_MODE=csv
+
+Future Oracle:
+ORACLE_USER=demo_user
+ORACLE_PASSWORD=demo_password
+ORACLE_CONNECT_STRING=example_high
+ORACLE_WALLET_PATH=./wallet</code></pre>
+                <p>Then the app can decide behavior using <code>STORAGE_MODE</code> instead of requiring code edits every time the environment changes.</p>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should feel structured and realistic. Good configuration planning makes future evolution easier without making the current project unnecessarily complicated.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain which parts of the app belong in code and which parts belong in configuration, you understand a major step toward production-style engineering.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/21-deployment-and-publishing.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/22-oracle-future-architecture.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
