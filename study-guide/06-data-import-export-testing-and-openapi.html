@@ -133,6 +133,34 @@
             </ul>
             <p>These are the habits that move a project closer to professional practice.</p>
           </section>
+
+          <section id="exercise">
+            <h2>8. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Add one very small export option that returns plain JSON text for the current todo list.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>The clean place to extend export behavior is inside the export service logic, because that function already switches on format.</p>
+                <pre><code>if (normalizedFormat === 'json') {
+  return {
+    statusCode: 200,
+    contentType: 'application/json; charset=utf-8',
+    fileName: `todos-${timestamp}.json`,
+    body: JSON.stringify({ items: todos }, null, 2)
+  };
+}</code></pre>
+                <p>This keeps the route layer simple because the service still returns one consistent export result object.</p>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>When you request the JSON export endpoint, you should receive a downloadable JSON file containing an <code>items</code> array with the current tasks. That tells you the export logic and HTTP response are working together.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how testing, import/export, OpenAPI, and Swagger all improve reliability and clarity, you understand the quality layer of the project.</p>
+          </section>
         </article>
 
         <nav class="chapter-nav">
