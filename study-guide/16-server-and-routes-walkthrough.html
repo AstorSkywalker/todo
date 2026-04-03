@@ -146,8 +146,18 @@ sendJson(res, result.statusCode, result.item);</code></pre>
             </table>
           </section>
 
+          <section id="mistakes">
+            <h2>7. Common Mistakes</h2>
+            <ul>
+              <li><strong>Doing too much in <code>server.js</code>:</strong> once routing and behavior grow, the entry point should delegate instead of becoming a giant file.</li>
+              <li><strong>Forgetting early returns:</strong> route branching becomes messy fast if matched branches keep falling through.</li>
+              <li><strong>Skipping content-type handling:</strong> browsers need the right type to render files correctly.</li>
+              <li><strong>Trusting request paths too much:</strong> safe static serving should normalize and constrain paths.</li>
+            </ul>
+          </section>
+
           <section id="exercise">
-            <h2>7. Exercise and Checkpoint</h2>
+            <h2>8. Exercise and Checkpoint</h2>
             <div class="exercise-stack">
               <div class="exercise-card">
                 <h3>Problem</h3>

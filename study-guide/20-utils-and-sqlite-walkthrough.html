@@ -115,8 +115,18 @@ db.pragma('journal_mode = WAL');</code></pre>
             <p>These files are a good reminder that architecture often improves not because files become bigger, but because small files start carrying focused responsibilities.</p>
           </section>
 
+          <section id="mistakes">
+            <h2>5. Common Mistakes</h2>
+            <ul>
+              <li><strong>Underestimating helper files:</strong> small shared files often carry a lot of consistency value.</li>
+              <li><strong>Putting validation inside every route:</strong> duplicated rules become harder to maintain and test.</li>
+              <li><strong>Making the SQLite mirror too magical:</strong> it should stay observable and understandable.</li>
+              <li><strong>Ignoring synchronization visibility:</strong> status routes and timestamps make storage behavior easier to debug.</li>
+            </ul>
+          </section>
+
           <section id="exercise">
-            <h2>5. Exercise and Checkpoint</h2>
+            <h2>6. Exercise and Checkpoint</h2>
             <div class="exercise-stack">
               <div class="exercise-card">
                 <h3>Problem</h3>

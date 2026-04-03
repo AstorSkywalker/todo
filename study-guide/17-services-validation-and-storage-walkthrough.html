@@ -136,8 +136,18 @@ writeTodos(todos);</code></pre>
             <p>When rules live together like this, tests become more focused and future storage migrations become easier.</p>
           </section>
 
+          <section id="mistakes">
+            <h2>7. Common Mistakes</h2>
+            <ul>
+              <li><strong>Skipping normalization:</strong> raw request data is often inconsistent and harder to validate safely.</li>
+              <li><strong>Mixing validation into many places:</strong> shared helpers keep backend rules coherent.</li>
+              <li><strong>Treating CSV writes and SQLite sync as unrelated:</strong> in this app they are part of one storage flow.</li>
+              <li><strong>Overcomplicating ids too early:</strong> simple ids are fine in a learning project if the tradeoff is understood.</li>
+            </ul>
+          </section>
+
           <section id="exercise">
-            <h2>7. Exercise and Checkpoint</h2>
+            <h2>8. Exercise and Checkpoint</h2>
             <div class="exercise-stack">
               <div class="exercise-card">
                 <h3>Problem</h3>

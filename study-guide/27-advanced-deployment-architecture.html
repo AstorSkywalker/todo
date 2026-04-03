@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 27: Advanced Deployment Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 27</p>
+      <h1>Advanced Deployment Architecture</h1>
+      <p class="kicker muted">Learn how to think about deployment as a system design problem, not only as a hosting button. This lesson connects browser, app server, storage, configuration, and future managed database infrastructure.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#layers">Deployment as layers</a></li>
+          <li><a href="#local">Local architecture</a></li>
+          <li><a href="#demo">Hosted demo architecture</a></li>
+          <li><a href="#production">Production-style architecture</a></li>
+          <li><a href="#oracle">Where Oracle fits</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="layers">
+            <h2>1. Deployment Is A Layered System</h2>
+            <p>Many beginners think deployment only means, "Where do I put my code?" A stronger engineering view is:</p>
+            <ul>
+              <li>where does the browser connect?</li>
+              <li>where does the app server run?</li>
+              <li>where does durable data live?</li>
+              <li>how is configuration supplied?</li>
+              <li>what changes between local, demo, and production-like setups?</li>
+            </ul>
+            <p>This shift in thinking is important because it turns deployment into architecture, not just hosting.</p>
+          </section>
+
+          <section id="local">
+            <h2>2. Local Architecture</h2>
+            <div class="diagram-group">
+              <div class="diagram-lane">
+                <div class="diagram-lane-title">Current Local Study Architecture</div>
+                <div class="diagram-flow compact-flow">
+                  <div class="diagram-node primary">Browser</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node warning">Node app</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node success">CSV primary</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node success">SQLite mirror</div>
+                </div>
+                <p class="diagram-note">This is great for learning because every part of the system is visible and easy to control.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="demo">
+            <h2>3. Hosted Demo Architecture</h2>
+            <p>A hosted demo usually keeps the same basic application shape, but adds platform constraints:</p>
+            <div class="diagram-group">
+              <div class="diagram-lane">
+                <div class="diagram-lane-title">Typical Demo Hosting Shape</div>
+                <div class="diagram-flow compact-flow">
+                  <div class="diagram-node primary">Browser</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node warning">Node app on host</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node danger">Temporary or limited disk</div>
+                </div>
+                <p class="diagram-note">This is why file-based persistence becomes a deployment concern even when the app code itself works fine.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="production">
+            <h2>4. Production-Style Architecture</h2>
+            <p>A more production-like design usually separates the app layer from the durable data layer more explicitly.</p>
+            <div class="diagram-group">
+              <div class="diagram-lane">
+                <div class="diagram-lane-title">Production-Style Shape</div>
+                <div class="diagram-flow compact-flow">
+                  <div class="diagram-node primary">Browser</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node warning">Node app instance</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node danger">Managed database</div>
+                </div>
+              </div>
+            </div>
+            <p>Once the database becomes external and durable, the app server becomes easier to scale or move without data loss concerns tied to local disk.</p>
+          </section>
+
+          <section id="oracle">
+            <h2>5. Where Oracle Fits</h2>
+            <p>Oracle fits as the future durable storage layer in the more advanced architecture. That could be:</p>
+            <ul>
+              <li>Oracle Database 26ai on-prem for lab or enterprise infrastructure</li>
+              <li>OCI Autonomous Database for managed cloud infrastructure</li>
+            </ul>
+            <pre><code>Browser
+  -&gt; Node app
+  -&gt; repository layer
+  -&gt; Oracle-backed implementation</code></pre>
+            <p>That is why the repository and configuration ideas in earlier lessons matter so much. They prepare the codebase for this shift.</p>
+          </section>
+
+          <section id="mistakes">
+            <h2>6. Common Mistakes</h2>
+            <ul>
+              <li><strong>Thinking hosting and architecture are the same thing:</strong> hosting is one part of the bigger deployment system.</li>
+              <li><strong>Ignoring durability:</strong> where the data lives is one of the main deployment questions.</li>
+              <li><strong>Skipping configuration design:</strong> deployment becomes harder when runtime choices are buried in code.</li>
+              <li><strong>Trying to leap from local learning straight into production complexity:</strong> staged architecture growth is healthier.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Describe the deployment architecture of the app in three stages: local study mode, hosted demo mode, and future Oracle-backed production-style mode.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A good answer should describe both the app layer and the storage layer in each stage.</p>
+                <pre><code>Local study mode:
+- browser
+- local Node app
+- CSV primary
+- SQLite mirror
+
+Hosted demo mode:
+- browser
+- Node app on a host
+- file persistence may be limited
+
+Future Oracle-backed mode:
+- browser
+- Node app with configuration-driven storage mode
+- Oracle 26ai on-prem or OCI Autonomous Database as the durable data layer</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should read like an architecture progression, not just a list of hosts. The strongest answers explain what changes about storage and why that changes deployment quality.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how deployment architecture evolves as storage and configuration mature, you understand the next professional step beyond the current app.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/26-environment-and-configuration.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/22-oracle-future-architecture.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
