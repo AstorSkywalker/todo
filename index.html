@@ -211,11 +211,12 @@
                     <option value="oldest">Sort: Oldest first</option>
                     <option value="due_soon">Sort: Due date, soonest first</option>
                     <option value="due_late">Sort: Due date, latest first</option>
-                    <option value="priority_high">Sort: Priority, high to low</option>
-                    <option value="priority_low">Sort: Priority, low to high</option>
-                    <option value="status">Sort: Status</option>
-                    <option value="title">Sort: Title A-Z</option>
-                  </select>
+                  <option value="priority_high">Sort: Priority, high to low</option>
+                  <option value="priority_low">Sort: Priority, low to high</option>
+                  <option value="status">Sort: Status</option>
+                  <option value="category">Sort: Category</option>
+                  <option value="title">Sort: Title A-Z</option>
+                </select>
                 </div>
                 <div class="quick-filters-row">
                   <label class="quick-filter" for="overdueOnly">
@@ -275,9 +276,15 @@
               </div>
               <p class="muted section-note">Review the current results after filters and sorting are applied.</p>
             </div>
-            <div class="view-toggle" role="group" aria-label="Task view mode">
-              <button class="view-toggle-button active" type="button" data-view-mode="cards">Cards</button>
-              <button class="view-toggle-button" type="button" data-view-mode="compact">Compact</button>
+            <div class="task-toolbar">
+              <div class="view-toggle" role="group" aria-label="Task view mode">
+                <button class="view-toggle-button active" type="button" data-view-mode="cards">Cards</button>
+                <button class="view-toggle-button" type="button" data-view-mode="compact">Compact</button>
+              </div>
+              <div class="density-toggle" role="group" aria-label="Task density">
+                <button class="density-toggle-button active" type="button" data-density-mode="comfortable">Comfortable</button>
+                <button class="density-toggle-button" type="button" data-density-mode="compact">Dense</button>
+              </div>
             </div>
           </div>
 
@@ -293,16 +300,18 @@
           </div>
           <div id="activeFilters" class="active-filters hidden"></div>
           <div id="feedback" class="feedback hidden"></div>
-          <div id="compactHeader" class="compact-header hidden" aria-hidden="true">
-            <span class="compact-header-title">Task</span>
-            <span class="compact-header-status">Status</span>
-            <span class="compact-header-priority">Priority</span>
-            <span class="compact-header-category">Category</span>
-            <span class="compact-header-due">Due</span>
-            <span class="compact-header-flag">Flag</span>
-            <span class="compact-header-actions">Actions</span>
+          <div class="task-list-shell">
+            <div id="compactHeader" class="compact-header hidden" aria-hidden="true">
+              <button class="compact-header-button compact-header-title" type="button" data-compact-sort="title">Task</button>
+              <button class="compact-header-button compact-header-status" type="button" data-compact-sort="status">Status</button>
+              <button class="compact-header-button compact-header-priority" type="button" data-compact-sort="priority">Priority</button>
+              <button class="compact-header-button compact-header-category" type="button" data-compact-sort="category">Category</button>
+              <button class="compact-header-button compact-header-due" type="button" data-compact-sort="due">Due</button>
+              <span class="compact-header-flag">Flag</span>
+              <span class="compact-header-actions">Actions</span>
+            </div>
+            <div id="todoList" class="todo-list"></div>
           </div>
-          <div id="todoList" class="todo-list"></div>
           </section>
         </div>
       </section>

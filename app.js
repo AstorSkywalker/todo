@@ -3,7 +3,8 @@ const state = {
   editingId: null,
   groupBy: 'status',
   sortBy: 'newest',
-  viewMode: 'cards'
+  viewMode: 'cards',
+  densityMode: 'comfortable'
 };
 
 const todoForm = document.querySelector('#todoForm');
@@ -31,6 +32,8 @@ const visibleCount = document.querySelector('#visibleCount');
 const activeFilterCount = document.querySelector('#activeFilterCount');
 const compactHeader = document.querySelector('#compactHeader');
 const viewToggleButtons = Array.from(document.querySelectorAll('[data-view-mode]'));
+const densityToggleButtons = Array.from(document.querySelectorAll('[data-density-mode]'));
+const compactSortButtons = Array.from(document.querySelectorAll('[data-compact-sort]'));
 const filtersPanel = document.querySelector('.filters-panel');
 const filtersBody = document.querySelector('#filtersBody');
 const toggleFiltersButton = document.querySelector('#toggleFiltersButton');
@@ -83,6 +86,7 @@ initialize();
 function initialize() {
   restoreListPreferences();
   updateViewModeButtons();
+  updateDensityButtons();
   restoreFiltersPanelState();
   restoreGroupingPanelState();
   bindEvents();
@@ -105,6 +109,12 @@ function bindEvents() {
   sortTasks.addEventListener('change', handleSortChange);
   viewToggleButtons.forEach((button) => {
     button.addEventListener('click', () => handleViewModeChange(button.dataset.viewMode));
+  });
+  densityToggleButtons.forEach((button) => {
+    button.addEventListener('click', () => handleDensityModeChange(button.dataset.densityMode));
+  });
+  compactSortButtons.forEach((button) => {
+    button.addEventListener('click', () => handleCompactHeaderSort(button.dataset.compactSort));
   });
   toggleFiltersButton.addEventListener('click', toggleFiltersPanel);
   toggleGroupingButton.addEventListener('click', toggleGroupingPanel);
@@ -214,8 +224,11 @@ function renderTodos() {
   todoList.innerHTML = '';
   const isCompactMode = state.viewMode === 'compact';
   todoList.classList.toggle('compact-mode', isCompactMode);
+  todoList.classList.toggle('density-compact', state.densityMode === 'compact');
   compactHeader.classList.toggle('hidden', !isCompactMode);
   compactHeader.setAttribute('aria-hidden', String(!isCompactMode));
+  compactHeader.classList.toggle('density-compact', state.densityMode === 'compact');
+  updateCompactHeaderButtons();
 
   if (!state.items.length) {
     todoList.innerHTML = '<article class="todo-card"><h4>No tasks to display</h4><p class="todo-description">Try creating a new task or adjusting the filters.</p></article>';
@@ -559,6 +572,32 @@ function handleViewModeChange(viewMode) {
   renderTodos();
 }
 
+function handleDensityModeChange(densityMode) {
+  if (!['comfortable', 'compact'].includes(densityMode)) {
+    return;
+  }
+
+  state.densityMode = densityMode;
+  updateDensityButtons();
+  saveListPreferences();
+  renderTodos();
+}
+
+function handleCompactHeaderSort(sortKey) {
+  const nextSortBy = getCompactHeaderSortValue(sortKey);
+  if (!nextSortBy) {
+    return;
+  }
+
+  state.sortBy = nextSortBy;
+  sortTasks.value = nextSortBy;
+  saveListPreferences();
+  state.items = sortTodoItems(state.items);
+  renderActiveFilters();
+  renderResultsStrip();
+  renderTodos();
+}
+
 function debounce(fn, delay) {
   let timeoutId;
   return (...args) => {
@@ -586,6 +625,8 @@ function sortTodoItems(items) {
         return (priorityRank[left.priority] || 0) - (priorityRank[right.priority] || 0);
       case 'status':
         return (statusRank[left.status] || 99) - (statusRank[right.status] || 99) || compareText(left.title, right.title);
+      case 'category':
+        return compareText(left.category || '', right.category || '') || compareText(left.title, right.title);
       case 'title':
         return compareText(left.title, right.title);
       case 'newest':
@@ -638,7 +679,8 @@ function saveListPreferences() {
     dueTodayOnly: dueTodayOnly.checked,
     dueSoonOnly: dueSoonOnly.checked,
     sortBy: sortTasks.value,
-    viewMode: state.viewMode
+    viewMode: state.viewMode,
+    densityMode: state.densityMode
   };
 
   localStorage.setItem(listPreferencesKey, JSON.stringify(preferences));
@@ -662,7 +704,9 @@ function restoreListPreferences() {
     sortTasks.value = preferences.sortBy || 'newest';
     state.sortBy = sortTasks.value;
     state.viewMode = preferences.viewMode === 'compact' ? 'compact' : 'cards';
+    state.densityMode = preferences.densityMode === 'compact' ? 'compact' : 'comfortable';
     updateViewModeButtons();
+    updateDensityButtons();
   } catch (error) {
     localStorage.removeItem(listPreferencesKey);
   }
@@ -674,6 +718,49 @@ function updateViewModeButtons() {
     button.classList.toggle('active', isActive);
     button.setAttribute('aria-pressed', String(isActive));
   });
+}
+
+function updateDensityButtons() {
+  densityToggleButtons.forEach((button) => {
+    const isActive = button.dataset.densityMode === state.densityMode;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function updateCompactHeaderButtons() {
+  compactSortButtons.forEach((button) => {
+    const isActive = isCompactSortActive(button.dataset.compactSort);
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
+}
+
+function isCompactSortActive(sortKey) {
+  return {
+    title: state.sortBy === 'title',
+    status: state.sortBy === 'status',
+    priority: state.sortBy === 'priority_high' || state.sortBy === 'priority_low',
+    category: state.sortBy === 'category',
+    due: state.sortBy === 'due_soon' || state.sortBy === 'due_late'
+  }[sortKey] || false;
+}
+
+function getCompactHeaderSortValue(sortKey) {
+  switch (sortKey) {
+    case 'title':
+      return 'title';
+    case 'status':
+      return 'status';
+    case 'category':
+      return 'category';
+    case 'priority':
+      return state.sortBy === 'priority_high' ? 'priority_low' : 'priority_high';
+    case 'due':
+      return state.sortBy === 'due_soon' ? 'due_late' : 'due_soon';
+    default:
+      return '';
+  }
 }
 
 function toggleFiltersPanel() {
@@ -986,6 +1073,7 @@ function formatSortOption(sortValue) {
     priority_high: 'Priority, high to low',
     priority_low: 'Priority, low to high',
     status: 'Status',
+    category: 'Category',
     title: 'Title A-Z'
   }[sortValue] || sortValue;
 }

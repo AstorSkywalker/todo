@@ -678,7 +678,15 @@ textarea:focus {
   margin-bottom: 16px;
 }
 
-.view-toggle {
+.task-toolbar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.view-toggle,
+.density-toggle {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -688,7 +696,8 @@ textarea:focus {
   border: 1px solid var(--border);
 }
 
-.view-toggle-button {
+.view-toggle-button,
+.density-toggle-button {
   padding: 10px 14px;
   border-radius: 12px;
   background: transparent;
@@ -697,12 +706,14 @@ textarea:focus {
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
-.view-toggle-button:hover {
+.view-toggle-button:hover,
+.density-toggle-button:hover {
   color: var(--text);
   transform: translateY(-1px);
 }
 
-.view-toggle-button.active {
+.view-toggle-button.active,
+.density-toggle-button.active {
   background: rgba(105, 177, 255, 0.16);
   color: var(--primary);
   border-color: rgba(105, 177, 255, 0.22);
@@ -795,37 +806,43 @@ textarea:focus {
   color: var(--status-done-text);
 }
 
-.todo-list {
-  display: grid;
-  gap: 14px;
-  max-height: min(52vh, 720px);
+.task-list-shell {
+  display: flex;
+  flex-direction: column;
+  max-height: min(58vh, 780px);
   overflow-y: auto;
   padding-right: 6px;
 }
 
-.todo-list::-webkit-scrollbar {
+.task-list-shell::-webkit-scrollbar {
   width: 10px;
 }
 
-.todo-list::-webkit-scrollbar-track {
+.task-list-shell::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.04);
   border-radius: 999px;
 }
 
-.todo-list::-webkit-scrollbar-thumb {
+.task-list-shell::-webkit-scrollbar-thumb {
   background: rgba(105, 177, 255, 0.26);
   border-radius: 999px;
   border: 2px solid transparent;
   background-clip: padding-box;
 }
 
-body.light .todo-list::-webkit-scrollbar-track {
+body.light .task-list-shell::-webkit-scrollbar-track {
   background: rgba(24, 50, 78, 0.06);
 }
 
-body.light .todo-list::-webkit-scrollbar-thumb {
+body.light .task-list-shell::-webkit-scrollbar-thumb {
   background: rgba(14, 121, 209, 0.24);
   background-clip: padding-box;
+}
+
+.todo-list {
+  display: grid;
+  gap: 14px;
+  overflow: visible;
 }
 
 .todo-card {
@@ -918,6 +935,30 @@ body.light .todo-list::-webkit-scrollbar-thumb {
 
 .todo-list.compact-mode {
   gap: 10px;
+}
+
+.todo-list.density-compact {
+  gap: 8px;
+}
+
+.compact-header.density-compact {
+  padding-bottom: 8px;
+}
+
+.todo-list.density-compact .todo-row {
+  padding: 10px 14px;
+  gap: 12px;
+}
+
+.todo-list.density-compact .todo-row-description {
+  font-size: 0.86rem;
+}
+
+.todo-list.density-compact .compact-pill,
+.todo-list.density-compact .todo-row .status-badge,
+.todo-list.density-compact .due-pill {
+  padding: 6px 10px;
+  font-size: 0.76rem;
 }
 
 .todo-card.is-overdue {
@@ -1101,8 +1142,13 @@ body.light .date-icon-button:hover {
   grid-template-columns: minmax(240px, 2fr) minmax(120px, 0.9fr) minmax(100px, 0.8fr) minmax(120px, 1fr) minmax(120px, 0.9fr) minmax(110px, 0.9fr) auto;
   gap: 14px;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 2;
   margin: 0 0 10px;
   padding: 0 16px 10px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
   color: var(--muted);
   font-size: 0.77rem;
@@ -1113,6 +1159,35 @@ body.light .date-icon-button:hover {
 
 .compact-header-actions {
   justify-self: end;
+}
+
+.compact-header-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.compact-header-button:hover {
+  color: var(--text);
+}
+
+.compact-header-button.active {
+  color: var(--primary);
+}
+
+.compact-header-button.active::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 .filters-panel,
@@ -1297,12 +1372,21 @@ body.light .modal-backdrop {
     grid-template-columns: 1fr;
   }
 
-  .view-toggle {
+  .task-toolbar,
+  .view-toggle,
+  .density-toggle {
     width: 100%;
   }
 
-  .view-toggle-button {
+  .view-toggle-button,
+  .density-toggle-button {
     flex: 1 1 0;
+  }
+
+  .task-list-shell {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
   }
 
   .todo-row {
