@@ -34,6 +34,8 @@ const PUBLIC_FILES = {
   '/index.html': 'index.html',
   '/docs': 'docs.html',
   '/docs.html': 'docs.html',
+  '/study-guide': 'study-guide/index.html',
+  '/study-guide/': 'study-guide/index.html',
   '/openapi.json': 'openapi.json',
   '/styles.css': 'styles.css',
   '/app.js': 'app.js'
@@ -61,6 +63,12 @@ function createAppServer() {
       return;
     }
 
+    if (requestUrl.pathname.startsWith('/study-guide/')) {
+      const relativePath = decodeURIComponent(requestUrl.pathname.slice(1));
+      serveStaticFile(res, relativePath);
+      return;
+    }
+
     sendJson(res, 404, { error: 'Resource not found' });
   });
 }
@@ -74,6 +82,14 @@ function startServer(port = PORT) {
 
 function serveStaticFile(res, fileName) {
   const filePath = path.join(__dirname, fileName);
+  const normalizedPath = path.normalize(filePath);
+  const workspacePath = path.normalize(__dirname + path.sep);
+
+  if (!normalizedPath.startsWith(workspacePath) && normalizedPath !== path.normalize(__dirname)) {
+    sendJson(res, 403, { error: 'Access denied' });
+    return;
+  }
+
   const extension = path.extname(fileName);
   const contentType = {
     '.html': 'text/html; charset=utf-8',

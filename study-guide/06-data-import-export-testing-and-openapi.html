@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 6 - Data, Import/Export, Testing, and OpenAPI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 6</p>
+      <h1>Data, Import/Export, Testing, and OpenAPI</h1>
+      <p class="muted kicker">This lesson covers the data layer and quality layer: CSV parsing, SQLite synchronization, import/export flows, automated tests, OpenAPI structure, and the themed Swagger UI page.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#csv">CSV parsing and escaping</a></li>
+          <li><a href="#sqlite">SQLite mirror</a></li>
+          <li><a href="#import-export">Import and export</a></li>
+          <li><a href="#tests">Automated tests</a></li>
+          <li><a href="#openapi">OpenAPI spec</a></li>
+          <li><a href="#swagger">Swagger UI</a></li>
+          <li><a href="#quality">Why this quality layer matters</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="csv">
+            <h2>1. CSV Parsing and Escaping</h2>
+            <p>CSV looks simple, but correct handling matters. A task description may contain commas or quotes. That means you cannot just split each line on every comma.</p>
+            <p>The project includes custom logic to:</p>
+            <ul>
+              <li>read quoted CSV values correctly</li>
+              <li>unescape doubled quotes</li>
+              <li>re-escape values when exporting or writing back</li>
+            </ul>
+            <p>This is a strong teaching example because it shows why “simple text formats” still need careful implementation.</p>
+          </section>
+
+          <section id="sqlite">
+            <h2>2. SQLite As A Mirror</h2>
+            <p>SQLite is not the primary source of truth yet. It is a synchronized mirror.</p>
+            <p>This teaches a useful transitional architecture:</p>
+            <ul>
+              <li>do not break the current app</li>
+              <li>add a second storage layer safely</li>
+              <li>keep future migration options open</li>
+            </ul>
+            <p>The synchronization strategy is straightforward:</p>
+            <ol>
+              <li>read all CSV tasks</li>
+              <li>replace the SQLite table contents</li>
+              <li>update the last sync timestamp</li>
+            </ol>
+          </section>
+
+          <section id="import-export">
+            <h2>3. Import and Export Flows</h2>
+            <p>Import/export teaches how to think about data boundaries.</p>
+            <p>Export endpoints return either:</p>
+            <ul>
+              <li>CSV content</li>
+              <li>JSON content</li>
+            </ul>
+            <p>Import endpoints accept:</p>
+            <ul>
+              <li>a format</li>
+              <li>a mode (<code>append</code> or <code>replace</code>)</li>
+              <li>the file content as a string</li>
+            </ul>
+            <p>The import process normalizes rows, validates them, generates unique ids if necessary, and writes the final merged dataset.</p>
+          </section>
+
+          <section id="tests">
+            <h2>4. Automated Tests</h2>
+            <p>The automated test runner is intentionally lightweight. Instead of adding a large test framework, the project uses a custom Node script with assertions.</p>
+            <p>This is educational because it shows that good testing is more about disciplined scenarios than about tool complexity.</p>
+            <p>The tests currently cover:</p>
+            <ul>
+              <li>CSV parsing edge cases</li>
+              <li>validation rules</li>
+              <li>CRUD endpoint flow</li>
+              <li>grouping endpoint behavior</li>
+              <li>filtering behavior</li>
+              <li>negative API cases</li>
+              <li>import/export round trips</li>
+              <li>storage sync totals</li>
+            </ul>
+          </section>
+
+          <section id="openapi">
+            <h2>5. OpenAPI Specification</h2>
+            <p><code>openapi.json</code> describes the API in a machine-readable way. It includes:</p>
+            <ul>
+              <li>metadata like title and version</li>
+              <li>server URL</li>
+              <li>paths and operations</li>
+              <li>parameters</li>
+              <li>request bodies</li>
+              <li>response schemas</li>
+              <li>shared components</li>
+            </ul>
+            <p>This is one of the most professional parts of the project because it turns a working API into a documented contract.</p>
+          </section>
+
+          <section id="swagger">
+            <h2>6. Swagger UI</h2>
+            <p><code>docs.html</code> renders Swagger UI using the local OpenAPI file. The project also improves that page by:</p>
+            <ul>
+              <li>adding the same light/dark mode behavior</li>
+              <li>adding the same color scheme selector</li>
+              <li>storing those choices in the same browser keys as the main app</li>
+            </ul>
+            <p>This is a very nice lesson about consistency. Documentation should feel like part of the product, not like a separate ugly tool.</p>
+          </section>
+
+          <section id="quality">
+            <h2>7. Why This Quality Layer Matters</h2>
+            <p>A lot of beginner projects stop once the interface works. This project goes further by teaching quality disciplines:</p>
+            <ul>
+              <li>test the critical behaviors</li>
+              <li>document the API</li>
+              <li>show storage status</li>
+              <li>make architecture maintainable</li>
+            </ul>
+            <p>These are the habits that move a project closer to professional practice.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="05-backend-node-routing-services-and-storage.html">Previous lesson</a>
+          <a href="index.html">Back to study guide index</a>
+          <a href="07-strategy-decisions-roadmap-and-rebuild-path.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

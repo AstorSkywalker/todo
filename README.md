@@ -30,6 +30,7 @@ Run the app locally with `npm start`, then open:
 - App: `http://localhost:3000`
 - Swagger UI: `http://localhost:3000/docs`
 - OpenAPI JSON: `http://localhost:3000/openapi.json`
+- Study guide: `http://localhost:3000/study-guide`
 - Todos API: `http://localhost:3000/api/todos`
 - Storage status API: `http://localhost:3000/api/todos/storage`
 

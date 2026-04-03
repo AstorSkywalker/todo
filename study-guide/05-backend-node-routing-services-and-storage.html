@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 5 - Backend Node, Routing, Services, and Storage</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 5</p>
+      <h1>Backend Node.js, Routing, Services, and Storage</h1>
+      <p class="muted kicker">This lesson explains how the backend works after modularization, why responsibilities were split, and how requests move from the browser into CSV and SQLite persistence.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#server">server.js role</a></li>
+          <li><a href="#routes">Route handling</a></li>
+          <li><a href="#services">Service layer</a></li>
+          <li><a href="#http-utils">HTTP helpers</a></li>
+          <li><a href="#validation">Validation helpers</a></li>
+          <li><a href="#request-flow">Full request flow</a></li>
+          <li><a href="#modularization">Why modularization happened</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="server">
+            <h2>1. The Role of <code>server.js</code></h2>
+            <p>After the backend refactor, <code>server.js</code> is mostly a bootstrap file. This is exactly what we want. It now focuses on:</p>
+            <ul>
+              <li>ensuring the data file exists</li>
+              <li>initializing SQLite</li>
+              <li>synchronizing CSV into SQLite at startup</li>
+              <li>serving static files</li>
+              <li>forwarding API requests into the route module</li>
+            </ul>
+            <p>A small server entry point is healthier than a giant one because it keeps startup concerns separate from business logic.</p>
+          </section>
+
+          <section id="routes">
+            <h2>2. Route Handling</h2>
+            <p>The file <code>routes/todos.js</code> is responsible for deciding what to do when the request path points to <code>/api/todos</code>.</p>
+            <p>It does not know how CSV parsing works internally. It does not know how grouping is implemented. It only knows which service to call and which HTTP response to send.</p>
+            <p>This is an example of separation of concerns. Routes are traffic controllers, not storage engines.</p>
+          </section>
+
+          <section id="services">
+            <h2>3. Service Layer</h2>
+            <p>The service layer is where business logic lives.</p>
+            <p><code>services/todoService.js</code> handles:</p>
+            <ul>
+              <li>listing tasks</li>
+              <li>getting a task by id</li>
+              <li>creating tasks</li>
+              <li>updating tasks</li>
+              <li>deleting tasks</li>
+              <li>grouping</li>
+              <li>storage status</li>
+              <li>import/export</li>
+            </ul>
+            <p><code>services/csvService.js</code> handles:</p>
+            <ul>
+              <li>ensuring the CSV file exists</li>
+              <li>reading tasks from the CSV file</li>
+              <li>writing tasks to the CSV file</li>
+              <li>CSV line parsing</li>
+              <li>CSV value escaping</li>
+            </ul>
+          </section>
+
+          <section id="http-utils">
+            <h2>4. HTTP Helpers</h2>
+            <p><code>utils/http.js</code> contains small cross-cutting helpers:</p>
+            <ul>
+              <li><code>readBody(req)</code> to read and parse JSON request bodies</li>
+              <li><code>sendJson(res, statusCode, payload)</code> to return JSON with consistent headers</li>
+            </ul>
+            <p>Small helpers like these reduce repetition and make route files easier to read.</p>
+          </section>
+
+          <section id="validation">
+            <h2>5. Validation Helpers</h2>
+            <p><code>utils/validation.js</code> centralizes rules such as:</p>
+            <ul>
+              <li>required title</li>
+              <li>allowed status values</li>
+              <li>allowed priority values</li>
+              <li>valid ISO dates</li>
+              <li>payload normalization</li>
+              <li>import normalization</li>
+            </ul>
+            <p>This is valuable because validation should not be scattered randomly across the codebase.</p>
+          </section>
+
+          <section id="request-flow">
+            <h2>6. Full Request Flow Example</h2>
+            <p>Take <code>POST /api/todos</code> as an example:</p>
+            <ol>
+              <li>The browser sends JSON to the server.</li>
+              <li><code>server.js</code> routes the request to <code>handleTodosApi</code>.</li>
+              <li><code>routes/todos.js</code> reads the body and calls <code>createTodo</code>.</li>
+              <li><code>services/todoService.js</code> normalizes and validates the payload.</li>
+              <li>The service reads current tasks from <code>services/csvService.js</code>.</li>
+              <li>The new task is inserted into the array.</li>
+              <li>The updated task array is written back to CSV.</li>
+              <li>CSV writing triggers SQLite synchronization.</li>
+              <li>The service returns the created task.</li>
+              <li>The route sends it back as JSON.</li>
+            </ol>
+            <p>This is the kind of end-to-end flow a student should visualize for every endpoint.</p>
+          </section>
+
+          <section id="modularization">
+            <h2>7. Why Modularization Happened Later</h2>
+            <p>At the beginning, a single <code>server.js</code> was good enough. That is not a mistake. It was appropriate for the project size at the time.</p>
+            <p>Modularization happened after the backend proved it had enough complexity to justify it. That timing is important. Over-engineering too early can make learning harder, not easier.</p>
+            <div class="note">
+              <p><strong>Healthy refactor rule:</strong> split code when responsibilities become blurry, testing becomes harder, or file size starts harming readability. That is exactly what happened here.</p>
+            </div>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="04-frontend-javascript-state-rendering-and-interactions.html">Previous lesson</a>
+          <a href="index.html">Back to study guide index</a>
+          <a href="06-data-import-export-testing-and-openapi.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

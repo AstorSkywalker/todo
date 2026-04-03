@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 2 - HTML Structure and Dashboard Layout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 2</p>
+      <h1>HTML Structure and Dashboard Layout</h1>
+      <p class="muted kicker">This lesson teaches how the interface is organized using semantic HTML, what each area of the page does, and why the dashboard is broken into sections instead of one giant block.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#semantics">Semantic HTML</a></li>
+          <li><a href="#shell">App shell</a></li>
+          <li><a href="#sidebar">Sidebar</a></li>
+          <li><a href="#hero">Hero and stats</a></li>
+          <li><a href="#form">Task form</a></li>
+          <li><a href="#filters">Filters and grouping</a></li>
+          <li><a href="#tasks">Task list and templates</a></li>
+          <li><a href="#docs-page">Docs page</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="semantics">
+            <h2>1. Why Semantic HTML Matters</h2>
+            <p>Semantic HTML means choosing elements based on meaning, not only appearance. For example:</p>
+            <ul>
+              <li><code>&lt;aside&gt;</code> is used for the sidebar because it contains supporting information.</li>
+              <li><code>&lt;main&gt;</code> wraps the primary dashboard experience.</li>
+              <li><code>&lt;section&gt;</code> groups related content blocks.</li>
+              <li><code>&lt;article&gt;</code> is used for cards that stand as meaningful independent units.</li>
+              <li><code>&lt;form&gt;</code>, <code>&lt;label&gt;</code>, <code>&lt;input&gt;</code>, and <code>&lt;textarea&gt;</code> are used correctly for accessibility and browser behavior.</li>
+            </ul>
+            <p>This matters because semantic structure improves accessibility, maintainability, and clarity.</p>
+          </section>
+
+          <section id="shell">
+            <h2>2. The App Shell</h2>
+            <p>The outer page shell gives the app its two major columns:</p>
+            <pre><code>&lt;div class="app-shell"&gt;
+  &lt;aside class="sidebar glass-card"&gt;...&lt;/aside&gt;
+  &lt;main class="dashboard"&gt;...&lt;/main&gt;
+&lt;/div&gt;</code></pre>
+            <p>This is one of the most important structural decisions in the project. The sidebar contains identity, themes, APIs, and storage status. The main dashboard contains the actual working interface.</p>
+          </section>
+
+          <section id="sidebar">
+            <h2>3. Sidebar Structure</h2>
+            <p>The sidebar is not only decorative. It is a utility panel. It contains:</p>
+            <ul>
+              <li>project branding and short description</li>
+              <li>theme switcher</li>
+              <li>color scheme selector</li>
+              <li>API summary box</li>
+              <li>storage status panel</li>
+            </ul>
+            <p>This creates a useful left rail that keeps global controls separate from the task workflow.</p>
+            <div class="callout">
+              <p><strong>Why this is a good design:</strong> users do not need the theme switch or API list mixed into the task form. Separating global controls from task-specific controls reduces clutter.</p>
+            </div>
+          </section>
+
+          <section id="hero">
+            <h2>4. Hero, KPI Cards, and Chart Placement</h2>
+            <p>At the top of the dashboard, the HTML establishes a visual hierarchy:</p>
+            <ol>
+              <li>hero section for the dashboard title and import/export actions</li>
+              <li>stats grid for counts</li>
+              <li>analytics section for the workload chart</li>
+            </ol>
+            <p>This structure teaches a classic dashboard principle: summary first, then analysis, then detailed work surfaces.</p>
+          </section>
+
+          <section id="form">
+            <h2>5. Task Form HTML</h2>
+            <p>The task form is a complete input surface for creating and editing tasks. Important HTML ideas used here include:</p>
+            <ul>
+              <li>hidden input for task id during edits</li>
+              <li>labels that wrap their controls for usability</li>
+              <li>grouped fields using <code>div.form-row</code></li>
+              <li>a visible masked date input plus a hidden native date picker</li>
+              <li>small inline error elements under fields</li>
+            </ul>
+            <pre><code>&lt;label&gt;
+  Due date
+  &lt;div class="date-input-wrap"&gt;
+    &lt;input id="dueDate" type="text" placeholder="DD/MM/YYYY" /&gt;
+    &lt;input id="dueDatePicker" class="date-picker-native" type="date" /&gt;
+    &lt;button id="dueDateButton" class="date-icon-button" type="button"&gt;...&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;small id="dueDateError" class="field-error hidden"&gt;&lt;/small&gt;
+&lt;/label&gt;</code></pre>
+            <p>This pattern is one of the more educational pieces of the UI because it shows how to combine native browser controls with a custom visual experience.</p>
+          </section>
+
+          <section id="filters">
+            <h2>6. Filters and Grouping Sections</h2>
+            <p>The right-hand working column is intentionally split into independent panels:</p>
+            <ul>
+              <li><strong>Filters</strong>: search, selects, due range, quick due-state chips</li>
+              <li><strong>Grouping</strong>: status/priority/category summary</li>
+              <li><strong>Tasks</strong>: active filters, view toggles, and the rendered task list</li>
+            </ul>
+            <p>These are separate because they represent different mental jobs:</p>
+            <ul>
+              <li>finding</li>
+              <li>analyzing</li>
+              <li>reviewing results</li>
+            </ul>
+            <p>That split greatly improves readability compared with placing every control inside one large card.</p>
+          </section>
+
+          <section id="tasks">
+            <h2>7. Task List Templates</h2>
+            <p>Instead of building task cards entirely with string concatenation, the project uses HTML <code>&lt;template&gt;</code> elements. This is a powerful native browser feature.</p>
+            <p>There are two task templates:</p>
+            <ul>
+              <li>a card template for the default rich view</li>
+              <li>a compact row template for the table-like view</li>
+            </ul>
+            <p>Templates are useful because they keep structure visible in HTML while letting JavaScript clone and populate them later.</p>
+          </section>
+
+          <section id="docs-page">
+            <h2>8. The Documentation Page HTML</h2>
+            <p>The project also includes a separate documentation page, <code>docs.html</code>. This page is not part of the task dashboard itself. It exists to render Swagger UI and now also includes its own theme and palette controls that share settings with the main app.</p>
+            <p>This teaches a very practical pattern: you can have more than one HTML entry point in the same project, as long as the server knows how to serve them.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="01-foundations-and-project-setup.html">Previous lesson</a>
+          <a href="index.html">Back to study guide index</a>
+          <a href="03-css-system-themes-and-responsive-ui.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

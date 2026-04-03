@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 7 - Strategy, Decisions, Roadmap, and Rebuild Path</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 7</p>
+      <h1>Strategy, Design Decisions, Roadmap, and Rebuild Path</h1>
+      <p class="muted kicker">This final lesson explains the strategic thinking behind the project, why certain choices were made in a particular order, and how to rebuild the whole app as a learning exercise from the first line to the final polish.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#decisions">Key design decisions</a></li>
+          <li><a href="#tradeoffs">Tradeoffs</a></li>
+          <li><a href="#step-by-step">Full rebuild path</a></li>
+          <li><a href="#teaching-plan">Suggested teaching plan</a></li>
+          <li><a href="#future">Future roadmap</a></li>
+          <li><a href="#study-method">How to study the code</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="decisions">
+            <h2>1. Key Design Decisions</h2>
+            <p>The project made a series of strategic choices. Each one had a reason.</p>
+            <table>
+              <thead>
+                <tr><th>Decision</th><th>Why it was chosen</th><th>What it teaches</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Vanilla frontend</td><td>Keeps concepts visible and direct.</td><td>You can build rich UIs without hiding logic behind a framework.</td></tr>
+                <tr><td>CSV-first persistence</td><td>Fast to understand and inspect.</td><td>Start with transparency and simplicity.</td></tr>
+                <tr><td>SQLite mirror</td><td>Adds a more realistic data layer without abandoning the original app.</td><td>Migrations can be incremental.</td></tr>
+                <tr><td>Modular backend later</td><td>Avoid premature complexity.</td><td>Refactor when growth justifies it.</td></tr>
+                <tr><td>OpenAPI after stabilization</td><td>Documentation is easier when endpoints are stable.</td><td>Sequence matters.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="tradeoffs">
+            <h2>2. Tradeoffs and Honest Limitations</h2>
+            <p>No project design is perfect. Good engineering means understanding tradeoffs.</p>
+            <ul>
+              <li><strong>CSV is easy, but not ideal for concurrency.</strong></li>
+              <li><strong>Vanilla JavaScript is transparent, but becomes heavier as the UI grows.</strong></li>
+              <li><strong>Local file persistence is simple, but harder to deploy in production-style hosting.</strong></li>
+              <li><strong>SQLite mirroring is useful, but not yet the read source of truth.</strong></li>
+            </ul>
+            <p>These limitations are not failures. They are part of the learning journey and they help explain the roadmap.</p>
+          </section>
+
+          <section id="step-by-step">
+            <h2>3. Full Rebuild Path From Zero</h2>
+            <p>If a student wanted to rebuild the whole application from nothing, the safest lesson sequence would look like this:</p>
+            <ol>
+              <li>Create a new folder and initialize Git.</li>
+              <li>Create <code>index.html</code>, <code>styles.css</code>, and <code>app.js</code>.</li>
+              <li>Build a static dashboard shell with a sidebar, hero, stats, form, and task list section.</li>
+              <li>Add CSS variables, spacing, card surfaces, buttons, and a dark theme baseline.</li>
+              <li>Add a simple frontend task array and render cards from it.</li>
+              <li>Build the form submission flow in frontend JavaScript.</li>
+              <li>Create a Node server that serves the static frontend.</li>
+              <li>Add a simple <code>/api/todos</code> endpoint.</li>
+              <li>Write and read tasks from a CSV file.</li>
+              <li>Replace fake frontend data with backend <code>fetch</code> calls.</li>
+              <li>Add update and delete API endpoints.</li>
+              <li>Add sorting and filters.</li>
+              <li>Add due-state logic, date validation, and date masks.</li>
+              <li>Add grouped summaries and task counts.</li>
+              <li>Add light mode and palette selection.</li>
+              <li>Add compact view and density mode.</li>
+              <li>Add SQLite synchronization.</li>
+              <li>Add import/export.</li>
+              <li>Add automated tests.</li>
+              <li>Add OpenAPI and Swagger UI.</li>
+              <li>Refactor the backend into routes, services, and utils.</li>
+            </ol>
+          </section>
+
+          <section id="teaching-plan">
+            <h2>4. Suggested Teaching Plan For A Beginner</h2>
+            <p>If you were teaching this to someone from zero, do not start with advanced topics first. Teach in layers:</p>
+            <ol>
+              <li><strong>Web page basics:</strong> HTML structure and CSS styling.</li>
+              <li><strong>Interactivity:</strong> JavaScript events and rendering.</li>
+              <li><strong>Persistence:</strong> file-based storage.</li>
+              <li><strong>APIs:</strong> backend routes and JSON.</li>
+              <li><strong>Quality:</strong> tests and documentation.</li>
+              <li><strong>Architecture:</strong> modularization and future database planning.</li>
+            </ol>
+            <p>This order makes the project feel achievable instead of overwhelming.</p>
+          </section>
+
+          <section id="future">
+            <h2>5. Future Roadmap Context</h2>
+            <p>Current future directions in the project include:</p>
+            <ul>
+              <li>frontend smoke tests</li>
+              <li>auto-refresh behavior</li>
+              <li>optional SQLite-primary reads</li>
+              <li>optional Oracle Database 26ai on-premise integration</li>
+              <li>optional Oracle OCI Autonomous Database integration</li>
+            </ul>
+            <p>Notice how these are not random features. They are strategic next steps based on the current architecture.</p>
+          </section>
+
+          <section id="study-method">
+            <h2>6. How To Study The Codebase Effectively</h2>
+            <ol>
+              <li>Read a lesson here first.</li>
+              <li>Open the related project file.</li>
+              <li>Trace one flow from beginning to end.</li>
+              <li>Write your own small experiments or comments in a separate branch.</li>
+              <li>Run the app and tests after each change.</li>
+            </ol>
+            <div class="callout">
+              <p><strong>Most important advice:</strong> do not memorize the code blindly. Instead, learn the purpose of each layer, then the role of each file, then the details of each function. That is how you become able to recreate a project instead of only reading one.</p>
+            </div>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="06-data-import-export-testing-and-openapi.html">Previous lesson</a>
+          <a href="index.html">Back to study guide index</a>
+          <a href="08-file-by-file-reading-lab.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

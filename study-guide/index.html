@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow CSV Study Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Study Guide</p>
+      <h1>TaskFlow CSV Complete Build Guide</h1>
+      <p class="kicker muted">This study guide is a separate learning companion for the project. It is written as if a student is starting from zero and wants to understand how to rebuild the entire application step by step, including interface, logic, backend, storage, testing, documentation, architectural decisions, and future directions.</p>
+      <div class="header-actions">
+        <a href="../README.md">Open project README</a>
+        <a href="../index.html">Open app markup</a>
+        <a href="../openapi.json">Open OpenAPI spec</a>
+      </div>
+      <div class="badge-row">
+        <div class="badge"><strong>Goal</strong><span>Teach the whole project from first principles to full implementation.</span></div>
+        <div class="badge"><strong>Format</strong><span>HTML lessons with comfortable styling for long study sessions.</span></div>
+        <div class="badge"><strong>Audience</strong><span>Someone who may be new to HTML, CSS, JavaScript, Node.js, CSV, SQLite, and APIs.</span></div>
+        <div class="badge"><strong>Approach</strong><span>Concepts first, then structure, then code, then decisions, then testing and docs.</span></div>
+      </div>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+          <li><a href="#how-to-use">How to use this guide</a></li>
+          <li><a href="#learning-path">Recommended learning path</a></li>
+          <li><a href="#lesson-map">Lesson map</a></li>
+          <li><a href="#rebuild-strategy">Project rebuild strategy</a></li>
+          <li><a href="#design-principles">Design and engineering principles</a></li>
+          <li><a href="#chapter-links">Jump to lessons</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="how-to-use">
+            <h2>How To Use This Guide</h2>
+            <p>This guide is intentionally structured like a course. Each lesson explains not only <em>what</em> exists in the project, but also <em>why</em> it exists, <em>how</em> it works, and <em>what decision led to that implementation</em>. The idea is that if you had to recreate TaskFlow CSV from an empty folder, you could follow these lessons and build it again piece by piece.</p>
+            <p>Some lessons are conceptual and some are implementation-heavy. If you already know HTML and CSS, you can move faster. If you are new to web development, go in order and read slowly.</p>
+          </section>
+
+          <section id="learning-path">
+            <h2>Recommended Learning Path</h2>
+            <ol>
+              <li>Read Lesson 1 to understand the project, the files, and the build order.</li>
+              <li>Read Lesson 2 to understand the HTML dashboard structure and semantic markup.</li>
+              <li>Read Lesson 3 to understand the CSS system, variables, themes, pills, layouts, and transitions.</li>
+              <li>Read Lesson 4 to understand frontend JavaScript: state, rendering, filters, views, events, and persistence.</li>
+              <li>Read Lesson 5 to understand backend Node.js, routing, modular services, and storage behavior.</li>
+              <li>Read Lesson 6 to understand CSV, SQLite mirroring, import/export, tests, and API docs.</li>
+              <li>Read Lesson 7 for strategy, design decisions, tradeoffs, and how to rebuild the project from zero.</li>
+            </ol>
+          </section>
+
+          <section id="lesson-map">
+            <h2>Lesson Map</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Lesson</th>
+                  <th>Focus</th>
+                  <th>What you will learn</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a href="01-foundations-and-project-setup.html">Lesson 1</a></td>
+                  <td>Foundations and setup</td>
+                  <td>Project goals, file structure, storage model, startup sequence, and the mental model for the whole application.</td>
+                </tr>
+                <tr>
+                  <td><a href="02-html-structure-and-dashboard-layout.html">Lesson 2</a></td>
+                  <td>HTML structure</td>
+                  <td>How the dashboard is built with semantic sections, forms, panels, templates, and documentation pages.</td>
+                </tr>
+                <tr>
+                  <td><a href="03-css-system-themes-and-responsive-ui.html">Lesson 3</a></td>
+                  <td>CSS system</td>
+                  <td>Variables, color schemes, dark/light mode, layout grids, pills, compact tables, transitions, and visual consistency.</td>
+                </tr>
+                <tr>
+                  <td><a href="04-frontend-javascript-state-rendering-and-interactions.html">Lesson 4</a></td>
+                  <td>Frontend JavaScript</td>
+                  <td>State, rendering, event binding, filtering, sorting, localStorage, charting, and interaction patterns.</td>
+                </tr>
+                <tr>
+                  <td><a href="05-backend-node-routing-services-and-storage.html">Lesson 5</a></td>
+                  <td>Backend architecture</td>
+                  <td>Server startup, routes, services, HTTP helpers, validation helpers, CRUD flow, and modular organization.</td>
+                </tr>
+                <tr>
+                  <td><a href="06-data-import-export-testing-and-openapi.html">Lesson 6</a></td>
+                  <td>Data, tests, docs</td>
+                  <td>CSV parsing, SQLite mirroring, import/export, automated tests, Swagger UI, and OpenAPI structure.</td>
+                </tr>
+                <tr>
+                  <td><a href="07-strategy-decisions-roadmap-and-rebuild-path.html">Lesson 7</a></td>
+                  <td>Decisions and rebuild path</td>
+                  <td>Why the app was designed this way, what tradeoffs were made, and how to rebuild it step by step from an empty folder.</td>
+                </tr>
+                <tr>
+                  <td><a href="08-file-by-file-reading-lab.html">Lesson 8</a></td>
+                  <td>Reading lab</td>
+                  <td>A practical file-by-file study method for tracing the codebase and rebuilding it almost line by line.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="rebuild-strategy">
+            <h2>Project Rebuild Strategy</h2>
+            <p>If you had to recreate this project from nothing, the safest teaching order is not random. It should be:</p>
+            <ol>
+              <li>Create the folder structure and basic files.</li>
+              <li>Build the static HTML dashboard shell.</li>
+              <li>Add base CSS variables, layout, and typography.</li>
+              <li>Implement the task form and task list rendering in frontend JavaScript.</li>
+              <li>Connect the frontend to a simple backend API.</li>
+              <li>Implement CSV storage.</li>
+              <li>Add filters, sorting, grouping, and theming.</li>
+              <li>Add SQLite mirroring.</li>
+              <li>Add import/export.</li>
+              <li>Add tests.</li>
+              <li>Add Swagger/OpenAPI docs.</li>
+              <li>Refactor backend architecture for maintainability.</li>
+            </ol>
+            <div class="callout">
+              <p><strong>Why this order matters:</strong> it reduces complexity. You do not start with advanced architecture or cloud databases first. You start with something that works, then add sophistication step by step.</p>
+            </div>
+          </section>
+
+          <section id="design-principles">
+            <h2>Design and Engineering Principles Used In The Project</h2>
+            <ul>
+              <li><strong>Start simple, then refine:</strong> CSV-first made the app easy to begin.</li>
+              <li><strong>Keep the UI modern:</strong> the dashboard uses cards, glass-like surfaces, pills, contrast, and spacing for readability.</li>
+              <li><strong>Prefer progressive enhancement:</strong> the app gained charting, theming, compact view, and docs over time without throwing away the base.</li>
+              <li><strong>Use browser persistence for comfort:</strong> theme, palette, filters, view mode, density, and collapsible sections are saved in localStorage.</li>
+              <li><strong>Separate concerns when the app grows:</strong> the backend was modularized only after it became large enough to justify it.</li>
+              <li><strong>Document and test after stabilization:</strong> once the API became stable, tests and OpenAPI docs became high-value additions.</li>
+            </ul>
+          </section>
+
+          <section id="chapter-links">
+            <h2>Jump To Lessons</h2>
+            <div class="chapter-links">
+              <a class="link-card" href="01-foundations-and-project-setup.html"><strong>Lesson 1</strong><br />Foundations, file map, startup flow, and build order</a>
+              <a class="link-card" href="02-html-structure-and-dashboard-layout.html"><strong>Lesson 2</strong><br />HTML structure, semantic layout, templates, and dashboard composition</a>
+              <a class="link-card" href="03-css-system-themes-and-responsive-ui.html"><strong>Lesson 3</strong><br />CSS variables, palettes, responsive design, pills, transitions, and theming</a>
+              <a class="link-card" href="04-frontend-javascript-state-rendering-and-interactions.html"><strong>Lesson 4</strong><br />Frontend state, rendering, filters, chart logic, events, and localStorage</a>
+              <a class="link-card" href="05-backend-node-routing-services-and-storage.html"><strong>Lesson 5</strong><br />Node.js backend, modular routes/services/utils, validation, and storage flow</a>
+              <a class="link-card" href="06-data-import-export-testing-and-openapi.html"><strong>Lesson 6</strong><br />CSV, SQLite, import/export, tests, Swagger, and OpenAPI</a>
+              <a class="link-card" href="07-strategy-decisions-roadmap-and-rebuild-path.html"><strong>Lesson 7</strong><br />Decisions, strategy, roadmap, and a complete rebuild sequence</a>
+              <a class="link-card" href="08-file-by-file-reading-lab.html"><strong>Lesson 8</strong><br />File-by-file reading lab and near line-by-line reconstruction method</a>
+            </div>
+          </section>
+        </article>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 1 - Foundations and Project Setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 1</p>
+      <h1>Foundations and Project Setup</h1>
+      <p class="muted kicker">This lesson explains what the project is, why it was built the way it was, what every top-level file is responsible for, and how you would set up the same project from an empty folder.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#purpose">Project purpose</a></li>
+          <li><a href="#stack">Technology stack</a></li>
+          <li><a href="#folder">Folder structure</a></li>
+          <li><a href="#startup">How startup works</a></li>
+          <li><a href="#build-order">Recommended build order</a></li>
+          <li><a href="#why-csv">Why CSV first</a></li>
+          <li><a href="#environment">Environment and tools</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="purpose">
+            <h2>1. Project Purpose</h2>
+            <p>TaskFlow CSV is not just a To Do list. It is a teaching project that demonstrates how a real-world dashboard can grow from a very simple persistence model into a more layered and professional full-stack application.</p>
+            <p>The core idea was to keep the storage simple enough to understand from day one, which is why the first data layer was a plain CSV file. That decision made the first version easy to reason about because a task could literally be inspected as a line of text in <code>data/todos.csv</code>.</p>
+            <p>From there, the app added:</p>
+            <ul>
+              <li>a modern frontend dashboard</li>
+              <li>a Node.js backend API</li>
+              <li>SQLite mirroring</li>
+              <li>import/export support</li>
+              <li>sorting, filters, and grouped summaries</li>
+              <li>OpenAPI documentation</li>
+              <li>automated tests</li>
+            </ul>
+            <div class="callout">
+              <p><strong>Important mindset:</strong> the project was not built by starting with the biggest architecture possible. It was built by making something understandable first, then making it more capable.</p>
+            </div>
+          </section>
+
+          <section id="stack">
+            <h2>2. Technology Stack Explained</h2>
+            <table>
+              <thead>
+                <tr><th>Technology</th><th>Why it is used</th><th>What it teaches</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>HTML</td><td>Defines the structure of the dashboard and docs pages.</td><td>Semantic layout, forms, sections, templates, accessibility attributes.</td></tr>
+                <tr><td>CSS</td><td>Controls visual design, layout, themes, pills, tables, transitions, and responsiveness.</td><td>Design systems, variables, responsive grids, visual consistency.</td></tr>
+                <tr><td>Vanilla JavaScript</td><td>Runs all frontend interactions without a framework.</td><td>State management, rendering, events, localStorage, fetch, UI logic.</td></tr>
+                <tr><td>Node.js</td><td>Runs the server and API.</td><td>HTTP basics, file I/O, modular architecture, JSON APIs.</td></tr>
+                <tr><td>CSV</td><td>Main storage format.</td><td>Simple persistence, parsing, serialization, escaping.</td></tr>
+                <tr><td>SQLite</td><td>Mirror storage layer.</td><td>Relational storage, synchronization, future migration path.</td></tr>
+                <tr><td>Swagger/OpenAPI</td><td>Documents the API.</td><td>Professional API description, interactive docs, schema thinking.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="folder">
+            <h2>3. Folder Structure and Why It Matters</h2>
+            <p>At the beginning, the project had only a few root files. As it grew, the backend was modularized and the repository gained clearer structure.</p>
+            <pre><code>todo/
+  app.js
+  index.html
+  styles.css
+  server.js
+  sqliteService.js
+  openapi.json
+  docs.html
+  README.md
+  package.json
+  data/
+    todos.csv
+    todos.db
+  routes/
+    todos.js
+  services/
+    csvService.js
+    todoService.js
+  utils/
+    http.js
+    validation.js
+  scripts/
+    run-tests.js
+  study-guide/
+    index.html
+    ...chapter files...</code></pre>
+            <p>Each folder has a purpose:</p>
+            <ul>
+              <li><code>data/</code>: persistent local data files</li>
+              <li><code>routes/</code>: request routing and endpoint handling</li>
+              <li><code>services/</code>: business logic and storage operations</li>
+              <li><code>utils/</code>: small reusable helpers</li>
+              <li><code>scripts/</code>: development utilities, especially tests</li>
+              <li><code>study-guide/</code>: learning material kept separate from the app</li>
+            </ul>
+          </section>
+
+          <section id="startup">
+            <h2>4. How Startup Works</h2>
+            <p>When you run <code>npm start</code>, Node executes <code>server.js</code>. That file is now deliberately small. Its job is to:</p>
+            <ol>
+              <li>ensure storage files exist</li>
+              <li>initialize SQLite</li>
+              <li>sync CSV data into SQLite</li>
+              <li>create the HTTP server</li>
+              <li>serve static files like <code>index.html</code>, <code>styles.css</code>, <code>app.js</code>, <code>docs.html</code>, and <code>openapi.json</code></li>
+              <li>send API requests to the route handler</li>
+            </ol>
+            <p>This is a clean pattern because startup logic stays separate from endpoint logic.</p>
+          </section>
+
+          <section id="build-order">
+            <h2>5. Recommended Build Order From Zero</h2>
+            <p>If you were teaching someone from nothing, the order should be practical:</p>
+            <ol>
+              <li>Create <code>index.html</code>, <code>styles.css</code>, and <code>app.js</code>.</li>
+              <li>Build a static dashboard shell with no data yet.</li>
+              <li>Create a tiny <code>server.js</code> that serves static files.</li>
+              <li>Add a simple JSON endpoint like <code>GET /api/todos</code>.</li>
+              <li>Add file-based persistence with CSV.</li>
+              <li>Connect the frontend form and list rendering.</li>
+              <li>Add sorting and filtering.</li>
+              <li>Add theming and extra UI polish.</li>
+              <li>Add SQLite mirroring.</li>
+              <li>Add import/export, tests, and docs.</li>
+            </ol>
+            <div class="note">
+              <p><strong>Teaching principle:</strong> build vertical slices. A vertical slice means one feature working end to end, instead of many disconnected pieces.</p>
+            </div>
+          </section>
+
+          <section id="why-csv">
+            <h2>6. Why CSV First, Then SQLite</h2>
+            <p>CSV was chosen first because it is extremely transparent. A beginner can open the file and inspect exactly what is stored. That gives immediate feedback and reduces fear around persistence.</p>
+            <p>SQLite was added later because it introduces better structure and a more realistic database story, while still staying local and lightweight.</p>
+            <p>That storage strategy teaches an important software lesson: <strong>you do not need the final architecture on day one</strong>. You can evolve your design as the product proves its needs.</p>
+          </section>
+
+          <section id="environment">
+            <h2>7. Environment and Tools</h2>
+            <p>To recreate the project comfortably, you should understand the surrounding tools as well:</p>
+            <ul>
+              <li><strong>VS Code:</strong> editing, terminal, Markdown preview, source control panel.</li>
+              <li><strong>Git:</strong> tracking changes, creating checkpoints, pushing to GitHub.</li>
+              <li><strong>Node.js:</strong> running the server and scripts.</li>
+              <li><strong>PowerShell or terminal:</strong> running commands like <code>npm start</code> and <code>node scripts/run-tests.js</code>.</li>
+              <li><strong>Browser DevTools:</strong> debugging layout, network requests, and localStorage.</li>
+            </ul>
+            <p>In practice, building the app is only part of the skill. Understanding the workflow around it is also part of becoming productive.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="index.html">Back to study guide index</a>
+          <a href="02-html-structure-and-dashboard-layout.html">Next lesson: HTML structure</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 4 - Frontend JavaScript, State, Rendering, and Interactions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 4</p>
+      <h1>Frontend JavaScript: State, Rendering, and Interactions</h1>
+      <p class="muted kicker">This lesson is about how the interface behaves. It explains the state object, DOM references, event binding, data loading, rendering strategies, localStorage persistence, chart generation, and interactive flows.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#state">State object</a></li>
+          <li><a href="#dom-refs">DOM references</a></li>
+          <li><a href="#init">Initialization flow</a></li>
+          <li><a href="#render">Rendering strategy</a></li>
+          <li><a href="#filters">Filters and sorting</a></li>
+          <li><a href="#dates">Date masking and validation</a></li>
+          <li><a href="#storage">localStorage persistence</a></li>
+          <li><a href="#chart">Chart logic</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="state">
+            <h2>1. The State Object</h2>
+            <p>The frontend uses a small plain JavaScript object called <code>state</code> to track important UI mode and data information.</p>
+            <pre><code>const state = {
+  items: [],
+  editingId: null,
+  groupBy: 'status',
+  sortBy: 'newest',
+  viewMode: 'cards',
+  densityMode: 'comfortable'
+};</code></pre>
+            <p>This teaches a foundational frontend concept: state is the source of truth for what the UI should show.</p>
+            <p>Whenever state changes, the code rerenders the parts of the interface that depend on it.</p>
+          </section>
+
+          <section id="dom-refs">
+            <h2>2. DOM References</h2>
+            <p>Early in <code>app.js</code>, the code collects many DOM references with <code>document.querySelector</code>. This is a practical pattern because it prevents repeatedly searching the DOM for the same elements.</p>
+            <p>Examples include:</p>
+            <ul>
+              <li>form inputs</li>
+              <li>filter controls</li>
+              <li>buttons</li>
+              <li>containers for task lists and grouped results</li>
+              <li>chart containers</li>
+              <li>modal controls</li>
+            </ul>
+            <p>This section is very educational for beginners because it shows the bridge between HTML and JavaScript: every dynamic part of the page needs a reference.</p>
+          </section>
+
+          <section id="init">
+            <h2>3. Initialization Flow</h2>
+            <p>The frontend startup sequence is carefully ordered. On page load, it restores saved preferences first, then binds events, then applies saved theme settings, then loads data.</p>
+            <p>The order matters:</p>
+            <ol>
+              <li>restore preferences so the UI knows the right state</li>
+              <li>bind events so controls are interactive</li>
+              <li>apply theme and palette so the UI looks correct immediately</li>
+              <li>load todos and grouped data from the backend</li>
+            </ol>
+            <p>This teaches a general engineering principle: initialization order can affect user experience.</p>
+          </section>
+
+          <section id="render">
+            <h2>4. Rendering Strategy</h2>
+            <p>The app does not use a frontend framework. Instead, it uses direct rendering functions. Key render functions include:</p>
+            <ul>
+              <li><code>renderTodos()</code></li>
+              <li><code>renderSummary()</code></li>
+              <li><code>renderGroupResults()</code></li>
+              <li><code>renderActiveFilters()</code></li>
+              <li><code>renderResultsStrip()</code></li>
+              <li><code>renderWorkloadChart()</code></li>
+            </ul>
+            <p>This teaches that frameworks are useful, but not strictly required for building structured, interactive interfaces.</p>
+          </section>
+
+          <section id="filters">
+            <h2>5. Filters, Sorting, and View Mode</h2>
+            <p>The frontend supports a rich set of UI states:</p>
+            <ul>
+              <li>search text</li>
+              <li>status filter</li>
+              <li>priority filter</li>
+              <li>category filter</li>
+              <li>due-state quick filters</li>
+              <li>due-date range</li>
+              <li>sort mode</li>
+              <li>cards versus compact view</li>
+              <li>comfortable versus dense display</li>
+            </ul>
+            <p>The most important learning idea here is composability: a user is not limited to one filter. Multiple filters can be active together, and the UI represents that clearly with active pills.</p>
+          </section>
+
+          <section id="dates">
+            <h2>6. Date Masking and Validation</h2>
+            <p>Date entry is handled with a custom strategy:</p>
+            <ul>
+              <li>the visible input is a text field with a <code>DD/MM/YYYY</code> mask</li>
+              <li>a hidden native date picker exists behind it</li>
+              <li>JavaScript formats digits as the user types</li>
+              <li>validation detects impossible dates</li>
+              <li>values are converted to ISO when sending to the backend</li>
+            </ul>
+            <p>This is a very good teaching example because it covers:</p>
+            <ul>
+              <li>input event handling</li>
+              <li>blur normalization</li>
+              <li>error display</li>
+              <li>data transformation between display format and storage format</li>
+            </ul>
+          </section>
+
+          <section id="storage">
+            <h2>7. localStorage Persistence</h2>
+            <p>The app saves many user preferences into <code>localStorage</code> so the dashboard feels persistent and personal. Examples include:</p>
+            <ul>
+              <li>light/dark theme</li>
+              <li>selected color scheme</li>
+              <li>sort mode</li>
+              <li>filters</li>
+              <li>view mode</li>
+              <li>density mode</li>
+              <li>collapsed/expanded panel states</li>
+            </ul>
+            <p>This is a simple but powerful UX improvement because it makes the app feel less temporary.</p>
+          </section>
+
+          <section id="chart">
+            <h2>8. Chart Logic</h2>
+            <p>The workload chart is data-driven. It analyzes visible tasks, groups due dates into a rolling window, and then renders a smooth SVG line plus area fill. The visual dots are placed with an overlay layer so they keep a constant visible size.</p>
+            <p>That small technical detail teaches something useful: sometimes the visually correct solution is not the most obvious one. SVG circles scaled poorly during browser resizing, so the implementation moved the markers to HTML/CSS overlay elements.</p>
+            <div class="success">
+              <p><strong>Key lesson:</strong> frontend work often involves iteration. A first implementation may be functional, but testing in a real browser reveals what should be improved.</p>
+            </div>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="03-css-system-themes-and-responsive-ui.html">Previous lesson</a>
+          <a href="index.html">Back to study guide index</a>
+          <a href="05-backend-node-routing-services-and-storage.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

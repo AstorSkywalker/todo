@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 3 - CSS System, Themes, and Responsive UI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 3</p>
+      <h1>CSS System, Themes, and Responsive UI</h1>
+      <p class="muted kicker">This lesson explains the visual system of the app: spacing, grids, colors, themes, pills, table-like compact layout, transitions, and why CSS variables are the heart of the design.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#variables">CSS variables</a></li>
+          <li><a href="#layout">Layout system</a></li>
+          <li><a href="#cards">Cards and surfaces</a></li>
+          <li><a href="#themes">Dark/light mode</a></li>
+          <li><a href="#palettes">Color scheme selector</a></li>
+          <li><a href="#compact">Compact table styling</a></li>
+          <li><a href="#inputs">Inputs and pills</a></li>
+          <li><a href="#motion">Transitions and motion</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="variables">
+            <h2>1. CSS Variables As A Design System</h2>
+            <p>The most important CSS decision in this project is the use of variables. Variables allow the design to change theme or palette without rewriting every component.</p>
+            <pre><code>:root {
+  --bg: #0f1724;
+  --surface: rgba(17, 25, 40, 0.84);
+  --text: #eaf2ff;
+  --muted: #9ab0cf;
+  --primary: #79abff;
+  ...
+}</code></pre>
+            <p>Why is this powerful?</p>
+            <ul>
+              <li>Changing <code>--primary</code> changes buttons, accents, active states, and highlighted labels.</li>
+              <li>Changing <code>--surface</code> changes card appearance globally.</li>
+              <li>Each palette only needs to redefine tokens, not components.</li>
+            </ul>
+          </section>
+
+          <section id="layout">
+            <h2>2. Layout System</h2>
+            <p>The dashboard relies on CSS Grid and Flexbox for different jobs:</p>
+            <ul>
+              <li><strong>Grid</strong> for page regions, stats, content areas, compact rows, and filter groups</li>
+              <li><strong>Flexbox</strong> for smaller control clusters like toolbars, button groups, and pills</li>
+            </ul>
+            <p>This is a key CSS lesson: choose the layout tool that matches the problem. Grid is better when you need rows and columns. Flex is better for one-dimensional alignment.</p>
+          </section>
+
+          <section id="cards">
+            <h2>3. Cards, Panels, and Surface Layers</h2>
+            <p>The project uses reusable visual surfaces:</p>
+            <ul>
+              <li><code>.glass-card</code></li>
+              <li><code>.panel</code></li>
+              <li><code>.stat-card</code></li>
+              <li><code>.todo-card</code></li>
+            </ul>
+            <p>These share ideas such as:</p>
+            <ul>
+              <li>rounded corners</li>
+              <li>semi-transparent backgrounds</li>
+              <li>soft borders</li>
+              <li>shadow depth</li>
+            </ul>
+            <p>This gives the UI a coherent visual language without needing identical components everywhere.</p>
+          </section>
+
+          <section id="themes">
+            <h2>4. Dark and Light Mode</h2>
+            <p>The light/dark system works by toggling a class on <code>body</code>. When <code>body.light</code> is present, many CSS variables change. Components then inherit new values automatically.</p>
+            <p>That is cleaner than writing entirely separate stylesheets for dark and light mode because the component rules stay mostly the same.</p>
+            <div class="callout">
+              <p><strong>Core concept:</strong> theme switching becomes simple when components depend on tokens, not hardcoded colors.</p>
+            </div>
+          </section>
+
+          <section id="palettes">
+            <h2>5. Multiple Color Palettes</h2>
+            <p>TaskFlow CSV supports multiple palettes such as <code>default</code>, <code>aurora</code>, <code>eighties</code>, <code>cyberpunk</code>, <code>ember</code>, <code>forest</code>, <code>neon</code>, and <code>rose</code>.</p>
+            <p>The implementation uses <code>body[data-color-scheme='...']</code> selectors. This means the palette is a controlled state, not a random styling accident.</p>
+            <p>Each palette redefines:</p>
+            <ul>
+              <li>backgrounds</li>
+              <li>surface colors</li>
+              <li>accent colors</li>
+              <li>muted text</li>
+              <li>danger/warning/success tones</li>
+              <li>form control visuals</li>
+            </ul>
+          </section>
+
+          <section id="compact">
+            <h2>6. Compact Table-Like Styling</h2>
+            <p>The compact task view is one of the most educational CSS sections because it simulates table behavior using a grid layout rather than a literal HTML table.</p>
+            <p>Important concepts include:</p>
+            <ul>
+              <li>a shared column template for header and row alignment</li>
+              <li>centered data columns with a left-aligned title column</li>
+              <li>sticky header behavior</li>
+              <li>comfortable versus dense row styles</li>
+              <li>pills inside grid cells</li>
+            </ul>
+            <p>This teaches how far modern CSS can go without relying on rigid older layouts.</p>
+          </section>
+
+          <section id="inputs">
+            <h2>7. Inputs, Chips, Pills, and Micro Components</h2>
+            <p>Many small visual elements repeat across the app:</p>
+            <ul>
+              <li>status badges</li>
+              <li>due-state pills</li>
+              <li>compact pills</li>
+              <li>group pills</li>
+              <li>quick filter chips</li>
+              <li>active filter pills</li>
+            </ul>
+            <p>These all need careful attention to:</p>
+            <ul>
+              <li>padding</li>
+              <li>border radius</li>
+              <li>font size</li>
+              <li>contrast</li>
+              <li>hover and active states</li>
+            </ul>
+            <p>One important lesson from the project was that a pill can lose its intended appearance if its base shared styling is incomplete. That happened in the <code>Flag</code> column and was later fixed by giving <code>.due-pill</code> the same shape rules as <code>.compact-pill</code>.</p>
+          </section>
+
+          <section id="motion">
+            <h2>8. Transitions and Motion</h2>
+            <p>The project uses transitions in several meaningful ways:</p>
+            <ul>
+              <li>chevron rotation on collapsible sections</li>
+              <li>panel body collapse/expand animation</li>
+              <li>button hover lift</li>
+              <li>theme switch thumb movement</li>
+              <li>modal entrance and exit animation</li>
+            </ul>
+            <p>These are not just decorative. They help users understand state change. For example, when a panel collapses, both the arrow and the body move, so the user understands what happened.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="02-html-structure-and-dashboard-layout.html">Previous lesson</a>
+          <a href="index.html">Back to study guide index</a>
+          <a href="04-frontend-javascript-state-rendering-and-interactions.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

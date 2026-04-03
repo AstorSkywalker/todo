@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 8 - File-by-File Reading Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 8</p>
+      <h1>File-by-File Reading Lab</h1>
+      <p class="muted kicker">This lesson is a practical study lab. It tells you exactly how to walk through the codebase file by file, what to look for in each file, which blocks deserve the most attention, and how to simulate a near line-by-line reconstruction of the project.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#method">Reading method</a></li>
+          <li><a href="#frontend-order">Frontend reading order</a></li>
+          <li><a href="#backend-order">Backend reading order</a></li>
+          <li><a href="#question-list">Questions to ask per file</a></li>
+          <li><a href="#recreation">Recreate line by line</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="method">
+            <h2>1. Reading Method For Deep Study</h2>
+            <p>If you want to recreate the project from scratch, do not read the files in a random order. Use this method:</p>
+            <ol>
+              <li>Open one file only.</li>
+              <li>Read the top of the file to understand imports, constants, and global state.</li>
+              <li>Identify sections: setup, helpers, rendering, events, business logic, exports.</li>
+              <li>For each function, ask: what inputs does it receive, what side effects does it cause, and what other functions does it call?</li>
+              <li>Trace one complete user action end to end.</li>
+            </ol>
+            <p>This is how you convert code from “something you can read” into “something you could rebuild”.</p>
+          </section>
+
+          <section id="frontend-order">
+            <h2>2. Frontend Reading Order</h2>
+            <table>
+              <thead>
+                <tr><th>File</th><th>Study focus</th><th>What to examine closely</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>index.html</code></td><td>Structure</td><td>Page regions, ids, templates, forms, controls, panel composition.</td></tr>
+                <tr><td><code>styles.css</code></td><td>Visual system</td><td>Variables, theme tokens, grids, cards, pills, responsive blocks, compact table, transitions.</td></tr>
+                <tr><td><code>app.js</code></td><td>Behavior</td><td>State object, DOM references, initialize flow, event binding, rendering functions, fetch calls, localStorage, chart code.</td></tr>
+                <tr><td><code>docs.html</code></td><td>Documentation UI</td><td>Swagger UI bootstrapping, theme synchronization, palette application, style overrides.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="backend-order">
+            <h2>3. Backend Reading Order</h2>
+            <table>
+              <thead>
+                <tr><th>File</th><th>Study focus</th><th>What to examine closely</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>server.js</code></td><td>Bootstrap</td><td>Server creation, static file serving, API delegation, startup flow.</td></tr>
+                <tr><td><code>routes/todos.js</code></td><td>Routing</td><td>How each method/path is mapped to service calls.</td></tr>
+                <tr><td><code>services/todoService.js</code></td><td>Business logic</td><td>CRUD functions, import/export logic, grouping, storage status, summaries.</td></tr>
+                <tr><td><code>services/csvService.js</code></td><td>Persistence</td><td>CSV reads, writes, escaping, parsing, file ensuring.</td></tr>
+                <tr><td><code>utils/validation.js</code></td><td>Rules</td><td>Payload normalization, valid enums, ISO date checks, import normalization.</td></tr>
+                <tr><td><code>utils/http.js</code></td><td>Protocol helpers</td><td>JSON body reading and JSON response headers.</td></tr>
+                <tr><td><code>sqliteService.js</code></td><td>Mirror storage</td><td>SQLite setup, full-table replacement, last-sync tracking.</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="question-list">
+            <h2>4. Questions To Ask In Every File</h2>
+            <ul>
+              <li>What is this file responsible for?</li>
+              <li>What would break if this file disappeared?</li>
+              <li>Which identifiers are inputs and which are outputs?</li>
+              <li>Which parts are UI-only, storage-only, validation-only, or routing-only?</li>
+              <li>Which code exists for user comfort rather than strict necessity?</li>
+            </ul>
+            <p>That last question matters a lot. Features like localStorage preferences, panel collapse memory, and themed Swagger docs are examples of quality-of-life engineering decisions.</p>
+          </section>
+
+          <section id="recreation">
+            <h2>5. How To Recreate The Project Almost Line By Line</h2>
+            <p>If you want the closest thing to a line-by-line recreation exercise, follow this routine:</p>
+            <ol>
+              <li>Create a fresh branch or new folder.</li>
+              <li>Copy only the file names, not the code.</li>
+              <li>Rebuild one file at a time from the lessons and from your understanding.</li>
+              <li>After each file, compare it with the real project and note what you missed.</li>
+              <li>Explain each difference in your own words.</li>
+            </ol>
+            <div class="success">
+              <p><strong>Best practice:</strong> the moment you can explain why a function exists and where it belongs, you are no longer just copying code. You are learning architecture.</p>
+            </div>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="07-strategy-decisions-roadmap-and-rebuild-path.html">Previous lesson</a>
+          <a href="index.html">Back to study guide index</a>
+          <a href="../README.md">Open project README</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
