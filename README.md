@@ -10,6 +10,9 @@ Modern To Do app with CSV persistence, light/dark mode, SQLite mirroring, and a 
 - SQLite mirror in `data/todos.db`
 - REST API for creating, reading, updating, and deleting tasks
 - Grouped summaries by status, priority, or category
+- Sectioned dashboard with dedicated Filters, Grouping, and Tasks panels
+- Active filter pills with one-click removal and a clear-all action
+- Quick date filters for overdue, due today, and due soon tasks
 - Dates displayed in Honduras-friendly `dd/mm/yyyy` format in the interface
 
 ## Tech stack
@@ -49,6 +52,16 @@ npm start
 ```text
 http://localhost:3000
 ```
+
+## Dashboard layout
+
+The main dashboard is organized into clear working sections:
+
+- `Filters`: search, status, priority, category, sort order, and quick date filters
+- `Grouping`: summary chips grouped by status, priority, or category
+- `Tasks`: visible task count, active filter count, active filter pills, feedback, and task cards
+
+This keeps filtering, analysis, and execution visually separated so the UI stays easier to scan as features grow.
 
 ## Data storage
 
@@ -127,6 +140,12 @@ Supported filters:
 - `status`
 - `priority`
 - `category`
+
+The UI also includes client-side quick filters for:
+
+- `Overdue only`
+- `Due today only`
+- `Due soon only`
 
 Example:
 

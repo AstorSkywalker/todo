@@ -26,6 +26,8 @@ const dueSoonOnly = document.querySelector('#dueSoonOnly');
 const sortTasks = document.querySelector('#sortTasks');
 const todoList = document.querySelector('#todoList');
 const activeFilters = document.querySelector('#activeFilters');
+const visibleCount = document.querySelector('#visibleCount');
+const activeFilterCount = document.querySelector('#activeFilterCount');
 const feedback = document.querySelector('#feedback');
 const formTitle = document.querySelector('#formTitle');
 const submitButton = document.querySelector('#submitButton');
@@ -135,6 +137,7 @@ async function loadTodos() {
   state.items = sortTodoItems(filteredItems);
   renderSummary(data.summary || emptySummary());
   renderActiveFilters();
+  renderResultsStrip();
   renderTodos();
 }
 
@@ -660,6 +663,49 @@ function renderActiveFilters() {
     )),
     '<button class="clear-filters-button" type="button" data-filter-key="clearAll">Clear all</button>'
   ].join('');
+}
+
+function renderResultsStrip() {
+  visibleCount.textContent = state.items.length;
+  activeFilterCount.textContent = getActiveFilterEntries().length;
+}
+
+function getActiveFilterEntries() {
+  const filters = [];
+
+  if (searchInput.value.trim()) {
+    filters.push('search');
+  }
+
+  if (filterStatus.value) {
+    filters.push('status');
+  }
+
+  if (filterPriority.value) {
+    filters.push('priority');
+  }
+
+  if (filterCategory.value) {
+    filters.push('category');
+  }
+
+  if (overdueOnly.checked) {
+    filters.push('overdueOnly');
+  }
+
+  if (dueTodayOnly.checked) {
+    filters.push('dueTodayOnly');
+  }
+
+  if (dueSoonOnly.checked) {
+    filters.push('dueSoonOnly');
+  }
+
+  if (sortTasks.value !== 'newest') {
+    filters.push('sortBy');
+  }
+
+  return filters;
 }
 
 activeFilters.addEventListener('click', handleActiveFilterClick);

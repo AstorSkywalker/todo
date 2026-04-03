@@ -191,6 +191,12 @@ button {
   gap: 24px;
 }
 
+.list-stack {
+  display: grid;
+  gap: 24px;
+  align-content: start;
+}
+
 .panel {
   padding: 24px;
 }
@@ -201,6 +207,55 @@ button {
   align-items: center;
   gap: 12px;
   margin-bottom: 18px;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+  flex: 0 0 auto;
+}
+
+.section-icon::before {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 18px;
+  background: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.filters-icon::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M3 5.75A.75.75 0 0 1 3.75 5h16.5a.75.75 0 0 1 .53 1.28L14 13.06v5.19a.75.75 0 0 1-1.16.63l-2-1.25a.75.75 0 0 1-.34-.63v-3.94L3.22 6.28A.75.75 0 0 1 3 5.75Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M3 5.75A.75.75 0 0 1 3.75 5h16.5a.75.75 0 0 1 .53 1.28L14 13.06v5.19a.75.75 0 0 1-1.16.63l-2-1.25a.75.75 0 0 1-.34-.63v-3.94L3.22 6.28A.75.75 0 0 1 3 5.75Z'/%3E%3C/svg%3E");
+}
+
+.grouping-icon::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M4.5 4A1.5 1.5 0 0 0 3 5.5v3A1.5 1.5 0 0 0 4.5 10h3A1.5 1.5 0 0 0 9 8.5v-3A1.5 1.5 0 0 0 7.5 4h-3Zm6.75.75a.75.75 0 0 1 .75-.75h8a.75.75 0 0 1 0 1.5h-8a.75.75 0 0 1-.75-.75ZM12 8a.75.75 0 0 1 .75-.75H18a.75.75 0 0 1 0 1.5h-5.25A.75.75 0 0 1 12 8ZM4.5 14A1.5 1.5 0 0 0 3 15.5v3A1.5 1.5 0 0 0 4.5 20h3A1.5 1.5 0 0 0 9 18.5v-3A1.5 1.5 0 0 0 7.5 14h-3Zm6.75.75A.75.75 0 0 1 12 14h8a.75.75 0 0 1 0 1.5h-8a.75.75 0 0 1-.75-.75ZM12 18a.75.75 0 0 1 .75-.75H18a.75.75 0 0 1 0 1.5h-5.25A.75.75 0 0 1 12 18Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M4.5 4A1.5 1.5 0 0 0 3 5.5v3A1.5 1.5 0 0 0 4.5 10h3A1.5 1.5 0 0 0 9 8.5v-3A1.5 1.5 0 0 0 7.5 4h-3Zm6.75.75a.75.75 0 0 1 .75-.75h8a.75.75 0 0 1 0 1.5h-8a.75.75 0 0 1-.75-.75ZM12 8a.75.75 0 0 1 .75-.75H18a.75.75 0 0 1 0 1.5h-5.25A.75.75 0 0 1 12 8ZM4.5 14A1.5 1.5 0 0 0 3 15.5v3A1.5 1.5 0 0 0 4.5 20h3A1.5 1.5 0 0 0 9 18.5v-3A1.5 1.5 0 0 0 7.5 14h-3Zm6.75.75A.75.75 0 0 1 12 14h8a.75.75 0 0 1 0 1.5h-8a.75.75 0 0 1-.75-.75ZM12 18a.75.75 0 0 1 .75-.75H18a.75.75 0 0 1 0 1.5h-5.25A.75.75 0 0 1 12 18Z'/%3E%3C/svg%3E");
+}
+
+.tasks-icon::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M9 4.75A.75.75 0 0 1 9.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 9 4.75ZM5.5 3A2.5 2.5 0 0 0 3 5.5v13A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5v-13A2.5 2.5 0 0 0 18.5 3h-1.69a.75.75 0 0 0-.53.22l-.53.53A1.25 1.25 0 0 1 14.87 4.5H9.13a1.25 1.25 0 0 1-.88-.37l-.53-.53A.75.75 0 0 0 7.19 3H5.5Zm1.78 7.22a.75.75 0 0 1 1.06 0l1.16 1.16 3.16-3.16a.75.75 0 1 1 1.06 1.06l-3.69 3.69a.75.75 0 0 1-1.06 0L7.28 11.28a.75.75 0 0 1 0-1.06Zm0 5a.75.75 0 0 1 1.06 0l1.16 1.16 3.16-3.16a.75.75 0 0 1 1.06 1.06l-3.69 3.69a.75.75 0 0 1-1.06 0l-1.69-1.69a.75.75 0 0 1 0-1.06Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='black'%3E%3Cpath d='M9 4.75A.75.75 0 0 1 9.75 4h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 9 4.75ZM5.5 3A2.5 2.5 0 0 0 3 5.5v13A2.5 2.5 0 0 0 5.5 21h13a2.5 2.5 0 0 0 2.5-2.5v-13A2.5 2.5 0 0 0 18.5 3h-1.69a.75.75 0 0 0-.53.22l-.53.53A1.25 1.25 0 0 1 14.87 4.5H9.13a1.25 1.25 0 0 1-.88-.37l-.53-.53A.75.75 0 0 0 7.19 3H5.5Zm1.78 7.22a.75.75 0 0 1 1.06 0l1.16 1.16 3.16-3.16a.75.75 0 1 1 1.06 1.06l-3.69 3.69a.75.75 0 0 1-1.06 0L7.28 11.28a.75.75 0 0 1 0-1.06Zm0 5a.75.75 0 0 1 1.06 0l1.16 1.16 3.16-3.16a.75.75 0 0 1 1.06 1.06l-3.69 3.69a.75.75 0 0 1-1.06 0l-1.69-1.69a.75.75 0 0 1 0-1.06Z'/%3E%3C/svg%3E");
+}
+
+.section-note {
+  margin: 8px 0 0;
+  max-width: 58ch;
+  font-size: 0.92rem;
 }
 
 .eyebrow {
@@ -332,6 +387,35 @@ body.light .toggle-thumb {
   gap: 14px;
 }
 
+.search-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+}
+
+.filter-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.search-field input {
+  margin-top: 0;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.quick-filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .todo-form label,
 .filters input,
 .filters select {
@@ -460,7 +544,7 @@ textarea:focus {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  margin: 18px 0;
+  margin: 0 0 18px;
   color: var(--muted);
 }
 
@@ -486,6 +570,33 @@ textarea:focus {
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.results-strip {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.results-stat {
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+
+.results-stat span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.results-stat strong {
+  font-size: 1.2rem;
 }
 
 .active-filter-pill {
@@ -739,11 +850,17 @@ body.light .date-icon-button:hover {
 }
 
 .feedback {
-  margin-bottom: 14px;
+  margin: 16px 0 14px;
   padding: 12px 14px;
   border-radius: 16px;
   background: rgba(89, 216, 161, 0.12);
   color: var(--success);
+}
+
+.filters-panel,
+.grouping-panel,
+.list-panel {
+  position: relative;
 }
 
 .modal-backdrop {
@@ -899,7 +1016,12 @@ body.light .modal-backdrop {
   }
 
   .stats-grid,
-  .form-row {
+  .form-row,
+  .filter-grid {
     grid-template-columns: 1fr;
+  }
+
+  .quick-filters-row {
+    flex-direction: column;
   }
 }
