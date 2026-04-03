@@ -22,6 +22,16 @@ const searchInput = document.querySelector('#searchInput');
 const filterStatus = document.querySelector('#filterStatus');
 const filterPriority = document.querySelector('#filterPriority');
 const filterCategory = document.querySelector('#filterCategory');
+const filterDueFrom = document.querySelector('#filterDueFrom');
+const filterDueTo = document.querySelector('#filterDueTo');
+const filterDueFromWrap = document.querySelector('#filterDueFromWrap');
+const filterDueToWrap = document.querySelector('#filterDueToWrap');
+const filterDueFromPicker = document.querySelector('#filterDueFromPicker');
+const filterDueToPicker = document.querySelector('#filterDueToPicker');
+const filterDueFromButton = document.querySelector('#filterDueFromButton');
+const filterDueToButton = document.querySelector('#filterDueToButton');
+const filterDueFromError = document.querySelector('#filterDueFromError');
+const filterDueToError = document.querySelector('#filterDueToError');
 const overdueOnly = document.querySelector('#overdueOnly');
 const dueTodayOnly = document.querySelector('#dueTodayOnly');
 const dueSoonOnly = document.querySelector('#dueSoonOnly');
@@ -115,6 +125,14 @@ function bindEvents() {
   filterStatus.addEventListener('change', refreshList);
   filterPriority.addEventListener('change', refreshList);
   filterCategory.addEventListener('change', refreshList);
+  filterDueFrom.addEventListener('input', handleFilterDueFromInput);
+  filterDueFrom.addEventListener('blur', normalizeFilterDueFromField);
+  filterDueTo.addEventListener('input', handleFilterDueToInput);
+  filterDueTo.addEventListener('blur', normalizeFilterDueToField);
+  filterDueFromButton.addEventListener('click', openFilterDueFromPicker);
+  filterDueToButton.addEventListener('click', openFilterDueToPicker);
+  filterDueFromPicker.addEventListener('change', syncFilterDueFromPickerToInput);
+  filterDueToPicker.addEventListener('change', syncFilterDueToPickerToInput);
   overdueOnly.addEventListener('change', refreshList);
   dueTodayOnly.addEventListener('change', refreshList);
   dueSoonOnly.addEventListener('change', refreshList);
@@ -176,7 +194,7 @@ async function loadTodos() {
   const response = await fetch(`/api/todos${query}`);
   const data = await response.json();
 
-  const filteredItems = applyQuickFilters(data.items || []);
+  const filteredItems = applyDateRangeFilters(applyQuickFilters(data.items || []));
 
   state.items = sortTodoItems(filteredItems);
   renderSummary(data.summary || emptySummary());
@@ -700,6 +718,7 @@ function showFeedback(message, isError = false) {
 }
 
 function refreshList() {
+  normalizeDateRangeInputs();
   saveListPreferences();
   loadTodos();
 }
@@ -754,6 +773,24 @@ function debounce(fn, delay) {
     window.clearTimeout(timeoutId);
     timeoutId = window.setTimeout(() => fn(...args), delay);
   };
+}
+
+function normalizeDateRangeInputs() {
+  const dueFromIso = parseInputDateToIso(filterDueFrom.value.trim());
+  const dueToIso = parseInputDateToIso(filterDueTo.value.trim());
+
+  if (!dueFromIso || !dueToIso) {
+    return;
+  }
+
+  if (dueFromIso <= dueToIso) {
+    return;
+  }
+
+  filterDueFrom.value = formatDateForInput(dueToIso);
+  filterDueTo.value = formatDateForInput(dueFromIso);
+  filterDueFromPicker.value = dueToIso;
+  filterDueToPicker.value = dueFromIso;
 }
 
 function sortTodoItems(items) {
@@ -837,6 +874,8 @@ function saveListPreferences() {
     status: filterStatus.value,
     priority: filterPriority.value,
     category: filterCategory.value,
+    dueFrom: filterDueFrom.value,
+    dueTo: filterDueTo.value,
     overdueOnly: overdueOnly.checked,
     dueTodayOnly: dueTodayOnly.checked,
     dueSoonOnly: dueSoonOnly.checked,
@@ -860,6 +899,10 @@ function restoreListPreferences() {
     filterStatus.value = preferences.status || '';
     filterPriority.value = preferences.priority || '';
     filterCategory.dataset.savedValue = preferences.category || '';
+    filterDueFrom.value = normalizeStoredFilterDate(preferences.dueFrom);
+    filterDueTo.value = normalizeStoredFilterDate(preferences.dueTo);
+    filterDueFromPicker.value = parseInputDateToIso(filterDueFrom.value) || '';
+    filterDueToPicker.value = parseInputDateToIso(filterDueTo.value) || '';
     overdueOnly.checked = Boolean(preferences.overdueOnly);
     dueTodayOnly.checked = Boolean(preferences.dueTodayOnly);
     dueSoonOnly.checked = Boolean(preferences.dueSoonOnly);
@@ -872,6 +915,19 @@ function restoreListPreferences() {
   } catch (error) {
     localStorage.removeItem(listPreferencesKey);
   }
+}
+
+function normalizeStoredFilterDate(value) {
+  if (!value) {
+    return '';
+  }
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return formatDateForInput(value);
+  }
+
+  const isoDate = parseInputDateToIso(value);
+  return isoDate ? formatDateForInput(isoDate) : '';
 }
 
 function normalizeSortValue(sortValue) {
@@ -1088,6 +1144,31 @@ function applyQuickFilters(items) {
   return items.filter((item) => selectedTones.includes(getDueState(item).toneClass));
 }
 
+function applyDateRangeFilters(items) {
+  const dueFrom = parseInputDateToIso(filterDueFrom.value.trim());
+  const dueTo = parseInputDateToIso(filterDueTo.value.trim());
+
+  if (!dueFrom && !dueTo) {
+    return items;
+  }
+
+  return items.filter((item) => {
+    if (!item.dueDate) {
+      return false;
+    }
+
+    if (dueFrom && item.dueDate < dueFrom) {
+      return false;
+    }
+
+    if (dueTo && item.dueDate > dueTo) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
 function renderActiveFilters() {
   const filters = [];
 
@@ -1105,6 +1186,17 @@ function renderActiveFilters() {
 
   if (filterCategory.value) {
     filters.push({ key: 'category', label: `Category: ${filterCategory.value}` });
+  }
+
+  const dueFromIso = parseInputDateToIso(filterDueFrom.value.trim());
+  const dueToIso = parseInputDateToIso(filterDueTo.value.trim());
+
+  if (dueFromIso) {
+    filters.push({ key: 'dueFrom', label: `Due from: ${formatDate(dueFromIso)}` });
+  }
+
+  if (dueToIso) {
+    filters.push({ key: 'dueTo', label: `Due to: ${formatDate(dueToIso)}` });
   }
 
   if (overdueOnly.checked) {
@@ -1162,6 +1254,14 @@ function getActiveFilterEntries() {
     filters.push('category');
   }
 
+  if (parseInputDateToIso(filterDueFrom.value.trim())) {
+    filters.push('dueFrom');
+  }
+
+  if (parseInputDateToIso(filterDueTo.value.trim())) {
+    filters.push('dueTo');
+  }
+
   if (overdueOnly.checked) {
     filters.push('overdueOnly');
   }
@@ -1213,6 +1313,16 @@ function clearFilter(filterKey) {
     case 'category':
       filterCategory.value = '';
       break;
+    case 'dueFrom':
+      filterDueFrom.value = '';
+      filterDueFromPicker.value = '';
+      clearFilterDueFromError();
+      break;
+    case 'dueTo':
+      filterDueTo.value = '';
+      filterDueToPicker.value = '';
+      clearFilterDueToError();
+      break;
     case 'overdueOnly':
       overdueOnly.checked = false;
       break;
@@ -1238,6 +1348,12 @@ function clearAllFilters() {
   filterStatus.value = '';
   filterPriority.value = '';
   filterCategory.value = '';
+  filterDueFrom.value = '';
+  filterDueTo.value = '';
+  filterDueFromPicker.value = '';
+  filterDueToPicker.value = '';
+  clearFilterDueFromError();
+  clearFilterDueToError();
   overdueOnly.checked = false;
   dueTodayOnly.checked = false;
   dueSoonOnly.checked = false;
@@ -1404,14 +1520,7 @@ function parseInputDateToIso(value) {
 }
 
 function handleDueDateInput(event) {
-  const digits = event.target.value.replace(/\D/g, '').slice(0, 8);
-  const parts = [];
-
-  if (digits.length > 0) parts.push(digits.slice(0, 2));
-  if (digits.length > 2) parts.push(digits.slice(2, 4));
-  if (digits.length > 4) parts.push(digits.slice(4, 8));
-
-  event.target.value = parts.join('/');
+  applyDateMask(event.target);
   validateDueDateField();
 }
 
@@ -1420,6 +1529,32 @@ function normalizeDueDateField() {
   const isoDate = validation.valid ? parseInputDateToIso(dueDateInput.value) : '';
   dueDateInput.value = isoDate ? formatDateForInput(isoDate) : dueDateInput.value;
   dueDatePicker.value = isoDate || '';
+}
+
+function handleFilterDueFromInput(event) {
+  applyDateMask(event.target);
+  validateFilterDueFromField();
+}
+
+function handleFilterDueToInput(event) {
+  applyDateMask(event.target);
+  validateFilterDueToField();
+}
+
+function normalizeFilterDueFromField() {
+  const validation = validateFilterDueFromField();
+  const isoDate = validation.valid ? parseInputDateToIso(filterDueFrom.value) : '';
+  filterDueFrom.value = isoDate ? formatDateForInput(isoDate) : filterDueFrom.value;
+  filterDueFromPicker.value = isoDate || '';
+  refreshList();
+}
+
+function normalizeFilterDueToField() {
+  const validation = validateFilterDueToField();
+  const isoDate = validation.valid ? parseInputDateToIso(filterDueTo.value) : '';
+  filterDueTo.value = isoDate ? formatDateForInput(isoDate) : filterDueTo.value;
+  filterDueToPicker.value = isoDate || '';
+  refreshList();
 }
 
 function getToneClass(groupBy, value) {
@@ -1446,9 +1581,47 @@ function openDueDatePicker() {
   dueDatePicker.click();
 }
 
+function openFilterDueFromPicker() {
+  const currentIsoDate = parseInputDateToIso(filterDueFrom.value);
+  filterDueFromPicker.value = currentIsoDate || filterDueFromPicker.value || '';
+
+  if (typeof filterDueFromPicker.showPicker === 'function') {
+    filterDueFromPicker.showPicker();
+    return;
+  }
+
+  filterDueFromPicker.focus();
+  filterDueFromPicker.click();
+}
+
+function openFilterDueToPicker() {
+  const currentIsoDate = parseInputDateToIso(filterDueTo.value);
+  filterDueToPicker.value = currentIsoDate || filterDueToPicker.value || '';
+
+  if (typeof filterDueToPicker.showPicker === 'function') {
+    filterDueToPicker.showPicker();
+    return;
+  }
+
+  filterDueToPicker.focus();
+  filterDueToPicker.click();
+}
+
 function syncDatePickerToInput() {
   dueDateInput.value = formatDateForInput(dueDatePicker.value);
   clearDueDateError();
+}
+
+function syncFilterDueFromPickerToInput() {
+  filterDueFrom.value = formatDateForInput(filterDueFromPicker.value);
+  clearFilterDueFromError();
+  refreshList();
+}
+
+function syncFilterDueToPickerToInput() {
+  filterDueTo.value = formatDateForInput(filterDueToPicker.value);
+  clearFilterDueToError();
+  refreshList();
 }
 
 function validateDueDateField() {
@@ -1473,6 +1646,39 @@ function validateDueDateField() {
   }
 
   clearDueDateError();
+  return { valid: true, message: '' };
+}
+
+function validateFilterDueFromField() {
+  return validateGenericDateField(filterDueFrom, filterDueFromWrap, filterDueFromError, showFilterDueFromError, clearFilterDueFromError);
+}
+
+function validateFilterDueToField() {
+  return validateGenericDateField(filterDueTo, filterDueToWrap, filterDueToError, showFilterDueToError, clearFilterDueToError);
+}
+
+function validateGenericDateField(input, wrap, errorElement, showError, clearError) {
+  const rawValue = input.value.trim();
+  if (!rawValue) {
+    clearError();
+    return { valid: true, message: '' };
+  }
+
+  const digits = rawValue.replace(/\D/g, '');
+  if (digits.length < 8) {
+    const message = 'Complete the date using the DD/MM/YYYY format.';
+    showError(message);
+    return { valid: false, message };
+  }
+
+  const isoDate = parseInputDateToIso(rawValue);
+  if (!isoDate) {
+    const message = 'That date does not exist. Check the day, month, and year.';
+    showError(message);
+    return { valid: false, message };
+  }
+
+  clearError();
   return { valid: true, message: '' };
 }
 
@@ -1514,6 +1720,45 @@ function clearDueDateError() {
   dueDateInput.parentElement.classList.remove('is-invalid');
   dueDateError.textContent = '';
   dueDateError.classList.add('hidden');
+}
+
+function showFilterDueFromError(message) {
+  filterDueFrom.setAttribute('aria-invalid', 'true');
+  filterDueFromWrap.classList.add('is-invalid');
+  filterDueFromError.textContent = message;
+  filterDueFromError.classList.remove('hidden');
+}
+
+function clearFilterDueFromError() {
+  filterDueFrom.removeAttribute('aria-invalid');
+  filterDueFromWrap.classList.remove('is-invalid');
+  filterDueFromError.textContent = '';
+  filterDueFromError.classList.add('hidden');
+}
+
+function showFilterDueToError(message) {
+  filterDueTo.setAttribute('aria-invalid', 'true');
+  filterDueToWrap.classList.add('is-invalid');
+  filterDueToError.textContent = message;
+  filterDueToError.classList.remove('hidden');
+}
+
+function clearFilterDueToError() {
+  filterDueTo.removeAttribute('aria-invalid');
+  filterDueToWrap.classList.remove('is-invalid');
+  filterDueToError.textContent = '';
+  filterDueToError.classList.add('hidden');
+}
+
+function applyDateMask(input) {
+  const digits = input.value.replace(/\D/g, '').slice(0, 8);
+  const parts = [];
+
+  if (digits.length > 0) parts.push(digits.slice(0, 2));
+  if (digits.length > 2) parts.push(digits.slice(2, 4));
+  if (digits.length > 4) parts.push(digits.slice(4, 8));
+
+  input.value = parts.join('/');
 }
 
 function openDeleteModal() {

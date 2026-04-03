@@ -1,8 +1,13 @@
+const fs = require('fs');
 const Database = require('better-sqlite3');
 const path = require('path');
 
-const DATA_DIR = path.join(__dirname, 'data');
-const DB_FILE = path.join(DATA_DIR, 'todos.db');
+const DATA_DIR = process.env.TODO_DATA_DIR
+  ? path.resolve(process.env.TODO_DATA_DIR)
+  : path.join(__dirname, 'data');
+const DB_FILE = process.env.TODO_DB_FILE
+  ? path.resolve(process.env.TODO_DB_FILE)
+  : path.join(DATA_DIR, 'todos.db');
 
 let db;
 let lastSyncAt = null;
@@ -12,6 +17,7 @@ function initializeSqlite() {
     return db;
   }
 
+  fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
   db = new Database(DB_FILE);
   db.pragma('journal_mode = WAL');
   db.exec(`
@@ -70,8 +76,18 @@ function getSqliteSummary() {
   };
 }
 
+function closeSqlite() {
+  if (!db) {
+    return;
+  }
+
+  db.close();
+  db = null;
+}
+
 module.exports = {
   DB_FILE,
+  closeSqlite,
   getSqliteSummary,
   initializeSqlite,
   syncTodosToSqlite

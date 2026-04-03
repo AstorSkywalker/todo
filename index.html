@@ -273,6 +273,44 @@
                     <option value="flag_desc">Sort: Flag Z-A</option>
                   </select>
                 </div>
+                <div class="date-range-grid">
+                  <label class="filter-date-field">
+                    <span class="filter-label">Due from</span>
+                    <div id="filterDueFromWrap" class="date-input-wrap">
+                      <input
+                        id="filterDueFrom"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="10"
+                        placeholder="DD/MM/YYYY"
+                        aria-label="Filter tasks due from this date in day month year format"
+                      />
+                      <input id="filterDueFromPicker" class="date-picker-native" type="date" tabindex="-1" aria-hidden="true" />
+                      <button id="filterDueFromButton" class="date-icon-button" type="button" aria-label="Open due from date picker">
+                        <span class="date-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <small id="filterDueFromError" class="field-error hidden" aria-live="polite"></small>
+                  </label>
+                  <label class="filter-date-field">
+                    <span class="filter-label">Due to</span>
+                    <div id="filterDueToWrap" class="date-input-wrap">
+                      <input
+                        id="filterDueTo"
+                        type="text"
+                        inputmode="numeric"
+                        maxlength="10"
+                        placeholder="DD/MM/YYYY"
+                        aria-label="Filter tasks due up to this date in day month year format"
+                      />
+                      <input id="filterDueToPicker" class="date-picker-native" type="date" tabindex="-1" aria-hidden="true" />
+                      <button id="filterDueToButton" class="date-icon-button" type="button" aria-label="Open due to date picker">
+                        <span class="date-icon" aria-hidden="true"></span>
+                      </button>
+                    </div>
+                    <small id="filterDueToError" class="field-error hidden" aria-live="polite"></small>
+                  </label>
+                </div>
                 <div class="quick-filters-row">
                   <label class="quick-filter" for="overdueOnly">
                     <input id="overdueOnly" type="checkbox" />

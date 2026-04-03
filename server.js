@@ -5,8 +5,12 @@ const { URL } = require('url');
 const { DB_FILE, getSqliteSummary, initializeSqlite, syncTodosToSqlite } = require('./sqliteService');
 
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, 'data');
-const DATA_FILE = path.join(DATA_DIR, 'todos.csv');
+const DATA_DIR = process.env.TODO_DATA_DIR
+  ? path.resolve(process.env.TODO_DATA_DIR)
+  : path.join(__dirname, 'data');
+const DATA_FILE = process.env.TODO_DATA_FILE
+  ? path.resolve(process.env.TODO_DATA_FILE)
+  : path.join(DATA_DIR, 'todos.csv');
 const PUBLIC_FILES = {
   '/': 'index.html',
   '/index.html': 'index.html',
@@ -14,33 +18,38 @@ const PUBLIC_FILES = {
   '/app.js': 'app.js'
 };
 
-ensureDataFile();
-initializeSqlite();
-syncTodosToSqlite(readTodos());
+function createAppServer() {
+  ensureDataFile();
+  initializeSqlite();
+  syncTodosToSqlite(readTodos());
 
-const server = http.createServer(async (req, res) => {
-  const requestUrl = new URL(req.url, `http://${req.headers.host}`);
+  return http.createServer(async (req, res) => {
+    const requestUrl = new URL(req.url, `http://${req.headers.host}`);
 
-  if (requestUrl.pathname.startsWith('/api/todos')) {
-    try {
-      await handleApi(req, res, requestUrl);
-    } catch (error) {
-      sendJson(res, 500, { error: 'Internal server error', detail: error.message });
+    if (requestUrl.pathname.startsWith('/api/todos')) {
+      try {
+        await handleApi(req, res, requestUrl);
+      } catch (error) {
+        sendJson(res, 500, { error: 'Internal server error', detail: error.message });
+      }
+      return;
     }
-    return;
-  }
 
-  if (PUBLIC_FILES[requestUrl.pathname]) {
-    serveStaticFile(res, PUBLIC_FILES[requestUrl.pathname]);
-    return;
-  }
+    if (PUBLIC_FILES[requestUrl.pathname]) {
+      serveStaticFile(res, PUBLIC_FILES[requestUrl.pathname]);
+      return;
+    }
 
-  sendJson(res, 404, { error: 'Resource not found' });
-});
+    sendJson(res, 404, { error: 'Resource not found' });
+  });
+}
 
-server.listen(PORT, () => {
-  console.log(`Todo app listening on http://localhost:${PORT}`);
-});
+function startServer(port = PORT) {
+  const server = createAppServer();
+  return new Promise((resolve) => {
+    server.listen(port, () => resolve(server));
+  });
+}
 
 async function handleApi(req, res, requestUrl) {
   const pathParts = requestUrl.pathname.split('/').filter(Boolean);
@@ -553,3 +562,33 @@ function buildSummary(todos) {
     highPriority: todos.filter((item) => item.priority === 'high').length
   };
 }
+
+if (require.main === module) {
+  startServer(PORT).then((server) => {
+    const address = server.address();
+    const activePort = typeof address === 'object' && address ? address.port : PORT;
+    console.log(`Todo app listening on http://localhost:${activePort}`);
+  });
+}
+
+module.exports = {
+  DATA_DIR,
+  DATA_FILE,
+  DB_FILE,
+  buildCsvContent,
+  buildSummary,
+  createAppServer,
+  escapeCsvValue,
+  generateUniqueId,
+  handleApi,
+  isValidDateTime,
+  isValidIsoDate,
+  normalizeImportedTodos,
+  normalizePayload,
+  parseCsvLine,
+  parseImportContent,
+  readTodos,
+  startServer,
+  validateTodo,
+  writeTodos
+};

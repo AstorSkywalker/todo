@@ -4,7 +4,8 @@
   "private": true,
   "description": "To Do app with CSV persistence and light/dark themes",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node scripts/run-tests.js"
   },
   "dependencies": {
     "better-sqlite3": "^12.8.0"
