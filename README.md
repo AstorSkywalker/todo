@@ -2,6 +2,12 @@
 
 TaskFlow CSV is a modern task management application built with vanilla HTML, CSS, JavaScript, and Node.js. It combines a polished dashboard UI with a lightweight backend, CSV persistence, SQLite mirroring, automated tests, and interactive Swagger/OpenAPI documentation.
 
+## Author
+
+Created and developed by **Nelson A. Nelson** as a full-stack learning and portfolio project, covering frontend design, backend API development, storage integration, automated testing, and technical documentation.
+
+For collaboration or professional contact, reach out via GitHub or email: `nelsonnelson@hotmail.com`
+
 ## Overview
 
 The project started as a CSV-based To Do application and evolved into a richer full-stack app with:
