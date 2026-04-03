@@ -48,6 +48,10 @@ const chartVisibleDue = document.querySelector('#chartVisibleDue');
 const chartPanel = document.querySelector('.chart-panel');
 const chartBody = document.querySelector('#chartBody');
 const toggleChartButton = document.querySelector('#toggleChartButton');
+const appShell = document.querySelector('.app-shell');
+const sidebar = document.querySelector('#sidebar');
+const sidebarBody = document.querySelector('#sidebarBody');
+const toggleSidebarButton = document.querySelector('#toggleSidebarButton');
 const compactHeader = document.querySelector('#compactHeader');
 const viewToggleButtons = Array.from(document.querySelectorAll('[data-view-mode]'));
 const densityToggleButtons = Array.from(document.querySelectorAll('[data-density-mode]'));
@@ -88,6 +92,7 @@ const listPreferencesKey = 'todo-list-preferences';
 const filtersPanelStateKey = 'todo-filters-collapsed';
 const groupingPanelStateKey = 'todo-grouping-collapsed';
 const chartPanelStateKey = 'todo-chart-collapsed';
+const sidebarStateKey = 'todo-sidebar-collapsed';
 const colorSchemeKey = 'todo-color-scheme';
 
 let pendingDeleteId = null;
@@ -111,6 +116,7 @@ function initialize() {
   restoreFiltersPanelState();
   restoreGroupingPanelState();
   restoreChartPanelState();
+  restoreSidebarState();
   bindEvents();
   applySavedTheme();
   loadTodos();
@@ -146,6 +152,7 @@ function bindEvents() {
   compactSortButtons.forEach((button) => {
     button.addEventListener('click', () => handleCompactHeaderSort(button.dataset.compactSort));
   });
+  toggleSidebarButton.addEventListener('click', toggleSidebar);
   toggleFiltersButton.addEventListener('click', toggleFiltersPanel);
   toggleGroupingButton.addEventListener('click', toggleGroupingPanel);
   toggleChartButton.addEventListener('click', toggleChartPanel);
@@ -251,6 +258,25 @@ async function loadStorageStatus() {
   storageTimestamp.textContent = data.sqlite?.lastSyncAt
     ? `Last sync: ${formatDateTime(data.sqlite.lastSyncAt)}`
     : 'Last sync: not available yet.';
+}
+
+function restoreSidebarState() {
+  const isCollapsed = localStorage.getItem(sidebarStateKey) === 'true';
+  setSidebarCollapsed(isCollapsed);
+}
+
+function toggleSidebar() {
+  const nextCollapsed = !sidebar.classList.contains('is-collapsed');
+  setSidebarCollapsed(nextCollapsed);
+  localStorage.setItem(sidebarStateKey, String(nextCollapsed));
+}
+
+function setSidebarCollapsed(collapsed) {
+  sidebar.classList.toggle('is-collapsed', collapsed);
+  appShell.classList.toggle('sidebar-collapsed', collapsed);
+  toggleSidebarButton.setAttribute('aria-expanded', String(!collapsed));
+  toggleSidebarButton.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+  sidebarBody.setAttribute('aria-hidden', String(collapsed));
 }
 
 function renderTodos() {

@@ -11,66 +11,79 @@
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar glass-card">
-      <div>
-        <p class="eyebrow">TaskFlow CSV</p>
-        <h1>Your modern list with simple persistence</h1>
-        <p class="muted">Manage tasks with light and dark mode, and keep everything stored in an easy-to-review CSV file.</p>
-      </div>
-
-      <div class="theme-switcher">
-        <span>Theme</span>
-        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Change theme">
-          <span class="toggle-track">
-            <span class="toggle-thumb"></span>
-          </span>
-          <span id="themeLabel">Dark</span>
+    <aside id="sidebar" class="sidebar glass-card">
+      <div class="sidebar-header">
+        <div class="sidebar-copy">
+          <p class="eyebrow">TaskFlow CSV</p>
+          <h1>Your modern list with simple persistence</h1>
+          <p class="muted">Manage tasks with light and dark mode, and keep everything stored in a reviewable CSV file with a synchronized SQLite mirror.</p>
+        </div>
+        <button id="toggleSidebarButton" class="panel-toggle sidebar-toggle" type="button" aria-expanded="true" aria-controls="sidebarBody" aria-label="Collapse sidebar">
+          <span class="panel-toggle-icon" aria-hidden="true"></span>
         </button>
       </div>
 
-      <div class="theme-palette">
-        <label for="colorSchemeSelect">Color scheme</label>
-        <select id="colorSchemeSelect" aria-label="Select color scheme">
-          <option value="default">Default</option>
-          <option value="aurora">Aurora</option>
-          <option value="eighties">80s</option>
-          <option value="cyberpunk">Cyberpunk</option>
-          <option value="ember">Ember</option>
-          <option value="forest">Forest</option>
-          <option value="neon">Neon</option>
-          <option value="rose">Rose Quartz</option>
-        </select>
-      </div>
+      <div id="sidebarBody" class="sidebar-body">
+        <div class="api-box appearance-box">
+          <h2>Appearance</h2>
+          <div class="theme-switcher">
+            <span>Theme</span>
+            <button id="themeToggle" class="theme-toggle" type="button" aria-label="Change theme">
+              <span class="toggle-track">
+                <span class="toggle-thumb"></span>
+              </span>
+              <span id="themeLabel">Dark</span>
+            </button>
+          </div>
 
-      <div class="api-box">
-        <h2>Study guide</h2>
-        <p class="muted">Open the full step-by-step companion course for this project.</p>
-        <a class="secondary-button" href="/study-guide" target="_blank" rel="noopener noreferrer">Open study guide</a>
-      </div>
-
-      <div class="api-box">
-        <h2>Included APIs</h2>
-        <ul>
-          <li><code>GET /api/todos</code></li>
-          <li><code>POST /api/todos</code></li>
-          <li><code>PUT /api/todos/:id</code></li>
-          <li><code>DELETE /api/todos/:id</code></li>
-          <li><code>GET /api/todos/group?by=status</code></li>
-        </ul>
-      </div>
-
-      <div class="api-box storage-box">
-        <h2>Storage status</h2>
-        <div class="storage-status">
-          <span>CSV rows</span>
-          <strong id="csvCount">0</strong>
+          <div class="theme-palette">
+            <label for="colorSchemeSelect">Color scheme</label>
+            <select id="colorSchemeSelect" aria-label="Select color scheme">
+              <option value="default">Default</option>
+              <option value="aurora">Aurora</option>
+              <option value="eighties">80s</option>
+              <option value="cyberpunk">Cyberpunk</option>
+              <option value="ember">Ember</option>
+              <option value="forest">Forest</option>
+              <option value="neon">Neon</option>
+              <option value="rose">Rose Quartz</option>
+            </select>
+          </div>
         </div>
-        <div class="storage-status">
-          <span>SQLite rows</span>
-          <strong id="sqliteCount">0</strong>
+
+        <div class="api-box study-guide-box">
+          <h2>Study guide</h2>
+          <a class="secondary-button" href="/study-guide" target="_blank" rel="noopener noreferrer">Open study guide</a>
         </div>
-        <p class="muted storage-note" id="storageNote">Sync status will appear here.</p>
-        <p class="muted storage-note" id="storageTimestamp">Last sync: waiting for data.</p>
+
+        <div class="api-box">
+          <h2>Included APIs</h2>
+          <div class="api-actions">
+            <a class="secondary-button" href="/docs" target="_blank" rel="noopener noreferrer">Open Swagger UI</a>
+            <a class="ghost-button" href="/openapi.json" target="_blank" rel="noopener noreferrer">Open OpenAPI JSON</a>
+          </div>
+          <ul class="api-link-list">
+            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>GET /api/todos</code></a></li>
+            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>POST /api/todos</code></a></li>
+            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>PUT /api/todos/:id</code></a></li>
+            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>DELETE /api/todos/:id</code></a></li>
+            <li><a href="/docs" target="_blank" rel="noopener noreferrer"><code>GET /api/todos/group?by=status</code></a></li>
+          </ul>
+        </div>
+
+        <div class="api-box storage-box">
+          <h2>Storage status</h2>
+          <div class="storage-status">
+            <span>CSV rows</span>
+            <strong id="csvCount">0</strong>
+          </div>
+          <div class="storage-status">
+            <span>SQLite rows</span>
+            <strong id="sqliteCount">0</strong>
+          </div>
+          <p class="muted storage-note" id="storageNote">Sync status will appear here.</p>
+          <p class="muted storage-note" id="storageTimestamp">Last sync: waiting for data.</p>
+        </div>
       </div>
     </aside>
 
@@ -79,7 +92,7 @@
         <div>
           <p class="eyebrow">Main dashboard</p>
           <h2>Organize, filter, and group your tasks</h2>
-          <p class="muted">A lightweight interface for working with plain-text persisted data without losing a modern experience.</p>
+          <p class="muted">A lightweight interface for working with CSV-based data backed by a synchronized SQLite mirror, without losing a modern experience.</p>
         </div>
         <div class="hero-actions">
           <select id="importMode" aria-label="Import mode">
