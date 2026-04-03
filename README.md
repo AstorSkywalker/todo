@@ -27,6 +27,16 @@ Run the app locally with `npm start`, then open:
 - Todos API: `http://localhost:3000/api/todos`
 - Storage status API: `http://localhost:3000/api/todos/storage`
 
+## Screenshots
+
+### Dashboard overview
+
+![TaskFlow CSV dashboard overview](assets/screenshots/dashboard-overview.jpg)
+
+### Workload chart focus
+
+![TaskFlow CSV workload chart](assets/screenshots/dashboard-chart.jpg)
+
 ## Main Features
 
 ### Dashboard and UI
@@ -360,6 +370,8 @@ The backend tests currently cover:
 - [ ] Auto-refresh when storage changes
 - [ ] Frontend smoke tests
 - [ ] Optional move to SQLite-primary reads
+- [ ] Optional Oracle Database 26ai on-premise integration
+- [ ] Optional Oracle OCI Autonomous Database integration
 - [ ] Authentication or user accounts
 
 ## Future Improvements
@@ -369,6 +381,8 @@ The backend tests currently cover:
 - Stronger API versioning if the backend grows
 - Optional authentication and user separation
 - Optional SQLite-primary mode when the project moves beyond CSV-first
+- Optional Oracle Database 26ai on-premise backend for enterprise or lab deployments
+- Optional Oracle OCI Autonomous Database backend for a production-grade managed database path
 
 ## License
 
