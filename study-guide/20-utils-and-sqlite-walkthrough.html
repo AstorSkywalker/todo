@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 20 - utils and sqliteService Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 20</p>
+      <h1>Line-by-Line Walkthrough: utils and sqliteService</h1>
+      <p class="muted kicker">This lesson finishes the backend learning arc by focusing on the small helper files and the SQLite mirror service that make the whole project more maintainable.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#http">utils/http.js</a></li>
+          <li><a href="#validation">utils/validation.js</a></li>
+          <li><a href="#sqlite">sqliteService.js</a></li>
+          <li><a href="#design">Why these small files matter</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="http">
+            <h2>1. Reading <code>utils/http.js</code></h2>
+            <pre><code>function sendJson(res, statusCode, payload) {
+  res.writeHead(statusCode, {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  });
+  res.end(JSON.stringify(payload));
+}</code></pre>
+            <p>This helper is tiny, but it is powerful. Every route can now send JSON consistently without rewriting headers again and again.</p>
+            <pre><code>function readBody(req) {
+  return new Promise((resolve, reject) =&gt; {
+    let data = '';
+    ...
+  });
+}</code></pre>
+            <p>This helper turns raw incoming request chunks into a parsed JSON object. It is one of those functions that removes noisy plumbing from route handlers.</p>
+          </section>
+
+          <section id="validation">
+            <h2>2. Reading <code>utils/validation.js</code></h2>
+            <pre><code>function normalizePayload(body) {
+  return {
+    title: String(body.title || '').trim(),
+    description: String(body.description || '').trim(),
+    status: String(body.status || 'pending').trim(),
+    ...
+  };
+}</code></pre>
+            <p>Normalization makes incoming data predictable. That is a major backend habit worth learning early.</p>
+            <pre><code>function validateTodo(todo) {
+  if (!todo.title) {
+    return 'Title is required.';
+  }
+  ...
+}</code></pre>
+            <p>Validation then applies business rules after normalization. The pairing of normalization plus validation is much safer than relying on raw request bodies.</p>
+            <pre><code>function normalizeImportedTodos(items, existingTodos) {
+  ...
+  if (!id || existingIds.has(id)) {
+    id = generateUniqueId(existingIds);
+  }
+  ...
+}</code></pre>
+            <p>This import helper is especially instructive because it shows how the app prevents id collisions during import.</p>
+          </section>
+
+          <section id="sqlite">
+            <h2>3. Reading <code>sqliteService.js</code></h2>
+            <pre><code>let db;
+let lastSyncAt = null;</code></pre>
+            <p>These variables show that the SQLite connection is maintained at module scope and reused. That keeps the service simple for a small project.</p>
+            <pre><code>db = new Database(DB_FILE);
+db.pragma('journal_mode = WAL');</code></pre>
+            <p>This creates the SQLite database and enables a safer journal mode. Even if you do not know SQLite deeply yet, this is a good example of local database initialization.</p>
+            <pre><code>function syncTodosToSqlite(todos) {
+  const database = initializeSqlite();
+  const replaceAll = database.transaction((items) =&gt; {
+    database.prepare('DELETE FROM todos').run();
+    ...
+  });
+  replaceAll(todos);
+  lastSyncAt = new Date().toISOString();
+}</code></pre>
+            <p>This service chooses a replace-all sync strategy. That is a deliberate tradeoff: not the most advanced possible method, but simple, readable, and reliable for the app's scale.</p>
+          </section>
+
+          <section id="design">
+            <h2>4. Why These Small Files Matter</h2>
+            <table>
+              <thead>
+                <tr><th>File</th><th>What it protects</th><th>Why that matters</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><code>utils/http.js</code></td><td>HTTP consistency</td><td>Routes stay cleaner and less repetitive.</td></tr>
+                <tr><td><code>utils/validation.js</code></td><td>Data quality</td><td>Invalid rows are blocked before storage.</td></tr>
+                <tr><td><code>sqliteService.js</code></td><td>Database mirroring</td><td>The project can evolve toward stronger storage later.</td></tr>
+              </tbody>
+            </table>
+            <p>These files are a good reminder that architecture often improves not because files become bigger, but because small files start carrying focused responsibilities.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>5. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Add one more field to the SQLite summary response, such as a static <code>mode</code> string that says <code>mirror</code>.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>The clean place to do this is in <code>getSqliteSummary()</code>, because that function already defines the shape of the SQLite status response.</p>
+                <pre><code>function getSqliteSummary() {
+  const database = initializeSqlite();
+  const total = database.prepare('SELECT COUNT(*) AS total FROM todos').get().total;
+  return {
+    dbFile: DB_FILE,
+    total,
+    lastSyncAt,
+    mode: 'mirror'
+  };
+}</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>The storage status response should now include a new field inside the SQLite object. This teaches you to extend behavior where responsibility already lives instead of patching it from the outside.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain why helpers and storage services deserve their own files, you understand a big part of backend maintainability.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/19-visual-diagrams-and-system-maps.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
+

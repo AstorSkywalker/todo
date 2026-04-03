@@ -255,6 +255,38 @@ h3 {
   gap: 14px;
 }
 
+.diagram-flow,
+.diagram-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.diagram-flow {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-items: center;
+}
+
+.diagram-node {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--panel-2);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.diagram-node strong {
+  display: block;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+
+.diagram-arrow {
+  text-align: center;
+  color: var(--muted);
+  font-size: 1.4rem;
+}
+
 .note {
   background: rgba(244, 199, 104, 0.08);
   border-color: rgba(244, 199, 104, 0.22);

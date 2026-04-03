@@ -127,6 +127,36 @@
               <p><strong>Healthy refactor rule:</strong> split code when responsibilities become blurry, testing becomes harder, or file size starts harming readability. That is exactly what happened here.</p>
             </div>
           </section>
+
+          <section id="exercise">
+            <h2>8. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Imagine you want a new endpoint named <code>GET /api/todos/storage</code>. Which backend layer should own each part of that feature?</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Split the responsibility instead of putting everything in one file:</p>
+                <ul>
+                  <li><strong>route layer:</strong> recognize the path and method</li>
+                  <li><strong>service layer:</strong> build the storage summary object</li>
+                  <li><strong>storage layer:</strong> expose CSV and SQLite totals</li>
+                  <li><strong>HTTP helper:</strong> send the JSON response</li>
+                </ul>
+                <pre><code>// routes/todos.js
+if (req.method === 'GET' &amp;&amp; pathParts[2] === 'storage') {
+  sendJson(res, 200, getStorageStatus());
+  return;
+}</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>The final endpoint should return one JSON object showing both CSV and SQLite totals. More importantly, the code should feel separated instead of crammed into a single giant route block.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain which backend layer should own a new feature, you are starting to think architecturally instead of only procedurally.</p>
+          </section>
         </article>
 
         <nav class="chapter-nav">

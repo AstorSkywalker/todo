@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 19 - Visual Diagrams and System Maps</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 19</p>
+      <h1>Visual Diagrams and System Maps</h1>
+      <p class="muted kicker">This lesson converts the project into visual system maps so you can study it with your eyes first, then with code second. That often makes complex projects much easier to own.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#request">Request flow map</a></li>
+          <li><a href="#render">Frontend render map</a></li>
+          <li><a href="#storage">Storage sync map</a></li>
+          <li><a href="#preferences">localStorage map</a></li>
+          <li><a href="#future">Future Oracle path</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="request">
+            <h2>1. Request Flow Map</h2>
+            <div class="diagram-flow">
+              <div class="diagram-node"><strong>Browser</strong><span>fetch request</span></div>
+              <div class="diagram-arrow">→</div>
+              <div class="diagram-node"><strong>server.js</strong><span>dispatch request</span></div>
+              <div class="diagram-arrow">→</div>
+              <div class="diagram-node"><strong>routes/todos.js</strong><span>match route</span></div>
+              <div class="diagram-arrow">→</div>
+              <div class="diagram-node"><strong>todoService</strong><span>run logic</span></div>
+            </div>
+            <p>This is the basic request path. Once you see it visually, the backend becomes less mysterious.</p>
+          </section>
+
+          <section id="render">
+            <h2>2. Frontend Render Map</h2>
+            <div class="diagram-stack">
+              <div class="diagram-node"><strong>initialize()</strong><span>restore preferences and bind events</span></div>
+              <div class="diagram-node"><strong>loadTodos()</strong><span>fetch current data from the API</span></div>
+              <div class="diagram-node"><strong>renderDashboard()</strong><span>counters, chart, groups, tasks</span></div>
+              <div class="diagram-node"><strong>DOM updates</strong><span>cards, filters, compact table, chart labels</span></div>
+            </div>
+            <p>The frontend is driven by a simple idea: restore state, load data, render visible output.</p>
+          </section>
+
+          <section id="storage">
+            <h2>3. Storage Sync Map</h2>
+            <div class="diagram-flow">
+              <div class="diagram-node"><strong>Form / API write</strong><span>create, update, delete, import</span></div>
+              <div class="diagram-arrow">→</div>
+              <div class="diagram-node"><strong>CSV write</strong><span>primary source of truth</span></div>
+              <div class="diagram-arrow">→</div>
+              <div class="diagram-node"><strong>SQLite sync</strong><span>mirror current rows</span></div>
+            </div>
+            <p>This is one of the project’s most important architectural stories: CSV remains primary while SQLite mirrors it for future evolution.</p>
+          </section>
+
+          <section id="preferences">
+            <h2>4. localStorage Preference Map</h2>
+            <div class="diagram-flow">
+              <div class="diagram-node"><strong>Theme</strong><span>light / dark</span></div>
+              <div class="diagram-node"><strong>Palette</strong><span>color scheme</span></div>
+              <div class="diagram-node"><strong>Layout</strong><span>cards / compact / density</span></div>
+              <div class="diagram-node"><strong>Filters</strong><span>search, status, date range</span></div>
+              <div class="diagram-node"><strong>Collapsed Panels</strong><span>sidebar, filters, grouping, chart</span></div>
+            </div>
+            <p>Seeing the preference system this way helps you understand that the UI has a memory, and that memory lives in the browser.</p>
+          </section>
+
+          <section id="future">
+            <h2>5. Future Oracle Path</h2>
+            <div class="diagram-flow">
+              <div class="diagram-node"><strong>Current</strong><span>CSV primary + SQLite mirror</span></div>
+              <div class="diagram-arrow">→</div>
+              <div class="diagram-node"><strong>Transitional</strong><span>optional Oracle integration</span></div>
+              <div class="diagram-arrow">→</div>
+              <div class="diagram-node"><strong>Future</strong><span>Oracle 26ai or OCI ADB primary</span></div>
+            </div>
+            <p>This map is useful because it shows that architectural growth is a path, not a jump.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>6. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Draw your own version of the request flow for <code>POST /api/todos</code> on paper or in a notes app.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Your diagram should show at least these steps in order:</p>
+                <pre><code>Browser form
+→ server.js
+→ routes/todos.js
+→ todoService.createTodo()
+→ csvService.writeTodos()
+→ sqliteService.syncTodosToSqlite()
+→ JSON response
+→ frontend re-render</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>If your map has a clear beginning, middle, and end, and shows where validation and storage happen, then you are thinking about the project as a system instead of isolated files.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can draw the system from memory, you understand it at a much deeper level than someone who only reads individual files.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/18-chart-masterclass.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/20-utils-and-sqlite-walkthrough.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
