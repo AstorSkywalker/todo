@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 23: Frontend Smoke Tests</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 23</p>
+      <h1>Frontend Smoke Tests</h1>
+      <p class="kicker muted">Learn what smoke tests are, why they matter for dashboards like TaskFlow, and how to think about high-value UI checks before adding a full browser-testing toolchain.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#what">What smoke tests are</a></li>
+          <li><a href="#why">Why they matter here</a></li>
+          <li><a href="#targets">What this app should test</a></li>
+          <li><a href="#playwright">Why Playwright fits</a></li>
+          <li><a href="#sample">Sample smoke-test structure</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="what">
+            <h2>1. What Smoke Tests Are</h2>
+            <p>Smoke tests are quick, broad checks that answer a simple question: does the application still basically work after a change?</p>
+            <p>They do not try to prove every edge case. Instead, they focus on the highest-value flows that should never silently break.</p>
+            <div class="callout">
+              <p><strong>Simple mental model:</strong> backend tests protect logic and data behavior, while frontend smoke tests protect the visible user experience.</p>
+            </div>
+            <p>For a dashboard like TaskFlow, that means testing the parts a real user reaches first:</p>
+            <ul>
+              <li>the page loads</li>
+              <li>tasks render</li>
+              <li>filters work</li>
+              <li>view switching works</li>
+              <li>the delete modal opens</li>
+              <li>the docs page opens</li>
+            </ul>
+          </section>
+
+          <section id="why">
+            <h2>2. Why They Matter In This Project</h2>
+            <p>This app has grown far beyond a tiny CRUD page. It now contains theme selection, color schemes, compact and card views, date filters, charting, collapsible panels, import/export tools, and a study guide. That is a lot of UI surface area.</p>
+            <p>When a project becomes visually rich and interaction-heavy, the chance of accidental breakage goes up. A CSS change can hide a button. A JavaScript refactor can stop a toggle from rendering. A route change can make docs unreachable.</p>
+            <p>Smoke tests are useful because they give fast confidence that the top-level experience is still alive after changes.</p>
+          </section>
+
+          <section id="targets">
+            <h2>3. What This App Should Smoke Test</h2>
+            <p>If we were choosing the highest-value frontend smoke checks for TaskFlow, these would be the best starting set:</p>
+            <table>
+              <thead>
+                <tr><th>Flow</th><th>Why it matters</th><th>What to confirm</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Load dashboard</td><td>Everything starts here</td><td>Main title, task section, and form appear.</td></tr>
+                <tr><td>Toggle theme</td><td>Major visual preference</td><td>The page changes theme and saved preference updates.</td></tr>
+                <tr><td>Switch cards/compact</td><td>Major viewing mode</td><td>Task list layout changes correctly.</td></tr>
+                <tr><td>Apply a filter</td><td>Core user workflow</td><td>Visible task count or list content changes.</td></tr>
+                <tr><td>Open delete modal</td><td>Critical action safety</td><td>The modal appears and shows delete controls.</td></tr>
+                <tr><td>Open docs</td><td>Documentation experience</td><td><code>/docs</code> loads and shows Swagger UI.</td></tr>
+              </tbody>
+            </table>
+            <p>This is a healthy smoke-test philosophy: do not start with dozens of UI assertions. Start with the flows that prove the app is still usable.</p>
+          </section>
+
+          <section id="playwright">
+            <h2>4. Why Playwright Fits Well</h2>
+            <p>If this project later adds browser automation, Playwright would be a strong fit because it is modern, stable, and good at testing real browser interactions.</p>
+            <p>A Playwright-based smoke suite could open the app, click filters, inspect visible elements, and confirm route pages like <code>/docs</code> still load correctly.</p>
+            <pre><code>// example idea, not yet part of the project
+test('dashboard smoke test', async ({ page }) =&gt; {
+  await page.goto('http://localhost:3000');
+  await expect(page.getByText('Saved tasks')).toBeVisible();
+  await page.getByRole('button', { name: /compact/i }).click();
+  await expect(page.getByText('STATUS')).toBeVisible();
+});</code></pre>
+            <p>The important idea is not the tool alone. The important idea is choosing the smallest set of browser checks that provides maximum confidence.</p>
+          </section>
+
+          <section id="sample">
+            <h2>5. Sample Smoke-Test Structure</h2>
+            <p>A practical future smoke-test suite for TaskFlow could be organized like this:</p>
+            <pre><code>tests/
+  smoke/
+    dashboard-load.spec.js
+    theme-toggle.spec.js
+    task-view-toggle.spec.js
+    filters.spec.js
+    delete-modal.spec.js
+    docs-page.spec.js</code></pre>
+            <p>That structure stays simple and intentional. Each file protects one essential user flow.</p>
+            <div class="diagram-group">
+              <div class="diagram-lane">
+                <div class="diagram-lane-title">Recommended Smoke-Test Progression</div>
+                <div class="diagram-flow compact-flow">
+                  <div class="diagram-node primary">Load app</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node success">Check main UI</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node warning">Run one interaction</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node danger">Confirm no major breakage</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="mistakes">
+            <h2>6. Common Mistakes</h2>
+            <ul>
+              <li><strong>Testing too much too early:</strong> a smoke suite should stay small and fast.</li>
+              <li><strong>Asserting fragile styling details:</strong> smoke tests should focus on visible behavior, not tiny CSS values.</li>
+              <li><strong>Skipping route pages:</strong> docs and guide pages are part of the user experience too.</li>
+              <li><strong>Ignoring saved preferences:</strong> theme, palette, and collapsed state persistence are worth checking.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Write a three-test smoke plan for TaskFlow that covers one page-load check, one interaction check, and one documentation check.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A good answer should protect the highest-value visible flows with the fewest checks.</p>
+                <pre><code>Smoke test plan:
+
+1. Dashboard load
+- open /
+- confirm "Saved tasks" is visible
+
+2. Compact view interaction
+- click the Compact toggle
+- confirm compact table headers appear
+
+3. Documentation route
+- open /docs
+- confirm Swagger UI is visible</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should feel realistic and focused. A strong smoke plan does not test everything. It checks just enough to reveal major UI breakage quickly.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain which three to six user flows deserve browser smoke tests first, you understand the frontend quality strategy for this app.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/22-oracle-future-architecture.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/24-debugging-workflows.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

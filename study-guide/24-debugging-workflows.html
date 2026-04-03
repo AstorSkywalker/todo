@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 24: Debugging Workflows</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 24</p>
+      <h1>Debugging Workflows</h1>
+      <p class="kicker muted">Learn how to debug the app calmly and methodically by moving between browser tools, network inspection, backend logs, tests, and storage checks.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#mindset">Debugging mindset</a></li>
+          <li><a href="#browser">Browser-side debugging</a></li>
+          <li><a href="#network">Network and API debugging</a></li>
+          <li><a href="#backend">Backend tracing</a></li>
+          <li><a href="#storage">Storage debugging</a></li>
+          <li><a href="#workflow">A reliable debugging workflow</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="mindset">
+            <h2>1. Debugging Mindset</h2>
+            <p>Good debugging is not random guessing. It is a process of narrowing down where a problem starts.</p>
+            <p>For this project, a useful first question is:</p>
+            <ul>
+              <li>is the problem visual only?</li>
+              <li>is the browser state wrong?</li>
+              <li>did the request fail?</li>
+              <li>did the backend reject or transform the data?</li>
+              <li>did storage save the wrong thing?</li>
+            </ul>
+            <div class="callout">
+              <p><strong>Core principle:</strong> trace one feature from UI to network to backend to storage instead of changing many things at once.</p>
+            </div>
+          </section>
+
+          <section id="browser">
+            <h2>2. Browser-Side Debugging</h2>
+            <p>When the UI looks wrong, start in the browser.</p>
+            <ul>
+              <li><strong>Elements panel:</strong> inspect markup, classes, and computed styles.</li>
+              <li><strong>Console:</strong> inspect JavaScript errors and quick variable output.</li>
+              <li><strong>Application panel:</strong> inspect <code>localStorage</code> values like theme, palette, sort mode, or collapsed sections.</li>
+            </ul>
+            <pre><code>// simple debugging pattern
+console.log('current filters', appState.filters);
+console.log('current view mode', appState.viewMode);</code></pre>
+            <p>If a feature seems visually broken, check whether the DOM class changed as expected. Sometimes the logic is correct and only the CSS is wrong.</p>
+          </section>
+
+          <section id="network">
+            <h2>3. Network and API Debugging</h2>
+            <p>If the UI is not updating, the next place to check is the browser network tab.</p>
+            <p>For example, if deleting a task fails, inspect:</p>
+            <ul>
+              <li>which request was sent</li>
+              <li>the request URL</li>
+              <li>the HTTP method</li>
+              <li>the response status</li>
+              <li>the JSON response body</li>
+            </ul>
+            <p>You can also debug outside the browser with quick HTTP checks:</p>
+            <pre><code>Invoke-RestMethod http://localhost:3000/api/todos/storage
+Invoke-RestMethod http://localhost:3000/openapi.json</code></pre>
+            <p>That helps separate frontend issues from backend issues.</p>
+          </section>
+
+          <section id="backend">
+            <h2>4. Backend Tracing</h2>
+            <p>If the request reaches the server but the result is wrong, the next step is to follow the backend flow:</p>
+            <ol>
+              <li><code>server.js</code> receives the request</li>
+              <li><code>routes/todos.js</code> matches the route</li>
+              <li><code>services/todoService.js</code> performs the business logic</li>
+              <li><code>services/csvService.js</code> and <code>sqliteService.js</code> update storage</li>
+            </ol>
+            <p>A simple debug habit is to log one value at each layer:</p>
+            <pre><code>console.log('route payload', payload);
+console.log('validated payload', validatedPayload);
+console.log('saved todo id', createdTodo.id);</code></pre>
+            <p>This lets you see whether a bug is introduced during route parsing, validation, service logic, or storage writes.</p>
+          </section>
+
+          <section id="storage">
+            <h2>5. Storage Debugging</h2>
+            <p>Because this app uses both CSV and SQLite, storage debugging has one extra step: check whether both layers still agree.</p>
+            <p>The project already exposes a helpful route for this:</p>
+            <pre><code>GET /api/todos/storage</code></pre>
+            <p>If counts disagree, the next question becomes whether the CSV write failed, the SQLite mirror failed, or the startup sync did not run as expected.</p>
+            <div class="diagram-group">
+              <div class="diagram-lane">
+                <div class="diagram-lane-title">Storage Debugging Flow</div>
+                <div class="diagram-flow compact-flow">
+                  <div class="diagram-node primary">UI action</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node warning">API request</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node success">CSV write</div>
+                  <div class="diagram-arrow">&rarr;</div>
+                  <div class="diagram-node success">SQLite mirror</div>
+                </div>
+                <p class="diagram-note">If the result looks wrong, check each stage one at a time instead of guessing.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="workflow">
+            <h2>6. A Reliable Debugging Workflow</h2>
+            <p>A calm, repeatable workflow for this project looks like this:</p>
+            <ol>
+              <li>reproduce the problem on purpose</li>
+              <li>decide whether it looks visual, client-side, network-related, backend-related, or storage-related</li>
+              <li>inspect the browser console and network tab</li>
+              <li>trace the backend route and service path</li>
+              <li>run the automated tests if the bug may affect shared logic</li>
+              <li>verify the fix and repeat the same action once more</li>
+            </ol>
+            <p>That is much safer than changing many files at once and hoping the bug disappears.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>A user clicks a filter pill and nothing changes in the task list. Describe the debugging path you would follow.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A good answer should trace the feature from browser interaction to rendered output.</p>
+                <pre><code>Debugging path:
+
+1. Reproduce the bug and watch the browser console for errors.
+2. Inspect the clicked element to confirm the active class changes.
+3. Log the related filter state in app.js.
+4. Confirm the render function runs after the state update.
+5. Check whether the filtered task array changes.
+6. If it does change, inspect CSS or DOM rendering.
+7. If it does not change, inspect the filter logic itself.</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should read like a trace plan, not a guess. A strong debugging answer narrows the bug to one layer at a time.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can trace a UI bug from click event to state change to render output to storage or backend when needed, you understand the debugging discipline behind this project.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/23-frontend-smoke-tests.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 22 - Oracle Future Architecture</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 22</p>
+      <h1>Oracle Future Architecture</h1>
+      <p class="muted kicker">This lesson explains how TaskFlow could evolve from a CSV-primary app with a SQLite mirror into a more production-style architecture using Oracle Database 26ai on-prem or Oracle OCI Autonomous Database.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#why-oracle">Why Oracle is a meaningful next step</a></li>
+          <li><a href="#onprem">Oracle Database 26ai on-prem</a></li>
+          <li><a href="#oci">OCI Autonomous Database</a></li>
+          <li><a href="#migration">Migration path from CSV and SQLite</a></li>
+          <li><a href="#backend">Backend changes required</a></li>
+          <li><a href="#config">Environment and configuration strategy</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="why-oracle">
+            <h2>1. Why Oracle Is A Meaningful Next Step</h2>
+            <p>The current architecture is excellent for learning and local development, but Oracle represents a different level of system maturity.</p>
+            <ul>
+              <li><strong>CSV</strong> is transparent and beginner-friendly.</li>
+              <li><strong>SQLite</strong> introduces relational structure locally.</li>
+              <li><strong>Oracle</strong> represents managed or enterprise-grade database architecture.</li>
+            </ul>
+            <p>That makes Oracle a natural future lesson because it teaches how a local learning app can grow into something closer to production engineering.</p>
+          </section>
+
+          <section id="onprem">
+            <h2>2. Oracle Database 26ai On-Prem</h2>
+            <p>An on-prem Oracle path would make sense if you want:</p>
+            <ul>
+              <li>an enterprise or lab deployment</li>
+              <li>control over your own infrastructure</li>
+              <li>a local or private-network database</li>
+              <li>a realistic environment for learning Oracle administration concepts</li>
+            </ul>
+            <p>In that path, the app would stop relying on local CSV files for primary persistence and would instead connect to an Oracle database server reachable over the network.</p>
+            <div class="callout">
+              <p><strong>Mindset shift:</strong> moving to on-prem Oracle is not only a database change. It is a deployment and operations change too.</p>
+            </div>
+          </section>
+
+          <section id="oci">
+            <h2>3. OCI Autonomous Database</h2>
+            <p>OCI Autonomous Database is a more cloud-oriented path. It is attractive because it offers:</p>
+            <ul>
+              <li>a managed Oracle database service</li>
+              <li>less manual infrastructure maintenance</li>
+              <li>a stronger fit for cloud-hosted application architecture</li>
+              <li>a better long-term story for public or production-style deployment</li>
+            </ul>
+            <p>This would likely be the cleaner future path if the goal is a public cloud application rather than a lab or on-prem environment.</p>
+          </section>
+
+          <section id="migration">
+            <h2>4. Migration Path From CSV And SQLite</h2>
+            <p>The safest migration path is incremental, not destructive.</p>
+            <ol>
+              <li>Keep CSV as the current source of truth.</li>
+              <li>Keep SQLite as the current mirror.</li>
+              <li>Add Oracle as an optional third storage layer behind a service interface.</li>
+              <li>Test writes and reads against Oracle.</li>
+              <li>Promote Oracle to primary only after confidence is high.</li>
+              <li>Eventually demote CSV to import/export or backup only.</li>
+            </ol>
+            <p>This is important architecturally because it avoids a risky “big bang” migration.</p>
+          </section>
+
+          <section id="backend">
+            <h2>5. Backend Changes Required</h2>
+            <p>The modular backend already helps a lot. To support Oracle cleanly, the project would likely add something like:</p>
+            <pre><code>services/
+  oracleService.js
+  todoRepository.js</code></pre>
+            <p>A healthy future design would move toward a storage abstraction such as a repository layer:</p>
+            <pre><code>listTodos()
+getTodoById(id)
+createTodo(payload)
+updateTodo(id, payload)
+deleteTodo(id)</code></pre>
+            <p>Then the implementation behind that interface could be:</p>
+            <ul>
+              <li>CSV-backed</li>
+              <li>SQLite-backed</li>
+              <li>Oracle-backed</li>
+            </ul>
+            <p>This is one of the biggest reasons modularization matters: it makes future storage changes more realistic.</p>
+          </section>
+
+          <section id="config">
+            <h2>6. Environment And Configuration Strategy</h2>
+            <p>A future Oracle integration should not hardcode credentials or connection settings. It should move those into environment variables.</p>
+            <pre><code>STORAGE_MODE=oracle
+ORACLE_USER=...
+ORACLE_PASSWORD=...
+ORACLE_CONNECT_STRING=...
+ORACLE_WALLET_PATH=...</code></pre>
+            <p>Then the backend could decide storage behavior from configuration:</p>
+            <pre><code>if (process.env.STORAGE_MODE === 'oracle') {
+  // use Oracle-backed repository
+}</code></pre>
+            <p>This is a production-grade design habit: behavior changes through configuration, not by editing source code directly.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Write a small future-storage plan for the app in three phases: current, transitional, and production-style.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A clear answer should describe architecture evolution without pretending that production-ready storage exists today.</p>
+                <pre><code>Current:
+- CSV primary
+- SQLite mirror
+
+Transitional:
+- add Oracle service layer
+- support STORAGE_MODE switch
+- test Oracle reads and writes
+
+Production-style:
+- Oracle 26ai on-prem or OCI ADB primary
+- CSV kept only for import/export or backup
+- deploy Node app with environment-based configuration</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should read like a thoughtful engineering roadmap, not just a wish list. The strongest answers explain how to move safely from the current architecture to the future one in stages.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how this app could evolve from CSV/SQLite into Oracle-backed deployment without throwing away everything already built, you understand the long-term architectural story of the project.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/21-deployment-and-publishing.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/23-frontend-smoke-tests.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
