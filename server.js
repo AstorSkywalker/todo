@@ -22,7 +22,7 @@ const server = http.createServer(async (req, res) => {
     try {
       await handleApi(req, res, requestUrl);
     } catch (error) {
-      sendJson(res, 500, { error: 'Error interno del servidor', detail: error.message });
+      sendJson(res, 500, { error: 'Internal server error', detail: error.message });
     }
     return;
   }
@@ -32,11 +32,11 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  sendJson(res, 404, { error: 'Recurso no encontrado' });
+  sendJson(res, 404, { error: 'Resource not found' });
 });
 
 server.listen(PORT, () => {
-  console.log(`Todo app escuchando en http://localhost:${PORT}`);
+  console.log(`Todo app listening on http://localhost:${PORT}`);
 });
 
 async function handleApi(req, res, requestUrl) {
@@ -75,12 +75,12 @@ async function handleApi(req, res, requestUrl) {
     const allowed = new Set(['status', 'priority', 'category']);
 
     if (!allowed.has(groupBy)) {
-      sendJson(res, 400, { error: 'Parametro by invalido. Usa status, priority o category.' });
+      sendJson(res, 400, { error: 'Invalid by parameter. Use status, priority, or category.' });
       return;
     }
 
     const groups = todos.reduce((acc, todo) => {
-      const key = todo[groupBy] || 'Sin valor';
+      const key = todo[groupBy] || 'No value';
       acc[key] = (acc[key] || 0) + 1;
       return acc;
     }, {});
@@ -96,7 +96,7 @@ async function handleApi(req, res, requestUrl) {
     const todo = todos.find((item) => item.id === pathParts[2]);
 
     if (!todo) {
-      sendJson(res, 404, { error: 'Tarea no encontrada' });
+      sendJson(res, 404, { error: 'Task not found' });
       return;
     }
 
@@ -132,7 +132,7 @@ async function handleApi(req, res, requestUrl) {
     const index = todos.findIndex((item) => item.id === pathParts[2]);
 
     if (index === -1) {
-      sendJson(res, 404, { error: 'Tarea no encontrada' });
+      sendJson(res, 404, { error: 'Task not found' });
       return;
     }
 
@@ -161,17 +161,17 @@ async function handleApi(req, res, requestUrl) {
     const index = todos.findIndex((item) => item.id === pathParts[2]);
 
     if (index === -1) {
-      sendJson(res, 404, { error: 'Tarea no encontrada' });
+      sendJson(res, 404, { error: 'Task not found' });
       return;
     }
 
     const [deleted] = todos.splice(index, 1);
     writeTodos(todos);
-    sendJson(res, 200, { message: 'Tarea eliminada', item: deleted });
+    sendJson(res, 200, { message: 'Task deleted', item: deleted });
     return;
   }
 
-  sendJson(res, 405, { error: 'Metodo no permitido' });
+  sendJson(res, 405, { error: 'Method not allowed' });
 }
 
 function ensureDataFile() {
@@ -196,7 +196,7 @@ function serveStaticFile(res, fileName) {
 
   fs.readFile(filePath, (error, data) => {
     if (error) {
-      sendJson(res, 500, { error: 'No fue posible cargar el archivo solicitado' });
+      sendJson(res, 500, { error: 'The requested file could not be loaded' });
       return;
     }
 
@@ -227,7 +227,7 @@ function readBody(req) {
       try {
         resolve(data ? JSON.parse(data) : {});
       } catch (error) {
-        reject(new Error('JSON invalido'));
+        reject(new Error('Invalid JSON'));
       }
     });
 
@@ -314,15 +314,15 @@ function normalizePayload(body) {
 
 function validateTodo(todo) {
   if (!todo.title) {
-    return 'El titulo es obligatorio.';
+    return 'Title is required.';
   }
 
   if (!['pending', 'in_progress', 'done'].includes(todo.status)) {
-    return 'El estado debe ser pending, in_progress o done.';
+    return 'Status must be pending, in_progress, or done.';
   }
 
   if (!['low', 'medium', 'high'].includes(todo.priority)) {
-    return 'La prioridad debe ser low, medium o high.';
+    return 'Priority must be low, medium, or high.';
   }
 
   return null;

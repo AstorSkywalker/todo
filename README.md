@@ -1,67 +1,67 @@
 # TaskFlow CSV
 
-Aplicacion To Do moderna con persistencia en archivo CSV, interfaz light/dark y API CRUD sin base de datos relacional.
+Modern To Do app with CSV persistence, light/dark mode, and a simple CRUD API without a relational database.
 
-## Caracteristicas
+## Features
 
-- Interfaz moderna y responsive
-- Tema oscuro y claro
-- Persistencia simple en `data/todos.csv`
-- API REST para crear, consultar, editar y eliminar tareas
-- Agrupacion de resultados por estado, prioridad o categoria
-- Fechas mostradas en formato de Honduras (`dd/mm/aaaa` en la interfaz)
+- Modern and responsive interface
+- Light and dark themes
+- Simple persistence in `data/todos.csv`
+- REST API for creating, reading, updating, and deleting tasks
+- Grouped summaries by status, priority, or category
+- Dates displayed in Honduras-friendly `dd/mm/yyyy` format in the interface
 
-## Tecnologias usadas
+## Tech stack
 
 - HTML5
 - CSS3
-- JavaScript vanilla
+- Vanilla JavaScript
 - Node.js
-- CSV como almacenamiento local
+- CSV for local storage
 
-## Estructura del proyecto
+## Project structure
 
-- [index.html](c:\Users\Nelson\Documents\GitHub\todo\index.html): estructura principal de la interfaz
-- [styles.css](c:\Users\Nelson\Documents\GitHub\todo\styles.css): estilos, temas y componentes visuales
-- [app.js](c:\Users\Nelson\Documents\GitHub\todo\app.js): logica de frontend, consumo de APIs y renderizado
-- [server.js](c:\Users\Nelson\Documents\GitHub\todo\server.js): servidor HTTP y API CRUD
-- [data/todos.csv](c:\Users\Nelson\Documents\GitHub\todo\data\todos.csv): almacenamiento de tareas
-- [package.json](c:\Users\Nelson\Documents\GitHub\todo\package.json): metadata y script de inicio
+- [index.html](c:\Users\Nelson\Documents\GitHub\todo\index.html): main UI structure
+- [styles.css](c:\Users\Nelson\Documents\GitHub\todo\styles.css): themes, layout, and component styling
+- [app.js](c:\Users\Nelson\Documents\GitHub\todo\app.js): frontend logic, rendering, and API integration
+- [server.js](c:\Users\Nelson\Documents\GitHub\todo\server.js): HTTP server and CRUD API
+- [data/todos.csv](c:\Users\Nelson\Documents\GitHub\todo\data\todos.csv): task storage
+- [package.json](c:\Users\Nelson\Documents\GitHub\todo\package.json): package metadata and start script
 
-## Requisitos
+## Requirements
 
-- Node.js 18 o superior recomendado
+- Node.js 18 or newer recommended
 
-## Como ejecutar
+## Run locally
 
-1. Abre una terminal en la carpeta del proyecto.
-2. Ejecuta:
+1. Open a terminal in the project folder.
+2. Run:
 
 ```bash
 npm start
 ```
 
-3. Abre en el navegador:
+3. Open this URL in your browser:
 
 ```text
 http://localhost:3000
 ```
 
-## Como se guardan los datos
+## Data storage
 
-Las tareas se persisten en el archivo:
+Tasks are stored in:
 
 ```text
 data/todos.csv
 ```
 
-Cada fila representa una tarea con estas columnas:
+Each row uses this structure:
 
 ```text
 id,title,description,status,priority,category,dueDate,createdAt,updatedAt
 ```
 
-## API REST
+## REST API
 
 Base URL:
 
@@ -69,28 +69,28 @@ Base URL:
 http://localhost:3000
 ```
 
-### 1. Listar tareas
+### 1. List tasks
 
 `GET /api/todos`
 
-Ejemplo `curl`:
+Example `curl`:
 
 ```bash
 curl http://localhost:3000/api/todos
 ```
 
-Respuesta:
+Response:
 
 ```json
 {
   "items": [
     {
       "id": "1",
-      "title": "Definir alcance",
-      "description": "Aterrizar las vistas y el flujo CRUD inicial",
+      "title": "Define scope",
+      "description": "Outline the screens and initial CRUD flow",
       "status": "pending",
       "priority": "high",
-      "category": "Planificacion",
+      "category": "Planning",
       "dueDate": "2026-04-05",
       "createdAt": "2026-04-02T09:00:00.000Z",
       "updatedAt": "2026-04-02T09:00:00.000Z"
@@ -106,42 +106,42 @@ Respuesta:
 }
 ```
 
-Filtros soportados:
+Supported filters:
 
 - `search`
 - `status`
 - `priority`
 - `category`
 
-Ejemplo:
+Example:
 
 ```text
 GET /api/todos?search=demo&status=pending&priority=high
 ```
 
-Ejemplo `curl`:
+Example `curl`:
 
 ```bash
 curl "http://localhost:3000/api/todos?search=demo&status=pending&priority=high"
 ```
 
-### 2. Obtener una tarea por id
+### 2. Get a task by id
 
 `GET /api/todos/:id`
 
-Ejemplo:
+Example:
 
 ```text
 GET /api/todos/1
 ```
 
-Ejemplo `curl`:
+Example `curl`:
 
 ```bash
 curl http://localhost:3000/api/todos/1
 ```
 
-### 3. Crear tarea
+### 3. Create a task
 
 `POST /api/todos`
 
@@ -149,8 +149,8 @@ Body:
 
 ```json
 {
-  "title": "Preparar demo",
-  "description": "Revisar UI y endpoints",
+  "title": "Prepare demo",
+  "description": "Review UI and endpoints",
   "status": "pending",
   "priority": "medium",
   "category": "Frontend",
@@ -158,15 +158,15 @@ Body:
 }
 ```
 
-Ejemplo `curl`:
+Example `curl`:
 
 ```bash
 curl -X POST http://localhost:3000/api/todos \
   -H "Content-Type: application/json" \
-  -d "{\"title\":\"Preparar demo\",\"description\":\"Revisar UI y endpoints\",\"status\":\"pending\",\"priority\":\"medium\",\"category\":\"Frontend\",\"dueDate\":\"2026-04-12\"}"
+  -d "{\"title\":\"Prepare demo\",\"description\":\"Review UI and endpoints\",\"status\":\"pending\",\"priority\":\"medium\",\"category\":\"Frontend\",\"dueDate\":\"2026-04-12\"}"
 ```
 
-### 4. Actualizar tarea
+### 4. Update a task
 
 `PUT /api/todos/:id`
 
@@ -174,8 +174,8 @@ Body:
 
 ```json
 {
-  "title": "Preparar demo final",
-  "description": "Validar estilo y CRUD",
+  "title": "Prepare final demo",
+  "description": "Validate styling and CRUD flow",
   "status": "in_progress",
   "priority": "high",
   "category": "Frontend",
@@ -183,41 +183,41 @@ Body:
 }
 ```
 
-Ejemplo `curl`:
+Example `curl`:
 
 ```bash
 curl -X PUT http://localhost:3000/api/todos/1 \
   -H "Content-Type: application/json" \
-  -d "{\"title\":\"Preparar demo final\",\"description\":\"Validar estilo y CRUD\",\"status\":\"in_progress\",\"priority\":\"high\",\"category\":\"Frontend\",\"dueDate\":\"2026-04-14\"}"
+  -d "{\"title\":\"Prepare final demo\",\"description\":\"Validate styling and CRUD flow\",\"status\":\"in_progress\",\"priority\":\"high\",\"category\":\"Frontend\",\"dueDate\":\"2026-04-14\"}"
 ```
 
-### 5. Eliminar tarea
+### 5. Delete a task
 
 `DELETE /api/todos/:id`
 
-Ejemplo:
+Example:
 
 ```text
 DELETE /api/todos/1
 ```
 
-Ejemplo `curl`:
+Example `curl`:
 
 ```bash
 curl -X DELETE http://localhost:3000/api/todos/1
 ```
 
-### 6. Agrupar resultados
+### 6. Group results
 
 `GET /api/todos/group?by=status`
 
-Valores permitidos para `by`:
+Allowed values for `by`:
 
 - `status`
 - `priority`
 - `category`
 
-Ejemplo de respuesta:
+Example response:
 
 ```json
 {
@@ -230,50 +230,50 @@ Ejemplo de respuesta:
 }
 ```
 
-Ejemplo `curl`:
+Example `curl`:
 
 ```bash
 curl "http://localhost:3000/api/todos/group?by=status"
 ```
 
-## Reglas de validacion
+## Validation rules
 
-- `title` es obligatorio
-- `status` debe ser `pending`, `in_progress` o `done`
-- `priority` debe ser `low`, `medium` o `high`
+- `title` is required
+- `status` must be `pending`, `in_progress`, or `done`
+- `priority` must be `low`, `medium`, or `high`
 
-## Notas tecnicas
+## Technical notes
 
-- No usa Express ni base de datos externa
-- El CSV se parsea y reescribe desde Node
-- Los menus y la fecha se adaptan al tema claro/oscuro
-- La UI traduce al espanol los estados y prioridades visibles
+- No Express or external database is used
+- The CSV file is parsed and rewritten directly from Node
+- Menus and date inputs adapt to light and dark themes
+- The UI translates status and priority values into friendly labels
 
 ## Roadmap
 
-- [x] CRUD completo de tareas
-- [x] Persistencia en CSV
-- [x] Tema claro y oscuro
-- [x] Filtros y agrupacion de tareas
-- [x] Documentacion basica de la API
-- [x] Ejemplos `curl`
-- [x] Validacion visual de fechas invalidas
-- [ ] Auto-refresh cuando cambie el CSV
+- [x] Full CRUD for tasks
+- [x] CSV persistence
+- [x] Light and dark themes
+- [x] Filtering and grouping
+- [x] Basic API documentation
+- [x] `curl` examples
+- [x] Visual validation for invalid dates
+- [ ] Auto-refresh when the CSV changes
 - [ ] Swagger / OpenAPI
-- [ ] Importar y exportar tareas
-- [ ] Tests automatizados
-- [ ] Migracion opcional a SQLite
+- [ ] Import and export tasks
+- [ ] Automated tests
+- [ ] Optional migration to SQLite
 
-## Posibles mejoras
+## Possible improvements
 
-- Agregar Swagger o OpenAPI para documentar la API
-- Detectar cambios del archivo CSV en tiempo real
-- Agregar exportacion/importacion de CSV
-- Resaltar tareas vencidas o proximas a vencer
-- Agregar autenticacion
-- Agregar tests automatizados
-- Migrar de CSV a SQLite si el proyecto crece
+- Add Swagger or OpenAPI documentation for the API
+- Detect CSV file changes in real time
+- Add CSV import/export
+- Highlight overdue or upcoming tasks
+- Add authentication
+- Add automated tests
+- Migrate from CSV to SQLite if the project grows
 
-## Licencia
+## License
 
-Este proyecto puede distribuirse bajo la licencia MIT.
+This project may be distributed under the MIT license.

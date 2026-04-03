@@ -58,7 +58,7 @@ function bindEvents() {
   refreshButton.addEventListener('click', async () => {
     await loadTodos();
     await loadGroupSummary();
-    showFeedback('Datos recargados desde el CSV.');
+    showFeedback('Data reloaded from the CSV file.');
   });
   themeToggle.addEventListener('click', toggleTheme);
 
@@ -96,7 +96,7 @@ function renderTodos() {
   todoList.innerHTML = '';
 
   if (!state.items.length) {
-    todoList.innerHTML = '<article class="todo-card"><h4>No hay tareas para mostrar</h4><p class="todo-description">Prueba creando una nueva tarea o ajustando los filtros.</p></article>';
+    todoList.innerHTML = '<article class="todo-card"><h4>No tasks to display</h4><p class="todo-description">Try creating a new task or adjusting the filters.</p></article>';
     return;
   }
 
@@ -110,14 +110,14 @@ function renderTodos() {
     const deleteButton = fragment.querySelector('.delete-button');
 
     title.textContent = item.title;
-    description.textContent = item.description || 'Sin descripcion';
+    description.textContent = item.description || 'No description';
     statusBadge.textContent = formatStatus(item.status);
     statusBadge.classList.add(item.status);
 
     meta.innerHTML = [
-      `<span>Prioridad: ${formatPriority(item.priority)}</span>`,
-      `<span>Categoria: ${item.category || 'General'}</span>`,
-      `<span>Entrega: ${formatDate(item.dueDate)}</span>`
+      `<span>Priority: ${formatPriority(item.priority)}</span>`,
+      `<span>Category: ${item.category || 'General'}</span>`,
+      `<span>Due: ${formatDate(item.dueDate)}</span>`
     ].join('');
 
     editButton.addEventListener('click', () => startEdit(item));
@@ -137,7 +137,7 @@ function renderGroupResults(groups) {
   groupResults.innerHTML = '';
 
   if (!groups.length) {
-    groupResults.innerHTML = '<span class="group-pill">Sin datos para agrupar</span>';
+    groupResults.innerHTML = '<span class="group-pill">No data to group</span>';
     return;
   }
 
@@ -186,11 +186,11 @@ async function handleSubmit(event) {
   const result = await response.json();
 
   if (!response.ok) {
-    showFeedback(result.error || 'No se pudo guardar la tarea.', true);
+    showFeedback(result.error || 'The task could not be saved.', true);
     return;
   }
 
-  showFeedback(isEditing ? 'Tarea actualizada correctamente.' : 'Tarea creada correctamente.');
+  showFeedback(isEditing ? 'Task updated successfully.' : 'Task created successfully.');
   resetForm();
   await loadTodos();
   await loadGroupSummary();
@@ -206,21 +206,21 @@ function startEdit(item) {
   dueDateInput.value = formatDateForInput(item.dueDate);
   dueDatePicker.value = item.dueDate || '';
   clearDueDateError();
-  formTitle.textContent = 'Editar tarea';
-  submitButton.textContent = 'Actualizar tarea';
+  formTitle.textContent = 'Edit task';
+  submitButton.textContent = 'Update task';
   cancelEditButton.classList.remove('hidden');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 async function removeTodo(id) {
-  const confirmed = window.confirm('Esta accion eliminara la tarea del CSV. Deseas continuar?');
+  const confirmed = window.confirm('This action will remove the task from the CSV file. Do you want to continue?');
   if (!confirmed) return;
 
   const response = await fetch(`/api/todos/${id}`, { method: 'DELETE' });
   const result = await response.json();
 
   if (!response.ok) {
-    showFeedback(result.error || 'No se pudo eliminar la tarea.', true);
+    showFeedback(result.error || 'The task could not be deleted.', true);
     return;
   }
 
@@ -228,7 +228,7 @@ async function removeTodo(id) {
     resetForm();
   }
 
-  showFeedback('Tarea eliminada correctamente.');
+  showFeedback('Task deleted successfully.');
   await loadTodos();
   await loadGroupSummary();
 }
@@ -239,8 +239,8 @@ function resetForm() {
   dueDateInput.value = '';
   dueDatePicker.value = '';
   clearDueDateError();
-  formTitle.textContent = 'Nueva tarea';
-  submitButton.textContent = 'Guardar tarea';
+  formTitle.textContent = 'New task';
+  submitButton.textContent = 'Save task';
   cancelEditButton.classList.add('hidden');
 }
 
@@ -257,7 +257,7 @@ function applySavedTheme() {
 }
 
 function updateThemeLabel(theme) {
-  themeLabel.textContent = theme === 'light' ? 'Claro' : 'Oscuro';
+  themeLabel.textContent = theme === 'light' ? 'Light' : 'Dark';
 }
 
 function showFeedback(message, isError = false) {
@@ -286,17 +286,17 @@ function debounce(fn, delay) {
 
 function formatStatus(status) {
   return {
-    pending: 'Pendiente',
-    in_progress: 'En progreso',
-    done: 'Completada'
+    pending: 'Pending',
+    in_progress: 'In progress',
+    done: 'Completed'
   }[status] || status;
 }
 
 function formatPriority(priority) {
   return {
-    low: 'Baja',
-    medium: 'Media',
-    high: 'Alta'
+    low: 'Low',
+    medium: 'Medium',
+    high: 'High'
   }[priority] || priority;
 }
 
@@ -309,12 +309,12 @@ function formatGroupValue(groupBy, value) {
     return formatPriority(value);
   }
 
-  return value || 'Sin valor';
+  return value || 'No value';
 }
 
 function formatDate(dateValue) {
   if (!dateValue) {
-    return 'Sin fecha';
+    return 'No due date';
   }
 
   const safeDate = new Date(`${dateValue}T00:00:00`);
@@ -322,7 +322,7 @@ function formatDate(dateValue) {
     return dateValue;
   }
 
-  return new Intl.DateTimeFormat('es-HN', {
+  return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
@@ -430,14 +430,14 @@ function validateDueDateField() {
 
   const digits = rawValue.replace(/\D/g, '');
   if (digits.length < 8) {
-    const message = 'Completa la fecha en formato DD/MM/YYYY.';
+    const message = 'Complete the date using the DD/MM/YYYY format.';
     showDueDateError(message);
     return { valid: false, message };
   }
 
   const isoDate = parseInputDateToIso(rawValue);
   if (!isoDate) {
-    const message = 'La fecha no existe. Revisa el dia, mes y anio.';
+    const message = 'That date does not exist. Check the day, month, and year.';
     showDueDateError(message);
     return { valid: false, message };
   }
