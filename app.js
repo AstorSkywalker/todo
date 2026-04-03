@@ -52,6 +52,7 @@ const exportJsonButton = document.querySelector('#exportJsonButton');
 const importFileInput = document.querySelector('#importFileInput');
 const themeToggle = document.querySelector('#themeToggle');
 const themeLabel = document.querySelector('#themeLabel');
+const colorSchemeSelect = document.querySelector('#colorSchemeSelect');
 const template = document.querySelector('#todoCardTemplate');
 const compactRowTemplate = document.querySelector('#todoCompactRowTemplate');
 const groupButtons = Array.from(document.querySelectorAll('[data-group]'));
@@ -68,6 +69,7 @@ const storageTimestamp = document.querySelector('#storageTimestamp');
 const listPreferencesKey = 'todo-list-preferences';
 const filtersPanelStateKey = 'todo-filters-collapsed';
 const groupingPanelStateKey = 'todo-grouping-collapsed';
+const colorSchemeKey = 'todo-color-scheme';
 
 let pendingDeleteId = null;
 let pendingDeleteTitle = '';
@@ -141,6 +143,7 @@ function bindEvents() {
     showFeedback('Data reloaded from the CSV file.');
   });
   themeToggle.addEventListener('click', toggleTheme);
+  colorSchemeSelect.addEventListener('change', handleColorSchemeChange);
 
   groupButtons.forEach((button) => {
     button.addEventListener('click', () => {
@@ -529,12 +532,26 @@ function toggleTheme() {
 
 function applySavedTheme() {
   const savedTheme = localStorage.getItem('todo-theme') || 'dark';
+  const savedColorScheme = localStorage.getItem(colorSchemeKey) || 'default';
   document.body.classList.toggle('light', savedTheme === 'light');
+  applyColorScheme(savedColorScheme);
   updateThemeLabel(savedTheme);
 }
 
 function updateThemeLabel(theme) {
   themeLabel.textContent = theme === 'light' ? 'Light' : 'Dark';
+}
+
+function handleColorSchemeChange() {
+  applyColorScheme(colorSchemeSelect.value);
+}
+
+function applyColorScheme(colorScheme) {
+  const supportedSchemes = new Set(['default', 'aurora', 'eighties', 'cyberpunk', 'ember', 'forest', 'neon', 'rose']);
+  const nextScheme = supportedSchemes.has(colorScheme) ? colorScheme : 'default';
+  document.body.dataset.colorScheme = nextScheme;
+  colorSchemeSelect.value = nextScheme;
+  localStorage.setItem(colorSchemeKey, nextScheme);
 }
 
 function showFeedback(message, isError = false) {
