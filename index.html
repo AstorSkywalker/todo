@@ -275,6 +275,10 @@
               </div>
               <p class="muted section-note">Review the current results after filters and sorting are applied.</p>
             </div>
+            <div class="view-toggle" role="group" aria-label="Task view mode">
+              <button class="view-toggle-button active" type="button" data-view-mode="cards">Cards</button>
+              <button class="view-toggle-button" type="button" data-view-mode="compact">Compact</button>
+            </div>
           </div>
 
           <div class="results-strip" id="resultsStrip">
@@ -289,6 +293,15 @@
           </div>
           <div id="activeFilters" class="active-filters hidden"></div>
           <div id="feedback" class="feedback hidden"></div>
+          <div id="compactHeader" class="compact-header hidden" aria-hidden="true">
+            <span class="compact-header-title">Task</span>
+            <span class="compact-header-status">Status</span>
+            <span class="compact-header-priority">Priority</span>
+            <span class="compact-header-category">Category</span>
+            <span class="compact-header-due">Due</span>
+            <span class="compact-header-flag">Flag</span>
+            <span class="compact-header-actions">Actions</span>
+          </div>
           <div id="todoList" class="todo-list"></div>
           </section>
         </div>
@@ -307,6 +320,24 @@
       </div>
       <div class="todo-meta"></div>
       <div class="todo-actions">
+        <button class="ghost-button edit-button" type="button">Edit</button>
+        <button class="danger-button delete-button" type="button">Delete</button>
+      </div>
+    </article>
+  </template>
+
+  <template id="todoCompactRowTemplate">
+    <article class="todo-row">
+      <div class="todo-row-title-wrap">
+        <h4 class="todo-row-title"></h4>
+        <p class="todo-row-description"></p>
+      </div>
+      <div class="todo-row-status"></div>
+      <div class="todo-row-priority"></div>
+      <div class="todo-row-category"></div>
+      <div class="todo-row-due"></div>
+      <div class="todo-row-flag"></div>
+      <div class="todo-row-actions">
         <button class="ghost-button edit-button" type="button">Edit</button>
         <button class="danger-button delete-button" type="button">Delete</button>
       </div>

@@ -2,7 +2,8 @@ const state = {
   items: [],
   editingId: null,
   groupBy: 'status',
-  sortBy: 'newest'
+  sortBy: 'newest',
+  viewMode: 'cards'
 };
 
 const todoForm = document.querySelector('#todoForm');
@@ -28,6 +29,8 @@ const todoList = document.querySelector('#todoList');
 const activeFilters = document.querySelector('#activeFilters');
 const visibleCount = document.querySelector('#visibleCount');
 const activeFilterCount = document.querySelector('#activeFilterCount');
+const compactHeader = document.querySelector('#compactHeader');
+const viewToggleButtons = Array.from(document.querySelectorAll('[data-view-mode]'));
 const filtersPanel = document.querySelector('.filters-panel');
 const filtersBody = document.querySelector('#filtersBody');
 const toggleFiltersButton = document.querySelector('#toggleFiltersButton');
@@ -47,6 +50,7 @@ const importFileInput = document.querySelector('#importFileInput');
 const themeToggle = document.querySelector('#themeToggle');
 const themeLabel = document.querySelector('#themeLabel');
 const template = document.querySelector('#todoCardTemplate');
+const compactRowTemplate = document.querySelector('#todoCompactRowTemplate');
 const groupButtons = Array.from(document.querySelectorAll('[data-group]'));
 const groupResults = document.querySelector('#groupResults');
 const confirmModal = document.querySelector('#confirmModal');
@@ -78,6 +82,7 @@ initialize();
 
 function initialize() {
   restoreListPreferences();
+  updateViewModeButtons();
   restoreFiltersPanelState();
   restoreGroupingPanelState();
   bindEvents();
@@ -98,6 +103,9 @@ function bindEvents() {
   dueTodayOnly.addEventListener('change', refreshList);
   dueSoonOnly.addEventListener('change', refreshList);
   sortTasks.addEventListener('change', handleSortChange);
+  viewToggleButtons.forEach((button) => {
+    button.addEventListener('click', () => handleViewModeChange(button.dataset.viewMode));
+  });
   toggleFiltersButton.addEventListener('click', toggleFiltersPanel);
   toggleGroupingButton.addEventListener('click', toggleGroupingPanel);
   titleInput.addEventListener('input', validateTitleField);
@@ -204,6 +212,10 @@ async function loadStorageStatus() {
 
 function renderTodos() {
   todoList.innerHTML = '';
+  const isCompactMode = state.viewMode === 'compact';
+  todoList.classList.toggle('compact-mode', isCompactMode);
+  compactHeader.classList.toggle('hidden', !isCompactMode);
+  compactHeader.setAttribute('aria-hidden', String(!isCompactMode));
 
   if (!state.items.length) {
     todoList.innerHTML = '<article class="todo-card"><h4>No tasks to display</h4><p class="todo-description">Try creating a new task or adjusting the filters.</p></article>';
@@ -211,40 +223,87 @@ function renderTodos() {
   }
 
   state.items.forEach((item) => {
-    const fragment = template.content.cloneNode(true);
-    const card = fragment.querySelector('.todo-card');
-    const title = fragment.querySelector('.todo-title');
-    const description = fragment.querySelector('.todo-description');
-    const statusBadge = fragment.querySelector('.status-badge');
-    const meta = fragment.querySelector('.todo-meta');
-    const editButton = fragment.querySelector('.edit-button');
-    const deleteButton = fragment.querySelector('.delete-button');
-
-    title.textContent = item.title;
-    description.textContent = item.description || 'No description';
-    statusBadge.textContent = formatStatus(item.status);
-    statusBadge.classList.add(item.status);
     const dueState = getDueState(item);
-    if (dueState.cardClass) {
-      card.classList.add(dueState.cardClass);
-    }
-
-    const metaParts = [
-      `<span>Priority: ${formatPriority(item.priority)}</span>`,
-      `<span>Category: ${item.category || 'General'}</span>`,
-      `<span>Due: ${formatDate(item.dueDate)}</span>`
-    ];
-
-    if (dueState.label) {
-      metaParts.push(`<span class="due-pill ${dueState.toneClass}">${dueState.label}</span>`);
-    }
-
-    meta.innerHTML = metaParts.join('');
-
-    editButton.addEventListener('click', () => startEdit(item));
-    deleteButton.addEventListener('click', () => removeTodo(item.id));
+    const fragment = state.viewMode === 'compact'
+      ? createCompactTodoRow(item, dueState)
+      : createTodoCard(item, dueState);
     todoList.appendChild(fragment);
   });
+}
+
+function createTodoCard(item, dueState) {
+  const fragment = template.content.cloneNode(true);
+  const card = fragment.querySelector('.todo-card');
+  const title = fragment.querySelector('.todo-title');
+  const description = fragment.querySelector('.todo-description');
+  const statusBadge = fragment.querySelector('.status-badge');
+  const meta = fragment.querySelector('.todo-meta');
+  const editButton = fragment.querySelector('.edit-button');
+  const deleteButton = fragment.querySelector('.delete-button');
+
+  title.textContent = item.title;
+  description.textContent = item.description || 'No description';
+  statusBadge.textContent = formatStatus(item.status);
+  statusBadge.classList.add(item.status);
+
+  if (dueState.cardClass) {
+    card.classList.add(dueState.cardClass);
+  }
+
+  meta.innerHTML = buildMetaParts(item, dueState).join('');
+  bindTodoItemActions(editButton, deleteButton, item);
+  return fragment;
+}
+
+function createCompactTodoRow(item, dueState) {
+  const fragment = compactRowTemplate.content.cloneNode(true);
+  const row = fragment.querySelector('.todo-row');
+  const title = fragment.querySelector('.todo-row-title');
+  const description = fragment.querySelector('.todo-row-description');
+  const status = fragment.querySelector('.todo-row-status');
+  const priority = fragment.querySelector('.todo-row-priority');
+  const category = fragment.querySelector('.todo-row-category');
+  const due = fragment.querySelector('.todo-row-due');
+  const flag = fragment.querySelector('.todo-row-flag');
+  const editButton = fragment.querySelector('.edit-button');
+  const deleteButton = fragment.querySelector('.delete-button');
+
+  title.textContent = item.title;
+  description.textContent = item.description || 'No description';
+
+  if (dueState.cardClass) {
+    row.classList.add(dueState.cardClass);
+  }
+
+  status.innerHTML = `<span class="status-badge ${item.status}">${formatStatus(item.status)}</span>`;
+  priority.innerHTML = `<span class="compact-pill">${formatPriority(item.priority)}</span>`;
+  category.innerHTML = `<span class="compact-pill">${item.category || 'General'}</span>`;
+  due.innerHTML = `<span class="compact-pill">${formatDate(item.dueDate)}</span>`;
+  flag.innerHTML = dueState.label
+    ? `<span class="due-pill ${dueState.toneClass}">${dueState.label}</span>`
+    : '<span class="compact-pill compact-pill-muted">Normal</span>';
+
+  bindTodoItemActions(editButton, deleteButton, item);
+  return fragment;
+}
+
+function buildMetaParts(item, dueState) {
+  const metaParts = [
+    `<span>Priority: ${formatPriority(item.priority)}</span>`,
+    `<span>Category: ${item.category || 'General'}</span>`,
+    `<span>Due: ${formatDate(item.dueDate)}</span>`
+  ];
+
+  if (dueState.label) {
+    metaParts.push(`<span class="due-pill ${dueState.toneClass}">${dueState.label}</span>`);
+  }
+
+  return metaParts;
+}
+
+function bindTodoItemActions(editButton, deleteButton, item) {
+  editButton.addEventListener('click', () => startEdit(item));
+  deleteButton.addEventListener('click', () => removeTodo(item.id));
 }
 
 function renderSummary(summary) {
@@ -489,6 +548,17 @@ function handleSortChange() {
   renderTodos();
 }
 
+function handleViewModeChange(viewMode) {
+  if (!['cards', 'compact'].includes(viewMode)) {
+    return;
+  }
+
+  state.viewMode = viewMode;
+  updateViewModeButtons();
+  saveListPreferences();
+  renderTodos();
+}
+
 function debounce(fn, delay) {
   let timeoutId;
   return (...args) => {
@@ -567,7 +637,8 @@ function saveListPreferences() {
     overdueOnly: overdueOnly.checked,
     dueTodayOnly: dueTodayOnly.checked,
     dueSoonOnly: dueSoonOnly.checked,
-    sortBy: sortTasks.value
+    sortBy: sortTasks.value,
+    viewMode: state.viewMode
   };
 
   localStorage.setItem(listPreferencesKey, JSON.stringify(preferences));
@@ -590,9 +661,19 @@ function restoreListPreferences() {
     dueSoonOnly.checked = Boolean(preferences.dueSoonOnly);
     sortTasks.value = preferences.sortBy || 'newest';
     state.sortBy = sortTasks.value;
+    state.viewMode = preferences.viewMode === 'compact' ? 'compact' : 'cards';
+    updateViewModeButtons();
   } catch (error) {
     localStorage.removeItem(listPreferencesKey);
   }
+}
+
+function updateViewModeButtons() {
+  viewToggleButtons.forEach((button) => {
+    const isActive = button.dataset.viewMode === state.viewMode;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-pressed', String(isActive));
+  });
 }
 
 function toggleFiltersPanel() {
