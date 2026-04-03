@@ -1,0 +1,9 @@
+{
+  "name": "todo-csv-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Aplicacion To Do con persistencia CSV y temas light/dark",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

@@ -1,0 +1,11 @@
+id,title,description,status,priority,category,dueDate,createdAt,updatedAt
+1775187273064,Preparar demo,Revisar UI y endpoints,pending,medium,Frontend,2026-04-12,2026-04-03T03:34:33.064Z,2026-04-03T03:34:33.064Z
+1775184533192,The Police,Every Breath You Take,in_progress,medium,Guitarra,2026-04-07,2026-04-03T02:48:53.192Z,2026-04-03T02:52:13.988Z
+1775184496841,Whitesnake,Is This Love,done,low,Guitarra,2026-04-06,2026-04-03T02:48:16.841Z,2026-04-03T02:52:34.402Z
+1775184411500,Metallica,For Whom The Bells Tolls,in_progress,low,Guitarra,2026-04-05,2026-04-03T02:46:51.500Z,2026-04-03T02:52:43.374Z
+1775184366763,Pink Floyd,Coming Back to Life,pending,medium,Guitarra,2026-04-04,2026-04-03T02:46:06.763Z,2026-04-03T02:52:52.410Z
+1775184319214,Eric Johnson,Cliffs of Dover,pending,high,Guitarra,2026-04-03,2026-04-03T02:45:19.214Z,2026-04-03T02:53:08.379Z
+1,Definir alcance,Aterrizar las vistas y el flujo CRUD inicial,pending,high,Planificacion,2026-04-05,2026-04-02T09:00:00.000Z,2026-04-02T09:00:00.000Z
+2,Disenar interfaz,Crear una interfaz moderna con tema claro y oscuro,in_progress,medium,Diseno,2026-04-06,2026-04-02T10:00:00.000Z,2026-04-02T10:00:00.000Z
+3,Probar persistencia CSV,"Validar insert, update, delete y group desde API",done,low,Backend,2026-04-07,2026-04-02T11:00:00.000Z,2026-04-02T11:00:00.000Z
+4,Probar,"Validar insert, update, delete y group desde API",done,low,Backend,2026-04-07,2026-04-02T11:00:00.000Z,2026-04-02T11:00:00.000Z

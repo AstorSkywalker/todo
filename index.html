@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<html lang="es-HN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow CSV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar glass-card">
+      <div>
+        <p class="eyebrow">TaskFlow CSV</p>
+        <h1>Tu lista moderna con persistencia simple</h1>
+        <p class="muted">Gestiona tareas con tema claro y oscuro, y guarda todo en un archivo CSV facil de revisar.</p>
+      </div>
+
+      <div class="theme-switcher">
+        <span>Tema</span>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">
+          <span class="toggle-track">
+            <span class="toggle-thumb"></span>
+          </span>
+          <span id="themeLabel">Oscuro</span>
+        </button>
+      </div>
+
+      <div class="api-box">
+        <h2>APIs incluidas</h2>
+        <ul>
+          <li><code>GET /api/todos</code></li>
+          <li><code>POST /api/todos</code></li>
+          <li><code>PUT /api/todos/:id</code></li>
+          <li><code>DELETE /api/todos/:id</code></li>
+          <li><code>GET /api/todos/group?by=status</code></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="dashboard">
+      <section class="hero glass-card">
+        <div>
+          <p class="eyebrow">Panel principal</p>
+          <h2>Organiza, filtra y agrupa tus tareas</h2>
+          <p class="muted">Una interfaz ligera para operar sobre datos persistidos en texto plano sin perder una experiencia moderna.</p>
+        </div>
+        <div class="hero-actions">
+          <button class="secondary-button" id="refreshButton" type="button">Recargar</button>
+        </div>
+      </section>
+
+      <section class="stats-grid">
+        <article class="stat-card glass-card accent-blue">
+          <span>Total</span>
+          <strong id="totalCount">0</strong>
+        </article>
+        <article class="stat-card glass-card accent-gold">
+          <span>Pendientes</span>
+          <strong id="pendingCount">0</strong>
+        </article>
+        <article class="stat-card glass-card accent-coral">
+          <span>En progreso</span>
+          <strong id="progressCount">0</strong>
+        </article>
+        <article class="stat-card glass-card accent-green">
+          <span>Completadas</span>
+          <strong id="doneCount">0</strong>
+        </article>
+      </section>
+
+      <section class="content-grid">
+        <div class="glass-card panel form-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Formulario</p>
+              <h3 id="formTitle">Nueva tarea</h3>
+            </div>
+            <button id="cancelEditButton" class="ghost-button hidden" type="button">Cancelar edicion</button>
+          </div>
+
+          <form id="todoForm" class="todo-form">
+            <input type="hidden" id="todoId" />
+
+            <label>
+              Titulo
+              <input id="title" name="title" type="text" maxlength="120" placeholder="Ej. Preparar demo del proyecto" required />
+            </label>
+
+            <label>
+              Descripcion
+              <textarea id="description" name="description" rows="4" placeholder="Agrega contexto, entregables o notas importantes"></textarea>
+            </label>
+
+            <div class="form-row">
+              <label>
+                Estado
+                <select id="status" name="status">
+                  <option value="pending">Pendiente</option>
+                  <option value="in_progress">En progreso</option>
+                  <option value="done">Completada</option>
+                </select>
+              </label>
+
+              <label>
+                Prioridad
+                <select id="priority" name="priority">
+                  <option value="low">Baja</option>
+                  <option value="medium" selected>Media</option>
+                  <option value="high">Alta</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="form-row">
+              <label>
+                Categoria
+                <input id="category" name="category" type="text" maxlength="60" placeholder="Ej. Backend" />
+              </label>
+
+              <label>
+                Fecha limite
+                <div class="date-input-wrap">
+                  <input
+                    id="dueDate"
+                    name="dueDate"
+                    type="text"
+                    inputmode="numeric"
+                    maxlength="10"
+                    placeholder="DD/MM/YYYY"
+                    aria-label="Fecha limite en formato dia mes anio"
+                  />
+                  <input id="dueDatePicker" class="date-picker-native" type="date" tabindex="-1" aria-hidden="true" />
+                  <button id="dueDateButton" class="date-icon-button" type="button" aria-label="Abrir selector de fecha">
+                    <span class="date-icon" aria-hidden="true"></span>
+                  </button>
+                </div>
+                <small id="dueDateError" class="field-error hidden" aria-live="polite"></small>
+              </label>
+            </div>
+
+            <button class="primary-button" type="submit" id="submitButton">Guardar tarea</button>
+          </form>
+        </div>
+
+        <div class="glass-card panel list-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Listado</p>
+              <h3>Tareas registradas</h3>
+            </div>
+          </div>
+
+          <div class="filters">
+            <input id="searchInput" type="search" placeholder="Buscar por titulo, categoria o descripcion" />
+            <select id="filterStatus">
+              <option value="">Todos los estados</option>
+              <option value="pending">Pendiente</option>
+              <option value="in_progress">En progreso</option>
+              <option value="done">Completada</option>
+            </select>
+            <select id="filterPriority">
+              <option value="">Todas las prioridades</option>
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+            </select>
+          </div>
+
+          <div class="group-toolbar">
+            <span>Agrupar resumen por:</span>
+            <button class="chip active" data-group="status" type="button">Estado</button>
+            <button class="chip" data-group="priority" type="button">Prioridad</button>
+            <button class="chip" data-group="category" type="button">Categoria</button>
+          </div>
+
+          <div id="groupResults" class="group-results"></div>
+          <div id="feedback" class="feedback hidden"></div>
+          <div id="todoList" class="todo-list"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <template id="todoCardTemplate">
+    <article class="todo-card">
+      <div class="todo-card-header">
+        <div>
+          <h4 class="todo-title"></h4>
+          <p class="todo-description"></p>
+        </div>
+        <span class="status-badge"></span>
+      </div>
+      <div class="todo-meta"></div>
+      <div class="todo-actions">
+        <button class="ghost-button edit-button" type="button">Editar</button>
+        <button class="danger-button delete-button" type="button">Eliminar</button>
+      </div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
