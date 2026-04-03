@@ -45,7 +45,7 @@
   --primary: #69b1ff;
   ...
 }</code></pre>
-            <p>This top block is the heart of the visual system. It defines the dashboard’s language before any component appears. When you learn dashboard design, this is one of the most reusable lessons: if you control color, contrast, and surface tokens centrally, the rest of the system becomes much easier to theme and evolve.</p>
+            <p>This top block is the heart of the visual system. It defines the dashboard's language before any component appears. When you learn dashboard design, this is one of the most reusable lessons: if you control color, contrast, and surface tokens centrally, the rest of the system becomes much easier to theme and evolve.</p>
           </section>
 
           <section id="layout">
@@ -137,7 +137,32 @@
 
           <section id="exercise">
             <h2>8. Exercise and Checkpoint</h2>
-            <p><strong>Exercise:</strong> create one new accent class, such as <code>.accent-purple</code>, using the same gradient pattern as the existing KPI cards.</p>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Create one new accent class, such as <code>.accent-purple</code>, using the same gradient pattern as the existing KPI cards.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Reuse the same card geometry and only change the accent tint. That keeps the dashboard cohesive while still adding variety.</p>
+                <pre><code>.accent-purple {
+  background: linear-gradient(
+    135deg,
+    rgba(174, 120, 255, 0.18),
+    var(--surface-strong)
+  );
+}</code></pre>
+                <p>Apply it in the HTML like this:</p>
+                <pre><code>&lt;article class="stat-card glass-card accent-purple"&gt;
+  &lt;p class="stat-label"&gt;Blocked&lt;/p&gt;
+  &lt;strong class="stat-value"&gt;12&lt;/strong&gt;
+&lt;/article&gt;</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>The new card should feel like part of the same KPI family, but with a violet-tinted atmosphere. If it feels too loud, reduce the opacity in the gradient color.</p>
+              </div>
+            </div>
             <p><strong>Checkpoint:</strong> if you can explain the difference between token definitions, component styles, and state-based selectors, you understand the main architecture of <code>styles.css</code>.</p>
           </section>
         </article>
@@ -152,3 +177,4 @@
   </div>
 </body>
 </html>
+

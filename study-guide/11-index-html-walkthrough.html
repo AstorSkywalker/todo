@@ -145,13 +145,59 @@
 
           <section id="exercise">
             <h2>9. Exercise and Checkpoint</h2>
-            <p><strong>Exercise:</strong> create a stripped-down copy of the dashboard shell containing only:</p>
-            <ul>
-              <li>sidebar</li>
-              <li>hero</li>
-              <li>stats grid</li>
-              <li>one empty panel</li>
-            </ul>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Create a stripped-down copy of the dashboard shell containing only:</p>
+                <ul>
+                  <li>sidebar</li>
+                  <li>hero</li>
+                  <li>stats grid</li>
+                  <li>one empty panel</li>
+                </ul>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Start with the outer app shell. Then build the left rail and the main column. Inside the main column, place the hero, the stats grid, and one reusable panel. The objective is structure, not interactivity.</p>
+                <pre><code>&lt;div class="app-shell"&gt;
+  &lt;aside class="sidebar glass-card"&gt;
+    &lt;div class="sidebar-header"&gt;
+      &lt;div class="sidebar-copy"&gt;
+        &lt;p class="eyebrow"&gt;TaskFlow&lt;/p&gt;
+        &lt;h1&gt;Dashboard shell&lt;/h1&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/aside&gt;
+
+  &lt;main class="dashboard"&gt;
+    &lt;section class="hero glass-card"&gt;
+      &lt;p class="eyebrow"&gt;Main dashboard&lt;/p&gt;
+      &lt;h2&gt;My first dashboard shell&lt;/h2&gt;
+    &lt;/section&gt;
+
+    &lt;section class="stats-grid"&gt;
+      &lt;article class="stat-card glass-card accent-blue"&gt;Total&lt;/article&gt;
+      &lt;article class="stat-card glass-card accent-gold"&gt;Pending&lt;/article&gt;
+      &lt;article class="stat-card glass-card accent-coral"&gt;In progress&lt;/article&gt;
+      &lt;article class="stat-card glass-card accent-green"&gt;Completed&lt;/article&gt;
+    &lt;/section&gt;
+
+    &lt;section class="glass-card panel"&gt;
+      &lt;div class="panel-head"&gt;
+        &lt;div&gt;
+          &lt;p class="eyebrow"&gt;Panel&lt;/p&gt;
+          &lt;h3&gt;Empty working area&lt;/h3&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+&lt;/div&gt;</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>You should see a dashboard skeleton: one left rail, one hero section, four summary cards, and one empty glass-style work panel below. If that looks balanced, your structure is correct.</p>
+              </div>
+            </div>
             <p><strong>Checkpoint:</strong> if you can explain why the app needs ids, templates, and repeated panel structures, you understand the main architectural role of <code>index.html</code>.</p>
           </section>
         </article>

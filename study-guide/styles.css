@@ -224,6 +224,37 @@ h3 {
   border-left: 4px solid var(--primary);
 }
 
+.exercise-card,
+.solution-card,
+.result-card {
+  padding: 18px 20px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+.exercise-card {
+  background: rgba(116, 171, 255, 0.08);
+}
+
+.solution-card {
+  background: rgba(86, 215, 159, 0.08);
+}
+
+.result-card {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.exercise-card h3,
+.solution-card h3,
+.result-card h3 {
+  margin-bottom: 10px;
+}
+
+.exercise-stack {
+  display: grid;
+  gap: 14px;
+}
+
 .note {
   background: rgba(244, 199, 104, 0.08);
   border-color: rgba(244, 199, 104, 0.22);

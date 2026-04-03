@@ -181,7 +181,35 @@
 
           <section id="exercise">
             <h2>9. Exercise And Checkpoint</h2>
-            <p><strong>Exercise:</strong> design one new KPI card style using the existing token system. Keep the same geometry but try a new accent gradient and pseudo-element treatment.</p>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Design one new KPI card style using the existing token system. Keep the same geometry but try a new accent gradient and pseudo-element treatment.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Keep the structure identical and only add a new accent class so the card still belongs to the same dashboard family.</p>
+                <pre><code>.accent-ice {
+  background: linear-gradient(
+    135deg,
+    rgba(120, 233, 255, 0.18),
+    var(--surface-strong)
+  );
+}
+
+.accent-ice::after {
+  background: rgba(120, 233, 255, 0.12);
+}</code></pre>
+                <pre><code>&lt;article class="stat-card glass-card accent-ice"&gt;
+  &lt;p class="stat-label"&gt;Due soon&lt;/p&gt;
+  &lt;strong class="stat-value"&gt;18&lt;/strong&gt;
+&lt;/article&gt;</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>The final card should have the same size, depth, and typography as the other KPI cards, but with a soft icy cyan mood. If it feels disconnected, lower the alpha values until it blends with the rest of the dashboard.</p>
+              </div>
+            </div>
             <p><strong>Checkpoint:</strong> if you can explain how hierarchy, spacing, cards, gradients, and motion work together, you are starting to think like a UI designer and not only like a coder.</p>
           </section>
         </article>

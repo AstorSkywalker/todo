@@ -138,7 +138,46 @@ Frontend initialize()
 
           <section id="exercises">
             <h2>4. Practice Exercises</h2>
-            <p>These exercises are designed to make the study guide active instead of passive.</p>
+            <p>These exercises are designed to make the study guide active instead of passive. The first one below includes a worked answer so you have a safe reference if your first attempt does not match.</p>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Guided Example Problem</h3>
+                <p>Rebuild one KPI card from scratch with HTML and CSS.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Answer With Full Code</h3>
+                <pre><code>&lt;article class="stat-card glass-card accent-blue"&gt;
+  &lt;p class="stat-label"&gt;Total&lt;/p&gt;
+  &lt;strong class="stat-value"&gt;193&lt;/strong&gt;
+&lt;/article&gt;</code></pre>
+                <pre><code>.stat-card {
+  position: relative;
+  padding: 22px;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  inset: auto -22px -22px auto;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.accent-blue {
+  background: linear-gradient(135deg, rgba(79, 155, 255, 0.18), var(--surface-strong));
+}</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>You should end up with a polished summary card that has a soft blue tint, rounded geometry, and a decorative circle in the lower-right corner. It should look like one of the real KPI cards at the top of the dashboard.</p>
+              </div>
+            </div>
             <table>
               <thead>
                 <tr><th>Exercise</th><th>Goal</th><th>What you should learn</th></tr>

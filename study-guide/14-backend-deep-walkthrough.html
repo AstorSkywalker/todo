@@ -156,7 +156,34 @@ normalizeImportedTodo(row)</code></pre>
 
           <section id="exercise">
             <h2>8. Exercise and Checkpoint</h2>
-            <p><strong>Exercise:</strong> trace <code>DELETE /api/todos/:id</code> from the route file into the service layer and write the sequence in your own words.</p>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Add a tiny backend endpoint called <code>GET /api/health</code> that confirms the server is alive.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>Because this endpoint is small and independent from todo logic, you can place it directly in <code>server.js</code> before static file serving.</p>
+                <pre><code>if (req.url === '/api/health' &amp;&amp; req.method === 'GET') {
+  sendJson(res, 200, {
+    ok: true,
+    service: 'taskflow',
+    storage: 'csv-primary-sqlite-mirror'
+  });
+  return;
+}</code></pre>
+                <p>If needed, import <code>sendJson</code> from <code>utils/http.js</code>.</p>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Opening <code>/api/health</code> in the browser or calling it with <code>curl</code> should return:</p>
+                <pre><code>{
+  "ok": true,
+  "service": "taskflow",
+  "storage": "csv-primary-sqlite-mirror"
+}</code></pre>
+              </div>
+            </div>
             <p><strong>Checkpoint:</strong> if you can explain why routing, services, storage, and validation are separate, you understand the architectural foundation of the backend.</p>
           </section>
         </article>

@@ -145,7 +145,37 @@ renderTodos();</code></pre>
 
           <section id="exercise">
             <h2>8. Exercise and Checkpoint</h2>
-            <p><strong>Exercise:</strong> add one more persisted preference to the app, such as a new panel state or a new display option, and save it in <code>localStorage</code>.</p>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Add one more persisted preference to the app, such as a new panel state or a new display option, and save it in <code>localStorage</code>.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A simple example is remembering whether a help panel is open. You need a storage key, a restore function, a setter, and an event that toggles the state.</p>
+                <pre><code>const HELP_PANEL_KEY = 'todo-help-panel-open';
+
+function restoreHelpPanelState() {
+  const saved = localStorage.getItem(HELP_PANEL_KEY);
+  const isOpen = saved !== 'false';
+  document.body.classList.toggle('help-open', isOpen);
+}
+
+function setHelpPanelOpen(isOpen) {
+  localStorage.setItem(HELP_PANEL_KEY, String(isOpen));
+  document.body.classList.toggle('help-open', isOpen);
+}
+
+helpToggleButton.addEventListener('click', () =&gt; {
+  const isOpen = !document.body.classList.contains('help-open');
+  setHelpPanelOpen(isOpen);
+});</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>If implemented correctly, the help panel should keep its open or closed state after reloading the page. That is the same persistence pattern used for theme, palette, density, and collapsed panels.</p>
+              </div>
+            </div>
             <p><strong>Checkpoint:</strong> if you can explain how a button click can change state, trigger a render function, and update the DOM, you understand the core architecture of <code>app.js</code>.</p>
           </section>
         </article>
