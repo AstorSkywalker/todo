@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 15 - Dashboard Design Principles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 15</p>
+      <h1>Dashboard Design Principles</h1>
+      <p class="muted kicker">This lesson steps back from the code and teaches how the dashboard achieves a modern look: visual hierarchy, surfaces, color tokens, gradients, glow, compact rhythm, and motion. The goal is to help you design dashboards in general, not only repeat this exact one.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#hierarchy">Visual hierarchy</a></li>
+          <li><a href="#cards">Card systems</a></li>
+          <li><a href="#spacing">Spacing and rhythm</a></li>
+          <li><a href="#color">Dark/light and palette strategy</a></li>
+          <li><a href="#gradients">Gradients and glow</a></li>
+          <li><a href="#kpis">KPI cards</a></li>
+          <li><a href="#chart">Chart aesthetics</a></li>
+          <li><a href="#motion">Motion and transitions</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="hierarchy">
+            <h2>1. Visual Hierarchy Comes First</h2>
+            <p>A dashboard feels modern when your eye knows where to go first. In this project, the visual order is intentional:</p>
+            <ol>
+              <li>brand and global controls on the left rail</li>
+              <li>main title and top actions at the top</li>
+              <li>summary KPI cards next</li>
+              <li>chart as the main analytic surface</li>
+              <li>form, filters, grouping, and tasks below</li>
+            </ol>
+            <p>This is not random stacking. It is hierarchy. A strong hierarchy makes even a dense interface feel understandable.</p>
+          </section>
+
+          <section id="cards">
+            <h2>2. Modern Dashboards Usually Depend On Card Systems</h2>
+            <p>The dashboard does not use one giant flat rectangle. It uses layered cards with a shared visual language:</p>
+            <pre><code>.panel,
+.stat-card,
+.sidebar,
+.chart-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}</code></pre>
+            <p>This works because users perceive the interface as a set of meaningful surfaces:</p>
+            <ul>
+              <li>one card = one responsibility</li>
+              <li>same geometry = same design language</li>
+              <li>different card content = variety without chaos</li>
+            </ul>
+          </section>
+
+          <section id="spacing">
+            <h2>3. Spacing And Rhythm Are More Important Than Decoration</h2>
+            <p>Many beginner UIs look "off" not because the colors are bad, but because spacing has no rhythm. In this project, rhythm comes from repeated spacing values and rounded corners.</p>
+            <pre><code>.page-shell { padding: 24px; }
+.dashboard-shell { gap: 20px; }
+.panel { padding: 22px; }
+.stat-card { padding: 22px; border-radius: 22px; }</code></pre>
+            <p>Why does this matter? Repeated spacing values create visual music. The interface starts to feel intentional instead of patched together.</p>
+          </section>
+
+          <section id="color">
+            <h2>4. Dark/Light And Palette Strategy</h2>
+            <p>The project uses tokens instead of hardcoded component colors. That is one of the key reasons the dashboard can support:</p>
+            <ul>
+              <li>dark mode</li>
+              <li>light mode</li>
+              <li>multiple palettes</li>
+            </ul>
+            <pre><code>:root {
+  --bg: #0b1320;
+  --surface: rgba(14, 22, 35, 0.88);
+  --text: #edf4ff;
+  --muted: #9ab0cf;
+  --primary: #74abff;
+}</code></pre>
+            <p>That strategy matters if you want to create dashboards professionally. Tokens make visual systems scalable.</p>
+          </section>
+
+          <section id="gradients">
+            <h2>5. Gradients, Glow, And Why They Work</h2>
+            <p>The dashboard uses restrained gradients and glow, not loud effects. Modern interfaces often look premium when they combine:</p>
+            <ul>
+              <li>a dark base surface</li>
+              <li>a soft tinted gradient</li>
+              <li>a subtle highlight shape</li>
+              <li>a controlled glow around charts or accents</li>
+            </ul>
+            <pre><code>.accent-blue {
+  background: linear-gradient(
+    135deg,
+    rgba(79, 155, 255, 0.18),
+    var(--surface-strong)
+  );
+}</code></pre>
+            <p>The lesson here is simple: visual richness does not require noise. A little gradient plus a little depth goes a long way.</p>
+          </section>
+
+          <section id="kpis">
+            <h2>6. Why The KPI Summary Cards Feel Strong</h2>
+            <p>The KPI cards are effective because they mix consistency and variation:</p>
+            <ul>
+              <li>consistent shape</li>
+              <li>consistent typography treatment</li>
+              <li>different accent colors</li>
+              <li>a subtle decorative bubble</li>
+            </ul>
+            <pre><code>.stat-card::after {
+  content: '';
+  position: absolute;
+  inset: auto -22px -22px auto;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}</code></pre>
+            <p>That pseudo-element is a great example of design thinking in code. It adds visual energy without adding another element to the HTML.</p>
+          </section>
+
+          <section id="chart">
+            <h2>7. Why The Chart Feels Modern</h2>
+            <p>The chart is not just a line. It is a designed object made of multiple visual layers:</p>
+            <ol>
+              <li>a chart shell card</li>
+              <li>grid lines in the background</li>
+              <li>a filled area under the curve</li>
+              <li>a blurred copy of the area for glow</li>
+              <li>a bright line on top</li>
+              <li>overlay dots that keep a constant size</li>
+            </ol>
+            <pre><code>.chart-area-blur {
+  filter: blur(16px);
+  opacity: 0.55;
+}
+
+.chart-line {
+  stroke: var(--primary);
+  stroke-width: 3;
+}</code></pre>
+            <p>That layering is the secret. A modern chart often feels premium because it is treated as part of the visual brand, not only as raw data output.</p>
+          </section>
+
+          <section id="motion">
+            <h2>8. Motion And Transitions</h2>
+            <p>Modern UIs feel better when motion helps explain state changes. This dashboard uses motion in careful places:</p>
+            <ul>
+              <li>chevron rotation for collapsed panels</li>
+              <li>panel height transition when opening and closing</li>
+              <li>button hover lift</li>
+              <li>theme switch thumb movement</li>
+              <li>sidebar width transition when collapsing</li>
+            </ul>
+            <pre><code>.panel-toggle-icon {
+  transition: transform 0.2s ease;
+}
+
+.sidebar {
+  transition: width 0.24s ease, padding 0.24s ease;
+}</code></pre>
+            <p>Motion should explain, not distract. That is a good rule for dashboards in general.</p>
+          </section>
+
+          <section id="exercise">
+            <h2>9. Exercise And Checkpoint</h2>
+            <p><strong>Exercise:</strong> design one new KPI card style using the existing token system. Keep the same geometry but try a new accent gradient and pseudo-element treatment.</p>
+            <p><strong>Checkpoint:</strong> if you can explain how hierarchy, spacing, cards, gradients, and motion work together, you are starting to think like a UI designer and not only like a coder.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/14-backend-deep-walkthrough.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
+

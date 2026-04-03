@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 14 - Backend Deep Walkthrough</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Lesson 14</p>
+      <h1>Backend Deep Walkthrough</h1>
+      <p class="muted kicker">This lesson slows the backend down and traces it the way a teacher would on a whiteboard: startup, routing, request parsing, validation, business logic, CSV writes, SQLite synchronization, and response handling.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>Lesson Contents</h2>
+        <ul>
+          <li><a href="#startup">Startup sequence</a></li>
+          <li><a href="#server-role">What server.js really does</a></li>
+          <li><a href="#route-trace">Route trace example</a></li>
+          <li><a href="#service-layer">Service layer responsibilities</a></li>
+          <li><a href="#csv-sqlite">CSV and SQLite together</a></li>
+          <li><a href="#validation">Validation pipeline</a></li>
+          <li><a href="#why-good">Why this architecture is healthy</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="startup">
+            <h2>1. Startup Sequence</h2>
+            <p>When the Node server starts, several things happen before the browser ever sees the dashboard. A beginner often thinks a server only listens on a port, but a real application usually has startup work to do first.</p>
+            <pre><code>ensureCsvFile()
+initializeSqlite()
+syncCsvToSqlite()
+createServer(...)
+listen(port)</code></pre>
+            <p>That startup sequence matters because the dashboard assumes the storage files are already present and consistent. If startup skipped those checks, the app could fail later when the first request arrives.</p>
+          </section>
+
+          <section id="server-role">
+            <h2>2. What <code>server.js</code> Really Does</h2>
+            <p>The backend entry point should not do everything. In this project, <code>server.js</code> mostly acts like an orchestrator.</p>
+            <pre><code>const server = http.createServer(async (req, res) => {
+  if (req.url.startsWith('/api/todos')) {
+    await handleTodosApi(req, res);
+    return;
+  }
+
+  await serveStaticAsset(req, res);
+});</code></pre>
+            <p>This is a healthy pattern because the server entry file becomes easy to scan:</p>
+            <ul>
+              <li>startup concerns live here</li>
+              <li>API dispatch starts here</li>
+              <li>static file serving starts here</li>
+              <li>business rules do <strong>not</strong> live here</li>
+            </ul>
+          </section>
+
+          <section id="route-trace">
+            <h2>3. Trace One Route End To End</h2>
+            <p>Let us trace <code>POST /api/todos</code> in slow motion.</p>
+            <ol>
+              <li>The browser serializes the form into JSON.</li>
+              <li>The request reaches <code>server.js</code>.</li>
+              <li><code>server.js</code> delegates to <code>handleTodosApi</code> in <code>routes/todos.js</code>.</li>
+              <li>The route helper reads the body with <code>readBody(req)</code>.</li>
+              <li>The route calls the service layer.</li>
+              <li>The service layer normalizes and validates the payload.</li>
+              <li>The service reads current rows from the CSV service.</li>
+              <li>The service mutates the array in memory.</li>
+              <li>The CSV service writes the updated rows back to disk.</li>
+              <li>The SQLite service mirrors the CSV state.</li>
+              <li>The route sends the created record as JSON.</li>
+            </ol>
+            <div class="callout">
+              <p><strong>Learning technique:</strong> if a backend feels confusing, do not stare at all the files at once. Pick one route and follow it through the stack from browser to disk and back.</p>
+            </div>
+          </section>
+
+          <section id="service-layer">
+            <h2>4. Why The Service Layer Matters</h2>
+            <p>The service layer gives the backend a place for application rules. It is where the backend decides what should happen, not just which URL was requested.</p>
+            <pre><code>function createTodo(payload) {
+  const normalized = normalizeTodoInput(payload);
+  validateTodo(normalized);
+  const todos = readTodosFromCsv();
+  const nextTodo = { ...normalized, id: createId(), ...timestamps };
+  todos.push(nextTodo);
+  writeTodosToCsv(todos);
+  syncTodosToSqlite(todos);
+  return nextTodo;
+}</code></pre>
+            <p>Notice how this function reads like a story. That is one of the strongest benefits of modularization: the business rule becomes narratable.</p>
+          </section>
+
+          <section id="csv-sqlite">
+            <h2>5. CSV and SQLite Together</h2>
+            <p>This project is educational because it uses two storage layers at once:</p>
+            <ul>
+              <li><strong>CSV</strong> is still the primary source of truth</li>
+              <li><strong>SQLite</strong> mirrors the same rows</li>
+            </ul>
+            <pre><code>CSV file
+  -> easy to inspect
+  -> easy to export
+  -> easy for learning
+
+SQLite file
+  -> structured relational storage
+  -> future migration path
+  -> stronger production direction</code></pre>
+            <p>The point here is not only technical. It also teaches architecture evolution. The app did not need to jump from zero straight to a heavier database. It gained storage sophistication gradually.</p>
+          </section>
+
+          <section id="validation">
+            <h2>6. Validation Pipeline</h2>
+            <p>Validation works best when it is centralized. In this project, the validation helpers keep important rules together.</p>
+            <pre><code>validateTodo(payload)
+isValidIsoDate(value)
+normalizeTodoInput(payload)
+normalizeImportedTodo(row)</code></pre>
+            <p>Why is that good?</p>
+            <ul>
+              <li>rules stay consistent across create, update, and import</li>
+              <li>tests can focus on one validation module</li>
+              <li>future database migrations reuse the same business rules</li>
+            </ul>
+          </section>
+
+          <section id="why-good">
+            <h2>7. Why This Architecture Is Healthy</h2>
+            <p>It is healthy because responsibilities are visible:</p>
+            <table>
+              <thead>
+                <tr><th>Layer</th><th>Responsibility</th><th>Example file</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Bootstrap</td><td>Start the server, initialize storage, serve files</td><td><code>server.js</code></td></tr>
+                <tr><td>Routes</td><td>Match HTTP requests to backend actions</td><td><code>routes/todos.js</code></td></tr>
+                <tr><td>Services</td><td>Run business logic and coordinate storage</td><td><code>services/todoService.js</code></td></tr>
+                <tr><td>Storage</td><td>Read and write concrete files and database rows</td><td><code>services/csvService.js</code>, <code>sqliteService.js</code></td></tr>
+                <tr><td>Helpers</td><td>Shared low-level logic such as validation and JSON responses</td><td><code>utils/validation.js</code>, <code>utils/http.js</code></td></tr>
+              </tbody>
+            </table>
+            <p>Once responsibilities are this visible, debugging becomes less intimidating. You no longer ask, "Where is everything?" You ask, "Which layer should own this change?"</p>
+          </section>
+
+          <section id="exercise">
+            <h2>8. Exercise and Checkpoint</h2>
+            <p><strong>Exercise:</strong> trace <code>DELETE /api/todos/:id</code> from the route file into the service layer and write the sequence in your own words.</p>
+            <p><strong>Checkpoint:</strong> if you can explain why routing, services, storage, and validation are separate, you understand the architectural foundation of the backend.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/13-app-js-walkthrough.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/15-dashboard-design-principles.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
+

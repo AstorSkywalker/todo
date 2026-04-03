@@ -22,6 +22,7 @@
         <h2>Lesson Contents</h2>
         <ul>
           <li><a href="#flow">System flow diagrams</a></li>
+          <li><a href="#request-map">Request and persistence maps</a></li>
           <li><a href="#rebuild">Rebuild roadmap</a></li>
           <li><a href="#exercises">Practice exercises</a></li>
           <li><a href="#troubleshooting">Troubleshooting guide</a></li>
@@ -68,8 +69,53 @@ read/write task changes
 sync updated rows into SQLite mirror</code></pre>
           </section>
 
+          <section id="request-map">
+            <h2>2. Request and Persistence Maps</h2>
+            <p>Here is a more detailed request flow for a read operation such as <code>GET /api/todos</code>:</p>
+            <pre><code>Browser
+  -> fetch('/api/todos')
+Server bootstrap
+  -> routes/todos.js
+Route handler
+  -> todoService.listTodos()
+Service
+  -> csvService.readTodosFromCsv()
+Service
+  -> apply search/filter/sort/group logic
+Route
+  -> sendJson(res, 200, todos)</code></pre>
+            <p>And here is the write flow for a create or update request:</p>
+            <pre><code>Browser form submit
+  -> JSON payload
+Route handler
+  -> readBody(req)
+  -> validation helpers
+Service layer
+  -> read existing CSV rows
+  -> mutate in memory
+  -> write CSV file
+  -> sync SQLite mirror
+Route
+  -> return updated JSON response</code></pre>
+            <p>One more important map is local browser persistence:</p>
+            <pre><code>localStorage
+  -> theme
+  -> color scheme
+  -> filters
+  -> sort mode
+  -> compact/card view
+  -> density mode
+  -> collapsed panel states
+Frontend initialize()
+  -> restore preferences
+  -> apply UI state
+  -> load tasks
+  -> render dashboard</code></pre>
+            <p>These diagrams matter because a learner often understands code much faster after first understanding the shape of the system.</p>
+          </section>
+
           <section id="rebuild">
-            <h2>2. Rebuild Roadmap</h2>
+            <h2>3. Rebuild Roadmap</h2>
             <p>If you want to recreate the app from zero instead of only reading it, use this structured path:</p>
             <ol>
               <li>Create a static page shell with sidebar and dashboard regions.</li>
@@ -91,7 +137,7 @@ sync updated rows into SQLite mirror</code></pre>
           </section>
 
           <section id="exercises">
-            <h2>3. Practice Exercises</h2>
+            <h2>4. Practice Exercises</h2>
             <p>These exercises are designed to make the study guide active instead of passive.</p>
             <table>
               <thead>
@@ -108,7 +154,7 @@ sync updated rows into SQLite mirror</code></pre>
           </section>
 
           <section id="troubleshooting">
-            <h2>4. Troubleshooting Guide</h2>
+            <h2>5. Troubleshooting Guide</h2>
             <table>
               <thead>
                 <tr><th>Problem</th><th>Likely cause</th><th>What to try</th></tr>
@@ -125,11 +171,11 @@ sync updated rows into SQLite mirror</code></pre>
           </section>
 
           <section id="next-steps">
-            <h2>5. Next Study Steps</h2>
+            <h2>6. Next Study Steps</h2>
             <p>The guide is already much stronger now because it includes a glossary, troubleshooting notes, and deep walkthroughs of the main frontend files. If you want to go even deeper in the future, the strongest next additions would be:</p>
             <ul>
-              <li>a deep walkthrough of <code>server.js</code> plus the backend route and service modules</li>
-              <li>more diagrams for request flow, storage synchronization, and localStorage persistence</li>
+              <li>line-by-line lessons for the backend service files, not only the architectural walkthrough</li>
+              <li>more diagrams for deployment flow, storage migration, and Oracle integration paths</li>
               <li>guided rebuild checkpoints at the end of every lesson</li>
               <li>frontend smoke tests as an advanced testing chapter</li>
               <li>a future lesson on Oracle Database 26ai and OCI Autonomous Database integration strategy</li>
@@ -143,7 +189,7 @@ sync updated rows into SQLite mirror</code></pre>
         <nav class="chapter-nav">
           <a href="/study-guide/09-glossary-and-core-web-concepts.html">Previous lesson</a>
           <a href="/study-guide/">Back to study guide index</a>
-          <a href="/study-guide/01-foundations-and-project-setup.html">Restart from lesson 1</a>
+          <a href="/study-guide/11-index-html-walkthrough.html">Next lesson</a>
         </nav>
       </main>
     </div>
