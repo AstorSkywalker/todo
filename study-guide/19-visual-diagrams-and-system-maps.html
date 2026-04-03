@@ -14,7 +14,7 @@
     <header class="hero">
       <p class="eyebrow">Lesson 19</p>
       <h1>Visual Diagrams and System Maps</h1>
-      <p class="muted kicker">This lesson converts the project into visual system maps so you can study it with your eyes first, then with code second. That often makes complex projects much easier to own.</p>
+      <p class="muted kicker">This lesson turns the project into richer visual maps so you can study the application as a system, not only as a collection of files. The goal is to help your eyes understand the architecture before your brain has to parse every line of code.</p>
     </header>
 
     <div class="grid grid-2">
@@ -34,63 +34,83 @@
         <article class="lesson">
           <section id="request">
             <h2>1. Request Flow Map</h2>
-            <div class="diagram-flow">
-              <div class="diagram-node"><strong>Browser</strong><span>fetch request</span></div>
-              <div class="diagram-arrow">→</div>
-              <div class="diagram-node"><strong>server.js</strong><span>dispatch request</span></div>
-              <div class="diagram-arrow">→</div>
-              <div class="diagram-node"><strong>routes/todos.js</strong><span>match route</span></div>
-              <div class="diagram-arrow">→</div>
-              <div class="diagram-node"><strong>todoService</strong><span>run logic</span></div>
+            <div class="diagram-group">
+              <p class="diagram-lane-title">Request Lifecycle</p>
+              <div class="diagram-flow">
+                <div class="diagram-node primary"><strong>Browser</strong><span>submit form or fetch data</span></div>
+                <div class="diagram-arrow">&rarr;</div>
+                <div class="diagram-node"><strong>server.js</strong><span>parse URL and dispatch</span></div>
+                <div class="diagram-arrow">&rarr;</div>
+                <div class="diagram-node"><strong>routes/todos.js</strong><span>match route and method</span></div>
+                <div class="diagram-arrow">&rarr;</div>
+                <div class="diagram-node success"><strong>todoService</strong><span>run business logic</span></div>
+              </div>
+              <p class="diagram-note">Read this as one story: the browser asks, the route layer decides, and the service layer does the real work.</p>
             </div>
-            <p>This is the basic request path. Once you see it visually, the backend becomes less mysterious.</p>
+            <p>This diagram is intentionally simple, but it already removes a lot of confusion. It shows that requests do not jump directly from the browser into storage. They pass through clear layers first.</p>
           </section>
 
           <section id="render">
             <h2>2. Frontend Render Map</h2>
-            <div class="diagram-stack">
-              <div class="diagram-node"><strong>initialize()</strong><span>restore preferences and bind events</span></div>
-              <div class="diagram-node"><strong>loadTodos()</strong><span>fetch current data from the API</span></div>
-              <div class="diagram-node"><strong>renderDashboard()</strong><span>counters, chart, groups, tasks</span></div>
-              <div class="diagram-node"><strong>DOM updates</strong><span>cards, filters, compact table, chart labels</span></div>
+            <div class="diagram-group">
+              <p class="diagram-lane-title">Render Lifecycle</p>
+              <div class="diagram-stack">
+                <div class="diagram-node primary"><strong>initialize()</strong><span>restore preferences and bind events</span></div>
+                <div class="diagram-node"><strong>loadTodos()</strong><span>fetch current data from the API</span></div>
+                <div class="diagram-node warning"><strong>renderDashboard()</strong><span>counters, chart, groups, tasks</span></div>
+                <div class="diagram-node success"><strong>DOM updates</strong><span>cards, filters, compact table, chart labels</span></div>
+              </div>
+              <p class="diagram-note">This flow helps you separate startup, data loading, rendering, and visible output into distinct phases.</p>
             </div>
-            <p>The frontend is driven by a simple idea: restore state, load data, render visible output.</p>
+            <p>The frontend is not random DOM manipulation. It follows a pipeline: restore state, load data, then paint the screen from that state.</p>
           </section>
 
           <section id="storage">
             <h2>3. Storage Sync Map</h2>
-            <div class="diagram-flow">
-              <div class="diagram-node"><strong>Form / API write</strong><span>create, update, delete, import</span></div>
-              <div class="diagram-arrow">→</div>
-              <div class="diagram-node"><strong>CSV write</strong><span>primary source of truth</span></div>
-              <div class="diagram-arrow">→</div>
-              <div class="diagram-node"><strong>SQLite sync</strong><span>mirror current rows</span></div>
+            <div class="diagram-group">
+              <p class="diagram-lane-title">Write And Sync Flow</p>
+              <div class="diagram-flow compact-flow">
+                <div class="diagram-node primary"><strong>Form / API write</strong><span>create, update, delete, import</span></div>
+                <div class="diagram-arrow">&rarr;</div>
+                <div class="diagram-node warning"><strong>CSV write</strong><span>primary source of truth</span></div>
+                <div class="diagram-arrow">&rarr;</div>
+                <div class="diagram-node success"><strong>SQLite sync</strong><span>mirror current rows</span></div>
+              </div>
+              <p class="diagram-note">This one matters because it captures the current storage philosophy in a single visual sentence.</p>
             </div>
-            <p>This is one of the project’s most important architectural stories: CSV remains primary while SQLite mirrors it for future evolution.</p>
+            <p>Seeing the sync flow like this makes the architecture easier to remember: CSV is still trusted first, and SQLite follows it.</p>
           </section>
 
           <section id="preferences">
             <h2>4. localStorage Preference Map</h2>
-            <div class="diagram-flow">
-              <div class="diagram-node"><strong>Theme</strong><span>light / dark</span></div>
-              <div class="diagram-node"><strong>Palette</strong><span>color scheme</span></div>
-              <div class="diagram-node"><strong>Layout</strong><span>cards / compact / density</span></div>
-              <div class="diagram-node"><strong>Filters</strong><span>search, status, date range</span></div>
-              <div class="diagram-node"><strong>Collapsed Panels</strong><span>sidebar, filters, grouping, chart</span></div>
+            <div class="diagram-group">
+              <p class="diagram-lane-title">Browser Memory</p>
+              <div class="diagram-flow compact-flow">
+                <div class="diagram-node"><strong>Theme</strong><span>light / dark</span></div>
+                <div class="diagram-node"><strong>Palette</strong><span>color scheme</span></div>
+                <div class="diagram-node"><strong>Layout</strong><span>cards / compact / density</span></div>
+                <div class="diagram-node"><strong>Filters</strong><span>search, status, date range</span></div>
+                <div class="diagram-node"><strong>Collapsed Panels</strong><span>sidebar, filters, grouping, chart</span></div>
+              </div>
+              <p class="diagram-note">The browser remembers the feel of the dashboard, not just the raw task data.</p>
             </div>
-            <p>Seeing the preference system this way helps you understand that the UI has a memory, and that memory lives in the browser.</p>
+            <p>This is one of the strongest UX ideas in the project. The app feels personal because the browser stores your preferred interface state.</p>
           </section>
 
           <section id="future">
             <h2>5. Future Oracle Path</h2>
-            <div class="diagram-flow">
-              <div class="diagram-node"><strong>Current</strong><span>CSV primary + SQLite mirror</span></div>
-              <div class="diagram-arrow">→</div>
-              <div class="diagram-node"><strong>Transitional</strong><span>optional Oracle integration</span></div>
-              <div class="diagram-arrow">→</div>
-              <div class="diagram-node"><strong>Future</strong><span>Oracle 26ai or OCI ADB primary</span></div>
+            <div class="diagram-group">
+              <p class="diagram-lane-title">Architecture Evolution</p>
+              <div class="diagram-flow compact-flow">
+                <div class="diagram-node warning"><strong>Current</strong><span>CSV primary + SQLite mirror</span></div>
+                <div class="diagram-arrow">&rarr;</div>
+                <div class="diagram-node primary"><strong>Transitional</strong><span>optional Oracle integration</span></div>
+                <div class="diagram-arrow">&rarr;</div>
+                <div class="diagram-node success"><strong>Future</strong><span>Oracle 26ai or OCI ADB primary</span></div>
+              </div>
+              <p class="diagram-note">This is not only a technical path. It is also a learning path from simple persistence toward production-grade storage.</p>
             </div>
-            <p>This map is useful because it shows that architectural growth is a path, not a jump.</p>
+            <p>This diagram is useful because it shows growth as a progression, not as one giant leap.</p>
           </section>
 
           <section id="exercise">
@@ -104,13 +124,13 @@
                 <h3>Solution Approach</h3>
                 <p>Your diagram should show at least these steps in order:</p>
                 <pre><code>Browser form
-→ server.js
-→ routes/todos.js
-→ todoService.createTodo()
-→ csvService.writeTodos()
-→ sqliteService.syncTodosToSqlite()
-→ JSON response
-→ frontend re-render</code></pre>
+&rarr; server.js
+&rarr; routes/todos.js
+&rarr; todoService.createTodo()
+&rarr; csvService.writeTodos()
+&rarr; sqliteService.syncTodosToSqlite()
+&rarr; JSON response
+&rarr; frontend re-render</code></pre>
               </div>
               <div class="result-card">
                 <h3>How It Should Look</h3>
@@ -131,3 +151,4 @@
   </div>
 </body>
 </html>
+
