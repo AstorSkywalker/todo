@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 31: Performance and Scalability Thinking</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 31</p>
+      <h1>Performance and Scalability Thinking</h1>
+      <p class="kicker muted">Learn how to think about speed, responsiveness, and architectural growth without pretending this project must become huge before those ideas matter.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#now">What performance means here</a></li>
+          <li><a href="#frontend">Frontend performance thinking</a></li>
+          <li><a href="#backend">Backend performance thinking</a></li>
+          <li><a href="#storage">Storage and scaling limits</a></li>
+          <li><a href="#future">How the architecture could scale</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="now">
+            <h2>1. What Performance Means In This Project</h2>
+            <p>Performance is not only about giant systems. Even a small app benefits from thoughtful speed and responsiveness.</p>
+            <p>In TaskFlow, performance mostly means:</p>
+            <ul>
+              <li>the dashboard loads quickly</li>
+              <li>filters feel responsive</li>
+              <li>the task list re-renders smoothly</li>
+              <li>CSV and SQLite sync do not feel laggy at the current scale</li>
+            </ul>
+          </section>
+
+          <section id="frontend">
+            <h2>2. Frontend Performance Thinking</h2>
+            <p>The frontend already uses a few healthy performance-minded patterns:</p>
+            <ul>
+              <li>debounced search input</li>
+              <li>state-driven re-rendering instead of random DOM updates everywhere</li>
+              <li>compact versus card view to manage dense lists</li>
+              <li>localStorage for UI preferences instead of repeated server calls</li>
+            </ul>
+            <p>These are not “big tech” optimizations. They are practical UX performance choices.</p>
+          </section>
+
+          <section id="backend">
+            <h2>3. Backend Performance Thinking</h2>
+            <p>The backend is intentionally simple. For the current project scale, that simplicity is usually a strength.</p>
+            <p>But it also has clear tradeoffs:</p>
+            <ul>
+              <li>read all rows from CSV</li>
+              <li>filter in memory</li>
+              <li>rewrite the full CSV file on writes</li>
+              <li>mirror the full dataset into SQLite</li>
+            </ul>
+            <p>That is fine for a learning project and moderate task counts, but it would eventually become less ideal as data grows much larger.</p>
+          </section>
+
+          <section id="storage">
+            <h2>4. Storage and Scaling Limits</h2>
+            <p>This project teaches a useful engineering truth: the storage model often defines the scaling story more than the UI does.</p>
+            <table>
+              <thead>
+                <tr><th>Storage mode</th><th>Strength</th><th>Limitation</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>CSV primary</td><td>Simple and easy to inspect</td><td>Full rewrites become less attractive as data grows</td></tr>
+                <tr><td>SQLite mirror</td><td>Structured relational model</td><td>Still not the primary read path today</td></tr>
+                <tr><td>Future Oracle</td><td>Stronger scaling and concurrency story</td><td>More setup and operational complexity</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section id="future">
+            <h2>5. How The Architecture Could Scale</h2>
+            <p>If performance or scale became a bigger concern later, the healthiest progression would likely be:</p>
+            <ol>
+              <li>keep the current app simple while the data size is modest</li>
+              <li>move reads toward SQLite-primary or another more query-friendly storage layer</li>
+              <li>move toward Oracle-backed storage for stronger long-term durability and scaling</li>
+              <li>only after that worry about more advanced deployment and concurrency concerns</li>
+            </ol>
+            <p>This is a good reminder that scalability is often architectural sequencing, not just code speed.</p>
+          </section>
+
+          <section id="mistakes">
+            <h2>6. Common Mistakes</h2>
+            <ul>
+              <li><strong>Optimizing too early:</strong> not every small project needs complex performance engineering on day one.</li>
+              <li><strong>Ignoring scale completely:</strong> it still helps to know where the current limits are.</li>
+              <li><strong>Confusing performance with cleverness:</strong> simpler code is often faster enough and easier to maintain.</li>
+              <li><strong>Skipping the storage story:</strong> many scaling questions are really data-layer questions.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>7. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Describe the first architectural change you would make if the app grew from hundreds of tasks to tens of thousands.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A strong answer should focus on the storage and query story before worrying about flashy optimizations.</p>
+                <pre><code>First likely change:
+- stop relying on CSV as the primary read path
+- move reads to a more query-friendly storage layer
+- keep CSV mainly for import/export or backup
+
+Reason:
+the scaling limit is more about reading, filtering, and rewriting data than about the dashboard markup itself</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should feel grounded and architectural. The strongest performance answers begin with data access and system shape, not random micro-optimizations.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain how the frontend, backend, and storage layers each affect performance differently, you understand the scalability story of the project.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/30-security-and-input-safety.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/24-debugging-workflows.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

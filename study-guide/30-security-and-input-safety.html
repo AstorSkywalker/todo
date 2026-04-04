@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 30: Security and Input Safety</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/study-guide/styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero compact-hero">
+      <p class="eyebrow">Lesson 30</p>
+      <h1>Security and Input Safety</h1>
+      <p class="kicker muted">Learn how this project protects itself from bad input, why validation matters on both frontend and backend, and how to think about security in a practical, beginner-friendly way.</p>
+    </header>
+
+    <div class="grid grid-2">
+      <aside class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#why">Why input safety matters</a></li>
+          <li><a href="#frontend">Frontend validation versus backend validation</a></li>
+          <li><a href="#backend">What the backend currently protects</a></li>
+          <li><a href="#limits">What this app still does not claim to solve</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#exercise">Exercise and checkpoint</a></li>
+        </ul>
+      </aside>
+
+      <main class="content-stack">
+        <article class="lesson">
+          <section id="why">
+            <h2>1. Why Input Safety Matters</h2>
+            <p>Every app receives input from outside itself. In this project, that input can come from:</p>
+            <ul>
+              <li>the task form in the dashboard</li>
+              <li>imported CSV and JSON files</li>
+              <li>manual API requests</li>
+              <li>future external integrations</li>
+            </ul>
+            <p>If the app trusts all input blindly, it becomes easier for broken data to enter the system and much harder to maintain consistency later.</p>
+            <div class="callout">
+              <p><strong>Core lesson:</strong> input safety is not only about attackers. It is also about protecting the app from accidental bad data, malformed files, and inconsistent state.</p>
+            </div>
+          </section>
+
+          <section id="frontend">
+            <h2>2. Frontend Validation Versus Backend Validation</h2>
+            <p>The frontend helps the user with friendly feedback, but the backend is the final authority.</p>
+            <table>
+              <thead>
+                <tr><th>Layer</th><th>Purpose</th><th>Example</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Frontend</td><td>User guidance</td><td>Masked date input and inline field errors</td></tr>
+                <tr><td>Backend</td><td>Actual enforcement</td><td>Reject invalid status, priority, or malformed date</td></tr>
+              </tbody>
+            </table>
+            <p>This distinction matters because a user can bypass the UI and send raw API requests directly. That is why backend validation must always exist even when the frontend already seems strict.</p>
+          </section>
+
+          <section id="backend">
+            <h2>3. What The Backend Currently Protects</h2>
+            <p>The backend already does several good things:</p>
+            <ul>
+              <li>normalizes payload values into predictable strings</li>
+              <li>requires a title</li>
+              <li>enforces valid status values</li>
+              <li>enforces valid priority values</li>
+              <li>checks ISO date validity</li>
+              <li>validates imported rows before saving them</li>
+            </ul>
+            <pre><code>function validateTodo(todo) {
+  if (!todo.title) {
+    return 'Title is required.';
+  }
+
+  if (todo.dueDate && !isValidIsoDate(todo.dueDate)) {
+    return 'Due date must be a valid date in YYYY-MM-DD format.';
+  }
+
+  if (!['pending', 'in_progress', 'done'].includes(todo.status)) {
+    return 'Status must be pending, in_progress, or done.';
+  }
+}</code></pre>
+            <p>This is a good example of safety through clear rule enforcement.</p>
+          </section>
+
+          <section id="limits">
+            <h2>4. What This App Still Does Not Claim To Solve</h2>
+            <p>It is also important to stay honest. This project is strong, but it is still a learning and portfolio app, not a full hardened enterprise platform.</p>
+            <p>So when we talk about security, we should be accurate. The app currently does not include things like:</p>
+            <ul>
+              <li>authentication and authorization</li>
+              <li>role-based access control</li>
+              <li>rate limiting</li>
+              <li>advanced audit logging</li>
+              <li>enterprise secret management</li>
+            </ul>
+            <p>That does not make it weak as a project. It simply means the security conversation should stay proportional to the app’s current scope.</p>
+          </section>
+
+          <section id="mistakes">
+            <h2>5. Common Mistakes</h2>
+            <ul>
+              <li><strong>Trusting the frontend too much:</strong> backend validation still has to enforce the rules.</li>
+              <li><strong>Mixing normalization and validation everywhere:</strong> shared helpers reduce inconsistency.</li>
+              <li><strong>Thinking security only means hackers:</strong> malformed files and accidental bad input matter too.</li>
+              <li><strong>Overclaiming enterprise-grade security:</strong> good engineering communication should stay honest about scope.</li>
+            </ul>
+          </section>
+
+          <section id="exercise">
+            <h2>6. Exercise and Checkpoint</h2>
+            <div class="exercise-stack">
+              <div class="exercise-card">
+                <h3>Problem</h3>
+                <p>Explain why a due date should still be validated on the backend even if the dashboard form already blocks bad dates.</p>
+              </div>
+              <div class="solution-card">
+                <h3>Solution Approach</h3>
+                <p>A strong answer should mention direct API access and imported data, not only normal form submission.</p>
+                <pre><code>Reason:
+- users can bypass the UI
+- files can contain malformed data
+- API clients can send invalid payloads
+- the backend is the final protection layer
+
+Conclusion:
+frontend validation helps users,
+backend validation protects the system</code></pre>
+              </div>
+              <div class="result-card">
+                <h3>How It Should Look</h3>
+                <p>Your answer should clearly separate user experience validation from real data enforcement. That separation is one of the biggest safety habits in full-stack development.</p>
+              </div>
+            </div>
+            <p><strong>Checkpoint:</strong> if you can explain why input normalization, validation, and honest security scope all matter together, you understand the security posture of this project.</p>
+          </section>
+        </article>
+
+        <nav class="chapter-nav">
+          <a href="/study-guide/29-api-design-principles.html">Previous lesson</a>
+          <a href="/study-guide/">Back to study guide index</a>
+          <a href="/study-guide/31-performance-and-scalability-thinking.html">Next lesson</a>
+        </nav>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
