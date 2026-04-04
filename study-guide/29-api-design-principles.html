@@ -23,9 +23,11 @@
         <ul>
           <li><a href="#routes">Route design</a></li>
           <li><a href="#verbs">HTTP verbs and intent</a></li>
+          <li><a href="#step-by-step">Step-by-step endpoint design</a></li>
           <li><a href="#responses">Response design</a></li>
           <li><a href="#validation">Validation and errors</a></li>
           <li><a href="#modularity">Why modularity helps API design</a></li>
+          <li><a href="#docs">Why documentation belongs here</a></li>
           <li><a href="#mistakes">Common mistakes</a></li>
           <li><a href="#exercise">Exercise and checkpoint</a></li>
         </ul>
@@ -58,17 +60,62 @@ GET    /api/todos/export</code></pre>
             <p>This consistency helps both humans and tools like Swagger understand the API quickly.</p>
           </section>
 
+          <section id="step-by-step">
+            <h2>3. Step-by-Step: How To Design One Good Endpoint</h2>
+            <p>The easiest way to learn API design is to walk through one endpoint slowly. Let us use the current list endpoint as the teaching example.</p>
+            <p><strong>Goal:</strong> return a filtered list of todos without making the route system confusing.</p>
+            <ol>
+              <li><strong>Choose the resource:</strong> the resource is still <code>todos</code>.</li>
+              <li><strong>Choose the action style:</strong> listing data is a <code>GET</code> request.</li>
+              <li><strong>Decide where filters belong:</strong> filters belong in query parameters, not in random new route names.</li>
+              <li><strong>Keep the route readable:</strong> use <code>/api/todos</code> instead of inventing multiple list-like routes.</li>
+              <li><strong>Pass only the needed filter values:</strong> search, status, priority, and category.</li>
+              <li><strong>Let the service layer do the real work:</strong> route files should not contain all filtering logic.</li>
+              <li><strong>Return one predictable JSON shape:</strong> items plus summary.</li>
+            </ol>
+            <p>The actual route handling already reflects this thinking:</p>
+            <pre><code>if (req.method === 'GET' && pathParts.length === 2) {
+  const result = listTodos({
+    search: requestUrl.searchParams.get('search'),
+    status: requestUrl.searchParams.get('status'),
+    priority: requestUrl.searchParams.get('priority'),
+    category: requestUrl.searchParams.get('category')
+  });
+
+  sendJson(res, 200, result);
+  return;
+}</code></pre>
+            <p>This is a good pattern to study because the route reads almost like plain English:</p>
+            <ul>
+              <li>if the request is a list request</li>
+              <li>collect the query filters</li>
+              <li>ask the service layer for the result</li>
+              <li>return the result as JSON</li>
+            </ul>
+          </section>
+
           <section id="responses">
-            <h2>3. Response Design Should Be Predictable</h2>
+            <h2>4. Response Design Should Be Predictable</h2>
             <p>The project uses consistent JSON response patterns. A successful request returns data. A failed request returns an error message and an appropriate status code.</p>
             <pre><code>{
   "error": "Title is required."
 }</code></pre>
             <p>Predictable response shapes matter because they reduce guesswork for frontend code and future API consumers.</p>
+            <p>For example, the list endpoint returns the same top-level shape every time:</p>
+            <pre><code>{
+  "items": [...],
+  "summary": {
+    "total": 192,
+    "pending": 78,
+    "inProgress": 60,
+    "done": 54
+  }
+}</code></pre>
+            <p>This matters because the frontend can render summary cards and the task list from one stable contract.</p>
           </section>
 
           <section id="validation">
-            <h2>4. Validation and Errors Are Part Of Good API Design</h2>
+            <h2>5. Validation and Errors Are Part Of Good API Design</h2>
             <p>A well-designed API is not only about the happy path. It should also reject bad input clearly.</p>
             <ul>
               <li>missing title</li>
@@ -78,10 +125,15 @@ GET    /api/todos/export</code></pre>
               <li>invalid import mode or format</li>
             </ul>
             <p>That is why validation helpers matter so much. They help the API behave consistently and transparently.</p>
+            <pre><code>if (result.error) {
+  sendJson(res, result.statusCode, { error: result.error });
+  return;
+}</code></pre>
+            <p>This small response pattern is one of the most useful backend habits in the whole project. It keeps error handling short, readable, and uniform.</p>
           </section>
 
           <section id="modularity">
-            <h2>5. Why Modularity Helps API Design</h2>
+            <h2>6. Why Modularity Helps API Design</h2>
             <p>Routes stay cleaner when they focus on HTTP concerns while services focus on business logic.</p>
             <pre><code>route layer
   - read request
@@ -97,18 +149,39 @@ service layer
             <p>This separation makes the API easier to document, test, and extend later.</p>
           </section>
 
+          <section id="docs">
+            <h2>7. Why Documentation Belongs To Good API Design</h2>
+            <p>A clear API is easier to use when the documentation reflects the actual route design. In this project, the OpenAPI file mirrors the route choices directly.</p>
+            <pre><code>"/api/todos": {
+  "get": {
+    "summary": "List tasks",
+    "parameters": [
+      { "in": "query", "name": "search" },
+      { "in": "query", "name": "status" },
+      { "in": "query", "name": "priority" },
+      { "in": "query", "name": "category" }
+    ]
+  }
+}</code></pre>
+            <p>This is important because good API design is not only route code. It is also the contract you communicate through Swagger and OpenAPI.</p>
+            <div class="callout">
+              <p><strong>Practical design rule:</strong> if an endpoint is hard to describe clearly in OpenAPI, that can be a sign the endpoint itself needs simplification.</p>
+            </div>
+          </section>
+
           <section id="mistakes">
-            <h2>6. Common Mistakes</h2>
+            <h2>8. Common Mistakes</h2>
             <ul>
               <li><strong>Making route names too clever:</strong> simple and explicit routes are easier to use.</li>
               <li><strong>Returning inconsistent error shapes:</strong> the frontend becomes harder to maintain.</li>
               <li><strong>Mixing business logic into route files:</strong> routes become harder to read and test.</li>
               <li><strong>Ignoring documentation:</strong> an API is stronger when Swagger and OpenAPI describe it clearly.</li>
+              <li><strong>Creating a new route when a filter would do:</strong> not every variation needs a brand-new endpoint.</li>
             </ul>
           </section>
 
           <section id="exercise">
-            <h2>7. Exercise and Checkpoint</h2>
+            <h2>9. Exercise and Checkpoint</h2>
             <div class="exercise-stack">
               <div class="exercise-card">
                 <h3>Problem</h3>
